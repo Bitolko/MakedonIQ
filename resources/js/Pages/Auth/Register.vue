@@ -1,6 +1,11 @@
 <script setup>
 import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
+
+const appState = window.MakedonIQ || {};
+const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const errors = appState.errors || {};
+const old = appState.old || {};
 </script>
 
 <template>
@@ -11,32 +16,43 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
                 <h1 class="mt-3 text-4xl font-black text-heritage-red">Create Account</h1>
                 <p class="mt-3 text-heritage-muted">Join our community of learners and heritage keepers.</p>
 
-                <form class="mt-8 grid gap-5" @submit.prevent>
+                <form class="mt-8 grid gap-5" action="/register" method="POST">
+                    <input type="hidden" name="_token" :value="csrfToken">
                     <div class="grid gap-5 md:grid-cols-2">
                         <div>
                             <label class="label" for="name">Name</label>
-                            <input id="name" class="field mt-2" type="text" placeholder="Nikola Petrovski" autocomplete="name">
+                            <input id="name" class="field mt-2" type="text" name="name" :value="old.name || ''" placeholder="Nikola Petrovski" autocomplete="name" required>
+                            <div v-if="errors.name" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
+                                <p v-for="error in errors.name" :key="error">{{ error }}</p>
+                            </div>
                         </div>
                         <div>
                             <label class="label" for="preferred_language">Preferred language</label>
-                            <select id="preferred_language" class="field mt-2">
-                                <option>English</option>
-                                <option>Македонски</option>
+                            <select id="preferred_language" class="field mt-2" name="preferred_language" :value="old.preferred_language || 'English'">
+                                <option value="English">English</option>
+                                <option value="Македонски">Македонски</option>
                             </select>
+                            <p class="mt-2 text-xs font-semibold text-heritage-muted">Saved later when learner profiles are added.</p>
                         </div>
                     </div>
                     <div>
                         <label class="label" for="register_email">Email</label>
-                        <input id="register_email" class="field mt-2" type="email" placeholder="name@example.com" autocomplete="email">
+                        <input id="register_email" class="field mt-2" type="email" name="email" :value="old.email || ''" placeholder="name@example.com" autocomplete="email" required>
+                        <div v-if="errors.email" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
+                            <p v-for="error in errors.email" :key="error">{{ error }}</p>
+                        </div>
                     </div>
                     <div class="grid gap-5 md:grid-cols-2">
                         <div>
                             <label class="label" for="register_password">Password</label>
-                            <input id="register_password" class="field mt-2" type="password" placeholder="Password" autocomplete="new-password">
+                            <input id="register_password" class="field mt-2" type="password" name="password" placeholder="Password" autocomplete="new-password" required minlength="8">
+                            <div v-if="errors.password" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
+                                <p v-for="error in errors.password" :key="error">{{ error }}</p>
+                            </div>
                         </div>
                         <div>
                             <label class="label" for="password_confirmation">Confirm password</label>
-                            <input id="password_confirmation" class="field mt-2" type="password" placeholder="Confirm password" autocomplete="new-password">
+                            <input id="password_confirmation" class="field mt-2" type="password" name="password_confirmation" placeholder="Confirm password" autocomplete="new-password" required minlength="8">
                         </div>
                     </div>
                     <PrimaryButton type="submit" class="w-full" size="lg">Create Account</PrimaryButton>

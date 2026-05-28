@@ -11,6 +11,11 @@ const props = defineProps({
 
 const open = ref(false);
 const currentPath = window.location.pathname;
+const appState = window.MakedonIQ || {};
+const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const user = computed(() => appState.auth?.user || null);
+const isAuthenticated = computed(() => Boolean(user.value));
+const displayName = computed(() => user.value?.name || 'Learner');
 
 const navItems = computed(() => {
     if (props.variant === 'admin') {
@@ -28,7 +33,6 @@ const navItems = computed(() => {
             { label: 'Dashboard', href: '/dashboard' },
             { label: 'Quizzes', href: '/quizzes' },
             { label: 'Progress', href: '/progress' },
-            { label: 'Logout', href: '/' },
         ];
     }
 
@@ -40,7 +44,13 @@ const navItems = computed(() => {
     ];
 });
 
-const isActive = (href) => href !== '#' && (currentPath === href || (href !== '/' && currentPath.startsWith(href)));
+const isActive = (href) => {
+    if (href === '/' || href === '/admin') {
+        return currentPath === href;
+    }
+
+    return currentPath === href || currentPath.startsWith(`${href}/`);
+};
 </script>
 
 <template>
@@ -74,15 +84,27 @@ const isActive = (href) => href !== '#' && (currentPath === href || (href !== '/
                     </a>
                 </nav>
 
-                <div v-if="variant === 'public'" class="hidden items-center gap-3 md:flex">
+                <div v-if="variant === 'public' && !isAuthenticated" class="hidden items-center gap-3 md:flex">
                     <button class="rounded-full border border-heritage-line bg-white px-3 py-2 text-xs font-black text-heritage-muted shadow-card">EN / MK</button>
                     <a href="/login" class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red">Login</a>
                     <PrimaryButton href="/register" size="sm">Start Learning</PrimaryButton>
                 </div>
 
+                <div v-else-if="variant === 'public' && isAuthenticated" class="hidden items-center gap-3 md:flex">
+                    <a href="/dashboard" class="rounded-full bg-heritage-panel px-4 py-2 text-sm font-black text-heritage-red">Dashboard</a>
+                    <form action="/logout" method="POST">
+                        <input type="hidden" name="_token" :value="csrfToken">
+                        <button class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red" type="submit">Logout</button>
+                    </form>
+                </div>
+
                 <div v-else-if="variant === 'dashboard'" class="hidden items-center gap-3 md:flex">
                     <span class="rounded-full bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep">5 day streak</span>
-                    <span class="rounded-full bg-heritage-panel px-3 py-2 text-xs font-black text-heritage-muted">Stefan</span>
+                    <span class="rounded-full bg-heritage-panel px-3 py-2 text-xs font-black text-heritage-muted">{{ displayName }}</span>
+                    <form action="/logout" method="POST">
+                        <input type="hidden" name="_token" :value="csrfToken">
+                        <button class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red" type="submit">Logout</button>
+                    </form>
                 </div>
 
                 <div v-else class="hidden items-center gap-3 md:flex">
@@ -95,9 +117,16 @@ const isActive = (href) => href !== '#' && (currentPath === href || (href !== '/
             </div>
 
             <div v-if="open" class="grid gap-3 border-t border-heritage-line/40 py-4 md:hidden">
-                <div v-if="variant === 'public'" class="grid grid-cols-2 gap-3">
+                <div v-if="variant === 'public' && !isAuthenticated" class="grid grid-cols-2 gap-3">
                     <button class="rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-muted shadow-card">EN / MK</button>
                     <a href="/login" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Login</a>
+                </div>
+                <div v-else-if="variant === 'public' && isAuthenticated" class="grid grid-cols-2 gap-3">
+                    <a href="/dashboard" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Dashboard</a>
+                    <form action="/logout" method="POST">
+                        <input type="hidden" name="_token" :value="csrfToken">
+                        <button class="w-full rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-muted shadow-card" type="submit">Logout</button>
+                    </form>
                 </div>
                 <a
                     v-for="item in navItems"
@@ -111,7 +140,11 @@ const isActive = (href) => href !== '#' && (currentPath === href || (href !== '/
                     {{ item.label }}
                     <span v-if="item.soon" class="ml-2 text-xs text-heritage-red">Coming soon</span>
                 </a>
-                <template v-if="variant === 'public'">
+                <form v-if="variant === 'dashboard'" action="/logout" method="POST">
+                    <input type="hidden" name="_token" :value="csrfToken">
+                    <button class="w-full rounded-2xl bg-heritage-panel px-4 py-3 text-left text-sm font-black text-heritage-muted" type="submit">Logout</button>
+                </form>
+                <template v-if="variant === 'public' && !isAuthenticated">
                     <a href="/register" class="rounded-2xl bg-heritage-red px-4 py-3 text-center text-sm font-black text-white">Start Learning</a>
                 </template>
             </div>

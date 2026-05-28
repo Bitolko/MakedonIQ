@@ -1,6 +1,11 @@
 <script setup>
 import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
+
+const appState = window.MakedonIQ || {};
+const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const errors = appState.errors || {};
+const old = appState.old || {};
 </script>
 
 <template>
@@ -13,20 +18,27 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
                     <p class="mt-3 leading-7 text-heritage-muted">Please enter your details to continue your Macedonian learning journey.</p>
                 </div>
 
-                <form class="mt-8 grid gap-5" @submit.prevent>
+                <form class="mt-8 grid gap-5" action="/login" method="POST">
+                    <input type="hidden" name="_token" :value="csrfToken">
                     <div>
                         <label class="label" for="email">Email address</label>
-                        <input id="email" class="field mt-2" type="email" placeholder="name@example.com" autocomplete="email">
+                        <input id="email" class="field mt-2" type="email" name="email" :value="old.email || ''" placeholder="name@example.com" autocomplete="email" required>
+                        <div v-if="errors.email" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
+                            <p v-for="error in errors.email" :key="error">{{ error }}</p>
+                        </div>
                     </div>
                     <div>
                         <div class="flex items-center justify-between gap-4">
                             <label class="label" for="password">Password</label>
                             <button class="text-sm font-bold text-heritage-red" type="button">Forgot password?</button>
                         </div>
-                        <input id="password" class="field mt-2" type="password" placeholder="Password" autocomplete="current-password">
+                        <input id="password" class="field mt-2" type="password" name="password" placeholder="Password" autocomplete="current-password" required>
+                        <div v-if="errors.password" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
+                            <p v-for="error in errors.password" :key="error">{{ error }}</p>
+                        </div>
                     </div>
                     <label class="flex items-center gap-3 rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-semibold text-heritage-muted">
-                        <input class="h-5 w-5 rounded border-heritage-line text-heritage-red" type="checkbox">
+                        <input class="h-5 w-5 rounded border-heritage-line text-heritage-red" type="checkbox" name="remember" value="1">
                         Remember me
                     </label>
                     <PrimaryButton type="submit" class="w-full" size="lg">Login</PrimaryButton>

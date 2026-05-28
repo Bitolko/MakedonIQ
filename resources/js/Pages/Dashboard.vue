@@ -5,6 +5,9 @@ import ProgressBar from '../Components/ProgressBar.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import AppBadge from '../Components/AppBadge.vue';
 import { dashboardStats, historyQuizzes, progressCategories, recentResults } from '../data/makedoniq';
+
+const user = window.MakedonIQ?.auth?.user;
+const displayName = user?.name || 'learner';
 </script>
 
 <template>
@@ -13,7 +16,7 @@ import { dashboardStats, historyQuizzes, progressCategories, recentResults } fro
             <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div>
                     <AppBadge variant="gold">Learner dashboard</AppBadge>
-                    <h1 class="mt-4 text-4xl font-black md:text-5xl">Welcome back, Stefan!</h1>
+                    <h1 class="mt-4 text-4xl font-black md:text-5xl">Welcome back, {{ displayName }}!</h1>
                     <p class="mt-3 max-w-2xl text-lg leading-8 text-white/80">You are on a roll. Continue a quiz, review recent results, and keep exploring your Macedonian heritage.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
