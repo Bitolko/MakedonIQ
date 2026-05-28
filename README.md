@@ -7,6 +7,44 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## MakedonIQ Local MySQL Setup
+
+This project uses Laravel's default users table for authentication. For local development, create a MySQL database and local user before running migrations.
+
+In MySQL, run:
+
+```sql
+CREATE DATABASE makedoniq CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'makedoniq_user'@'127.0.0.1' IDENTIFIED BY 'replace_with_a_local_password';
+GRANT ALL PRIVILEGES ON makedoniq.* TO 'makedoniq_user'@'127.0.0.1';
+FLUSH PRIVILEGES;
+```
+
+Then configure Laravel:
+
+```bash
+copy .env.example .env
+php artisan key:generate
+```
+
+Edit `.env` and fill in your local MySQL password:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=makedoniq
+DB_USERNAME=makedoniq_user
+DB_PASSWORD=your_local_password
+```
+
+Then run:
+
+```bash
+php artisan config:clear
+php artisan migrate
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
