@@ -20,8 +20,8 @@ const difficultyVariant = {
 <template>
     <article class="soft-card soft-card-hover flex h-full flex-col p-6">
         <div class="flex items-start justify-between gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-heritage-gold-soft text-lg font-black text-heritage-gold-deep">
-                ★
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint text-lg font-black text-heritage-gold-deep">
+                Q
             </div>
             <AppBadge :variant="quiz.status === 'Completed' ? 'green' : difficultyVariant[quiz.difficulty]">
                 {{ quiz.status }}
@@ -29,10 +29,10 @@ const difficultyVariant = {
         </div>
         <h3 class="mt-6 text-2xl font-black text-heritage-ink">{{ quiz.title }}</h3>
         <p class="mt-3 flex-1 text-heritage-muted">{{ quiz.description }}</p>
-        <div class="mt-5 flex flex-wrap gap-3 text-sm font-bold text-heritage-muted">
-            <span>{{ quiz.difficulty }}</span>
-            <span>{{ quiz.questions }} questions</span>
-            <span>{{ quiz.time }}</span>
+        <div class="mt-5 flex flex-wrap gap-2 text-sm font-bold text-heritage-muted">
+            <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.difficulty }}</span>
+            <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.questions }} questions</span>
+            <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.time }}</span>
         </div>
         <div class="mt-6">
             <ProgressBar :value="quiz.progress" label="Progress" />

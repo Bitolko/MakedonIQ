@@ -15,7 +15,7 @@ export const categories = [
         description: 'Read and recognise the Cyrillic letters with playful bilingual prompts.',
         level: 'Fundamental',
         quizzes: 8,
-        icon: 'АБ',
+        icon: 'AB',
         href: '/quizzes',
         tone: 'gold',
     },
@@ -25,7 +25,7 @@ export const categories = [
         description: 'Explore ancient kingdoms, cultural milestones, and modern Macedonian stories.',
         level: 'Intermediate',
         quizzes: 10,
-        icon: '🏛',
+        icon: 'HI',
         href: '/quizzes/history',
         tone: 'navy',
     },
@@ -35,7 +35,7 @@ export const categories = [
         description: 'Learn about mountains, lakes, cities, regions, and landmarks across Macedonia.',
         level: 'Beginner',
         quizzes: 7,
-        icon: '↗',
+        icon: 'GE',
         href: '/quizzes',
         tone: 'red',
     },
@@ -45,7 +45,7 @@ export const categories = [
         description: 'Celebrate holidays, family customs, folklore, dance, and community traditions.',
         level: 'All levels',
         quizzes: 9,
-        icon: '✦',
+        icon: 'CU',
         href: '/quizzes',
         tone: 'gold',
     },
@@ -55,7 +55,7 @@ export const categories = [
         description: 'Recognise traditional dishes, instruments, songs, and festival favourites.',
         level: 'Beginner',
         quizzes: 6,
-        icon: '♪',
+        icon: 'FM',
         href: '/quizzes',
         tone: 'navy',
     },
@@ -115,18 +115,18 @@ export const historyQuizzes = [
 ];
 
 export const dashboardStats = [
-    { label: 'Total points', value: '1,250', detail: '+180 this week', icon: '★', tone: 'gold' },
-    { label: 'Completed quizzes', value: '12', detail: '4 categories touched', icon: '✓', tone: 'red' },
-    { label: 'Current streak', value: '5 days', detail: 'Keep it rolling', icon: '↟', tone: 'navy' },
+    { label: 'Total points', value: '1,250', detail: '+180 this week', icon: 'XP', tone: 'gold' },
+    { label: 'Completed quizzes', value: '12', detail: '4 categories touched', icon: 'OK', tone: 'red' },
+    { label: 'Current streak', value: '5 days', detail: 'Keep it rolling', icon: '5', tone: 'navy' },
 ];
 
 export const progressCategories = [
     { title: 'Language', progress: 76, completed: 9, total: 12, icon: 'Aa' },
-    { title: 'Alphabet', progress: 58, completed: 5, total: 8, icon: 'АБ' },
-    { title: 'History', progress: 64, completed: 6, total: 10, icon: '🏛' },
-    { title: 'Geography', progress: 42, completed: 3, total: 7, icon: '↗' },
-    { title: 'Culture', progress: 71, completed: 6, total: 9, icon: '✦' },
-    { title: 'Food and Music', progress: 35, completed: 2, total: 6, icon: '♪' },
+    { title: 'Alphabet', progress: 58, completed: 5, total: 8, icon: 'AB' },
+    { title: 'History', progress: 64, completed: 6, total: 10, icon: 'HI' },
+    { title: 'Geography', progress: 42, completed: 3, total: 7, icon: 'GE' },
+    { title: 'Culture', progress: 71, completed: 6, total: 9, icon: 'CU' },
+    { title: 'Food and Music', progress: 35, completed: 2, total: 6, icon: 'FM' },
 ];
 
 export const recentResults = [
@@ -136,9 +136,9 @@ export const recentResults = [
 ];
 
 export const achievements = [
-    { title: 'First Quiz Finished', description: 'Completed your first MakedonIQ quiz.', icon: '✓' },
-    { title: 'Alphabet Explorer', description: 'Practised 20 Cyrillic letter prompts.', icon: 'А' },
-    { title: 'History Starter', description: 'Scored over 80% in a history quiz.', icon: '★' },
+    { title: 'First Quiz Finished', description: 'Completed your first MakedonIQ quiz.', icon: '01' },
+    { title: 'Alphabet Explorer', description: 'Practised 20 Cyrillic letter prompts.', icon: 'AB' },
+    { title: 'History Starter', description: 'Scored over 80% in a history quiz.', icon: 'HI' },
 ];
 
 export const adminQuizzes = [

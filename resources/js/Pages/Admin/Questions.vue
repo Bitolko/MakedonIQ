@@ -10,14 +10,17 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
             <p class="mt-2 text-heritage-muted">Static bilingual question form. Backend saving will come later.</p>
         </section>
 
-        <form class="soft-card grid gap-6 p-6 md:p-8" @submit.prevent>
-            <div>
-                <label class="label" for="quiz">Select quiz</label>
-                <select id="quiz" class="field mt-2">
-                    <option>Ancient Macedonia Basics</option>
-                    <option>Daily Macedonian Phrases</option>
-                    <option>Cyrillic Letter Match</option>
-                </select>
+        <form class="section-panel grid gap-6" @submit.prevent>
+            <div class="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div>
+                    <label class="label" for="quiz">Select quiz</label>
+                    <select id="quiz" class="field mt-2">
+                        <option>Ancient Macedonia Basics</option>
+                        <option>Daily Macedonian Phrases</option>
+                        <option>Cyrillic Letter Match</option>
+                    </select>
+                </div>
+                <PrimaryButton type="submit" class="w-full lg:w-auto">Save question</PrimaryButton>
             </div>
 
             <div class="grid gap-5 md:grid-cols-2">
@@ -32,7 +35,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
             </div>
 
             <div class="grid gap-6 lg:grid-cols-2">
-                <section class="rounded-3xl bg-heritage-panel p-5">
+                <section class="rounded-[1.5rem] bg-heritage-panel p-5">
                     <h2 class="text-xl font-black text-heritage-ink">Answer options in English</h2>
                     <div class="mt-4 grid gap-3">
                         <input class="field bg-white" placeholder="A. Good night">
@@ -41,7 +44,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
                         <input class="field bg-white" placeholder="D. Goodbye">
                     </div>
                 </section>
-                <section class="rounded-3xl bg-heritage-panel p-5">
+                <section class="rounded-[1.5rem] bg-heritage-panel p-5">
                     <h2 class="text-xl font-black text-heritage-ink">Answer options in Macedonian</h2>
                     <div class="mt-4 grid gap-3">
                         <input class="field bg-white" placeholder="A. Добра ноќ">
@@ -72,8 +75,6 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
                     <textarea id="explanation_mk" class="field mt-2 min-h-28" placeholder="Добро утро значи Good morning."></textarea>
                 </div>
             </div>
-
-            <PrimaryButton type="submit">Save question</PrimaryButton>
         </form>
     </AdminLayout>
 </template>

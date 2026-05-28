@@ -16,7 +16,7 @@ import AppBadge from '../Components/AppBadge.vue';
                 <div class="mt-8 grid gap-4">
                     <div class="soft-card p-5">
                         <p class="label">Email</p>
-                        <p class="mt-2 font-black text-heritage-ink">hello@makedoniq.example</p>
+                        <p class="mt-2 font-black text-heritage-ink">makedoniq2026@gmail.com</p>
                     </div>
                     <div class="soft-card p-5">
                         <p class="label">Based in</p>
@@ -25,7 +25,7 @@ import AppBadge from '../Components/AppBadge.vue';
                 </div>
             </section>
 
-            <section class="soft-card p-6 md:p-8">
+            <section class="section-panel">
                 <form class="grid gap-5" @submit.prevent>
                     <div class="grid gap-5 md:grid-cols-2">
                         <div>
@@ -51,7 +51,7 @@ import AppBadge from '../Components/AppBadge.vue';
                         <label class="label" for="message">Message</label>
                         <textarea id="message" class="field mt-2 min-h-40" placeholder="How can we help?"></textarea>
                     </div>
-                    <PrimaryButton type="submit">Send message</PrimaryButton>
+                    <PrimaryButton type="submit" size="lg">Send message</PrimaryButton>
                 </form>
             </section>
         </main>

@@ -8,7 +8,7 @@ const stats = [
     { label: 'Users', value: '1,284', detail: '+42 this month', icon: 'U', tone: 'red' },
     { label: 'Quizzes', value: '52', detail: '38 published', icon: 'Q', tone: 'gold' },
     { label: 'Questions', value: '640', detail: 'EN and MK prompts', icon: '?', tone: 'navy' },
-    { label: 'Completed attempts', value: '8,910', detail: '+312 this week', icon: '✓', tone: 'red' },
+    { label: 'Completed attempts', value: '8,910', detail: '+312 this week', icon: 'OK', tone: 'red' },
 ];
 </script>
 
@@ -27,12 +27,12 @@ const stats = [
         </section>
 
         <section class="mt-10 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-            <article class="soft-card p-6">
+            <article class="section-panel">
                 <h2 class="text-2xl font-black text-heritage-ink">Quick actions</h2>
                 <div class="mt-5 grid gap-3">
-                    <a href="/admin/quizzes" class="rounded-2xl bg-heritage-red px-5 py-4 font-black text-white">Add Quiz</a>
-                    <a href="#" class="rounded-2xl bg-heritage-panel px-5 py-4 font-black text-heritage-muted">Add Category</a>
-                    <a href="/admin/questions" class="rounded-2xl bg-heritage-gold-soft px-5 py-4 font-black text-heritage-gold-deep">Add Question</a>
+                    <PrimaryButton href="/admin/quizzes" class="w-full">Add Quiz</PrimaryButton>
+                    <PrimaryButton variant="soft" class="w-full">Add Category</PrimaryButton>
+                    <PrimaryButton href="/admin/questions" variant="gold" class="w-full">Add Question</PrimaryButton>
                 </div>
                 <h2 class="mt-8 text-2xl font-black text-heritage-ink">Recent activity</h2>
                 <div class="mt-5 grid gap-3">
@@ -40,13 +40,14 @@ const stats = [
                 </div>
             </article>
 
-            <article class="soft-card overflow-hidden">
+            <article class="table-shell">
                 <div class="border-b border-heritage-line/50 p-6">
-                    <h2 class="text-2xl font-black text-heritage-ink">Table preview</h2>
+                    <h2 class="text-2xl font-black text-heritage-ink">Quiz table preview</h2>
+                    <p class="mt-1 text-sm text-heritage-muted">A snapshot of published and draft quiz content.</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[700px] text-left">
-                        <thead class="bg-heritage-panel text-sm text-heritage-muted">
+                        <thead class="table-heading">
                             <tr>
                                 <th class="px-6 py-4 font-black">Quiz</th>
                                 <th class="px-6 py-4 font-black">Category</th>
@@ -60,7 +61,7 @@ const stats = [
                                 <td class="px-6 py-4 text-heritage-muted">{{ quiz.category }}</td>
                                 <td class="px-6 py-4 text-heritage-muted">{{ quiz.questions }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="rounded-full bg-heritage-panel px-3 py-1 text-xs font-black text-heritage-muted">{{ quiz.status }}</span>
+                                    <span :class="['rounded-full px-3 py-1 text-xs font-black', quiz.status === 'Published' ? 'bg-emerald-50 text-emerald-800' : 'bg-heritage-panel text-heritage-muted']">{{ quiz.status }}</span>
                                 </td>
                             </tr>
                         </tbody>

@@ -32,14 +32,14 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
                     <div class="grid gap-5 md:grid-cols-2">
                         <div>
                             <label class="label" for="register_password">Password</label>
-                            <input id="register_password" class="field mt-2" type="password" placeholder="••••••••" autocomplete="new-password">
+                            <input id="register_password" class="field mt-2" type="password" placeholder="Password" autocomplete="new-password">
                         </div>
                         <div>
                             <label class="label" for="password_confirmation">Confirm password</label>
-                            <input id="password_confirmation" class="field mt-2" type="password" placeholder="••••••••" autocomplete="new-password">
+                            <input id="password_confirmation" class="field mt-2" type="password" placeholder="Confirm password" autocomplete="new-password">
                         </div>
                     </div>
-                    <PrimaryButton type="submit" class="w-full">Create Account</PrimaryButton>
+                    <PrimaryButton type="submit" class="w-full" size="lg">Create Account</PrimaryButton>
                 </form>
 
                 <p class="mt-8 text-center text-sm text-heritage-muted">

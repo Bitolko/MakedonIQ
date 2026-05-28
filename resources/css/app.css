@@ -12,10 +12,13 @@
     --color-heritage-red: #a40000;
     --color-heritage-red-dark: #760000;
     --color-heritage-red-soft: #ffdad4;
+    --color-heritage-red-faint: #fff1ef;
     --color-heritage-gold: #f4c430;
     --color-heritage-gold-soft: #ffe16d;
+    --color-heritage-gold-faint: #fff8d7;
     --color-heritage-gold-deep: #705d00;
     --color-heritage-navy: #202136;
+    --color-heritage-navy-soft: #e9eaf5;
     --color-heritage-ink: #1b1c19;
     --color-heritage-muted: #5e3f3a;
     --color-heritage-bg: #faf9f4;
@@ -35,12 +38,27 @@
         @apply bg-heritage-bg text-heritage-ink antialiased;
     }
 
+    h1,
+    h2,
+    h3 {
+        @apply text-balance;
+    }
+
+    p {
+        @apply text-pretty;
+    }
+
     button,
     a,
     input,
     select,
     textarea {
         @apply outline-none;
+    }
+
+    a,
+    button {
+        @apply focus-visible:ring-4 focus-visible:ring-heritage-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-heritage-bg;
     }
 }
 
@@ -50,36 +68,61 @@
     }
 
     .soft-card {
-        @apply rounded-2xl border border-heritage-line/50 bg-white shadow-card transition-all duration-200;
+        @apply rounded-[1.5rem] border border-heritage-line/50 bg-white shadow-card transition-all duration-200;
     }
 
     .soft-card-hover {
-        @apply hover:-translate-y-1 hover:shadow-soft;
+        @apply hover:-translate-y-1 hover:border-heritage-red/25 hover:shadow-soft;
+    }
+
+    .section-panel {
+        @apply rounded-[2rem] border border-heritage-line/50 bg-white p-6 shadow-card md:p-8;
+    }
+
+    .metric-card {
+        @apply rounded-[1.25rem] border border-heritage-line/40 bg-white p-5 shadow-card;
     }
 
     .pressable-red {
-        @apply bg-heritage-red text-white shadow-[0_4px_0_0_#760000] transition active:translate-y-0.5 active:shadow-[0_2px_0_0_#760000];
+        @apply bg-heritage-red text-white shadow-[0_4px_0_0_#760000] transition hover:bg-heritage-red-dark active:translate-y-0.5 active:shadow-[0_2px_0_0_#760000];
     }
 
     .pressable-gold {
-        @apply bg-heritage-gold text-heritage-navy shadow-[0_4px_0_0_#b38f00] transition active:translate-y-0.5 active:shadow-[0_2px_0_0_#b38f00];
+        @apply bg-heritage-gold text-heritage-navy shadow-[0_4px_0_0_#b38f00] transition hover:bg-heritage-gold-soft active:translate-y-0.5 active:shadow-[0_2px_0_0_#b38f00];
+    }
+
+    .button-ghost {
+        @apply border border-heritage-line bg-white text-heritage-ink shadow-card transition hover:border-heritage-red/30 hover:bg-heritage-red-faint;
+    }
+
+    .button-soft {
+        @apply bg-heritage-panel text-heritage-muted transition hover:bg-white hover:text-heritage-red hover:shadow-card;
     }
 
     .eyebrow {
-        @apply inline-flex items-center gap-2 rounded-full bg-heritage-gold-soft px-4 py-1.5 text-xs font-bold uppercase text-heritage-gold-deep;
+        @apply inline-flex items-center gap-2 rounded-full border border-heritage-gold/40 bg-heritage-gold-faint px-4 py-1.5 text-xs font-black uppercase text-heritage-gold-deep;
     }
 
     .field {
-        @apply w-full rounded-2xl border border-heritage-line bg-heritage-panel px-4 py-3 text-heritage-ink transition focus:border-heritage-red focus:bg-white focus:ring-4 focus:ring-heritage-red/10;
+        @apply w-full rounded-2xl border border-heritage-line bg-heritage-panel px-4 py-3 text-heritage-ink transition placeholder:text-heritage-muted/60 focus:border-heritage-red focus:bg-white focus:ring-4 focus:ring-heritage-red/10;
     }
 
     .label {
-        @apply text-xs font-bold uppercase text-heritage-muted;
+        @apply text-xs font-black uppercase text-heritage-muted;
     }
 
     .heritage-pattern {
         background:
-            linear-gradient(135deg, rgba(164, 0, 0, 0.88), rgba(32, 33, 54, 0.92)),
-            repeating-linear-gradient(45deg, rgba(244, 196, 48, 0.28) 0 10px, transparent 10px 24px);
+            radial-gradient(circle at top right, rgba(244, 196, 48, 0.28), transparent 30%),
+            linear-gradient(135deg, rgba(164, 0, 0, 0.93), rgba(32, 33, 54, 0.96)),
+            repeating-linear-gradient(45deg, rgba(244, 196, 48, 0.22) 0 10px, transparent 10px 24px);
+    }
+
+    .table-shell {
+        @apply overflow-hidden rounded-[1.5rem] border border-heritage-line/50 bg-white shadow-card;
+    }
+
+    .table-heading {
+        @apply bg-heritage-panel text-sm text-heritage-muted;
     }
 }

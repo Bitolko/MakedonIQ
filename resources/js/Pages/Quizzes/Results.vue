@@ -29,10 +29,10 @@ import AppBadge from '../../Components/AppBadge.vue';
             </section>
 
             <section class="mx-auto mt-8 grid max-w-5xl gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-                <article class="soft-card p-8 text-center">
-                    <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] bg-heritage-gold-soft text-5xl font-black text-heritage-gold-deep">★</div>
-                    <h2 class="mt-5 text-2xl font-black text-heritage-ink">Badge earned</h2>
-                    <p class="mt-2 font-semibold text-heritage-muted">History Starter</p>
+                <article class="heritage-pattern rounded-[2rem] p-8 text-center text-white shadow-soft">
+                    <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white text-3xl font-black text-heritage-red">HI</div>
+                    <h2 class="mt-5 text-2xl font-black">Badge earned</h2>
+                    <p class="mt-2 font-semibold text-white/80">History Starter</p>
                 </article>
                 <article class="soft-card p-8">
                     <h2 class="text-2xl font-black text-heritage-ink">Achievement message</h2>
@@ -40,8 +40,8 @@ import AppBadge from '../../Components/AppBadge.vue';
                         You are building a strong foundation in Macedonian history. Keep going with cultural heritage, geography, and language quizzes to connect the story together.
                     </p>
                     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                        <a href="/quizzes/history/active" class="rounded-2xl bg-heritage-panel px-6 py-3 text-center text-sm font-black text-heritage-muted">Review answers</a>
-                        <a href="/quizzes/history/start" class="rounded-2xl bg-heritage-panel px-6 py-3 text-center text-sm font-black text-heritage-muted">Try again</a>
+                        <PrimaryButton href="/quizzes/history/active" variant="soft">Review answers</PrimaryButton>
+                        <PrimaryButton href="/quizzes/history/start" variant="ghost">Try again</PrimaryButton>
                         <PrimaryButton href="/quizzes">Continue learning</PrimaryButton>
                     </div>
                 </article>

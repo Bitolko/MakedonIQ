@@ -8,17 +8,17 @@ import { categories } from '../../data/makedoniq';
 <template>
     <PublicLayout>
         <main class="page-shell py-10 md:py-14">
-            <section class="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <section class="mb-10 grid gap-6 rounded-[2rem] bg-white p-6 shadow-card md:grid-cols-[1fr_auto] md:items-end md:p-8">
                 <div>
                     <AppBadge>Quiz Categories</AppBadge>
                     <h1 class="mt-4 text-4xl font-black text-heritage-ink md:text-5xl">Explore Categories</h1>
-                    <p class="mt-3 max-w-2xl text-lg text-heritage-muted">
+                    <p class="mt-3 max-w-2xl text-lg leading-8 text-heritage-muted">
                         Master Macedonian language, culture, history, geography, food, music, and traditions through friendly quizzes.
                     </p>
                 </div>
                 <div class="grid gap-3 sm:grid-cols-[1fr_auto]">
                     <input class="field min-w-0 sm:w-72" placeholder="Search topics..." type="search">
-                    <button class="rounded-2xl bg-heritage-panel px-5 py-3 text-sm font-black text-heritage-muted">Filter</button>
+                    <button class="button-soft rounded-2xl px-5 py-3 text-sm font-black" type="button">Filter</button>
                 </div>
             </section>
 

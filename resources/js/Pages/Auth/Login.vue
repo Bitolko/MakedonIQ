@@ -21,21 +21,21 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
                     <div>
                         <div class="flex items-center justify-between gap-4">
                             <label class="label" for="password">Password</label>
-                            <a href="#" class="text-sm font-bold text-heritage-red">Forgot password?</a>
+                            <button class="text-sm font-bold text-heritage-red" type="button">Forgot password?</button>
                         </div>
-                        <input id="password" class="field mt-2" type="password" placeholder="••••••••" autocomplete="current-password">
+                        <input id="password" class="field mt-2" type="password" placeholder="Password" autocomplete="current-password">
                     </div>
-                    <label class="flex items-center gap-3 text-sm font-semibold text-heritage-muted">
+                    <label class="flex items-center gap-3 rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-semibold text-heritage-muted">
                         <input class="h-5 w-5 rounded border-heritage-line text-heritage-red" type="checkbox">
                         Remember me
                     </label>
-                    <PrimaryButton type="submit" class="w-full">Login</PrimaryButton>
+                    <PrimaryButton type="submit" class="w-full" size="lg">Login</PrimaryButton>
                     <div class="flex items-center gap-4">
                         <div class="h-px flex-1 bg-heritage-line" />
                         <span class="text-xs font-black text-heritage-muted">OR</span>
                         <div class="h-px flex-1 bg-heritage-line" />
                     </div>
-                    <button class="flex w-full items-center justify-center gap-3 rounded-2xl border border-heritage-line bg-white px-6 py-3 text-sm font-black text-heritage-muted shadow-card" type="button">
+                    <button class="button-ghost flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-3 text-sm font-black" type="button">
                         <span class="flex h-6 w-6 items-center justify-center rounded-full bg-heritage-panel text-xs font-black text-heritage-red">G</span>
                         Continue with Google
                     </button>

@@ -2,6 +2,7 @@
 import PublicLayout from '../../Components/PublicLayout.vue';
 import QuizCard from '../../Components/QuizCard.vue';
 import AppBadge from '../../Components/AppBadge.vue';
+import ProgressBar from '../../Components/ProgressBar.vue';
 import { historyQuizzes } from '../../data/makedoniq';
 
 const categoryLinks = ['History', 'Language', 'Alphabet', 'Geography', 'Culture', 'Food and Music'];
@@ -10,16 +11,16 @@ const categoryLinks = ['History', 'Language', 'Alphabet', 'Geography', 'Culture'
 <template>
     <PublicLayout>
         <main class="page-shell grid gap-8 py-10 lg:grid-cols-[16rem_1fr]">
-            <aside class="hidden rounded-3xl bg-white p-5 shadow-card lg:block">
+            <aside class="hidden self-start rounded-[1.5rem] bg-white p-5 shadow-card lg:block">
                 <h2 class="text-lg font-black text-heritage-ink">Categories</h2>
                 <nav class="mt-5 grid gap-2">
                     <a
                         v-for="item in categoryLinks"
                         :key="item"
-                        href="/quizzes/history"
+                        :href="item === 'History' ? '/quizzes/history' : '/quizzes'"
                         :class="[
-                            'rounded-2xl px-4 py-3 text-sm font-bold',
-                            item === 'History' ? 'bg-heritage-gold-soft text-heritage-gold-deep' : 'text-heritage-muted hover:bg-heritage-panel',
+                            'rounded-2xl px-4 py-3 text-sm font-black transition',
+                            item === 'History' ? 'bg-heritage-gold-faint text-heritage-gold-deep shadow-card' : 'text-heritage-muted hover:bg-heritage-panel',
                         ]"
                     >
                         {{ item }}
@@ -36,9 +37,20 @@ const categoryLinks = ['History', 'Language', 'Alphabet', 'Geography', 'Culture'
                             Journey through ancient Macedonia, cultural heritage, important figures, and modern Macedonian stories.
                         </p>
                     </div>
+                    <div class="mt-8 max-w-xl rounded-2xl bg-white/10 p-5 backdrop-blur">
+                        <ProgressBar :value="64" label="Category completion" tone="gold" />
+                    </div>
                 </div>
 
-                <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div class="mt-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                    <div>
+                        <h2 class="text-2xl font-black text-heritage-ink">Available history quizzes</h2>
+                        <p class="mt-1 text-heritage-muted">Start with the basics or continue where you left off.</p>
+                    </div>
+                    <AppBadge variant="navy">{{ historyQuizzes.length }} quizzes</AppBadge>
+                </div>
+
+                <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                     <QuizCard v-for="quiz in historyQuizzes" :key="quiz.title" :quiz="quiz" />
                 </div>
             </section>
