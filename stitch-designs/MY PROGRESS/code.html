@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MakedonIQ | My Progress</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&amp;family=Quicksand:wght@400;500;600;700&amp;family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #faf9f4;
+        }
+        .heritage-border-bottom {
+            box-shadow: 0 4px 0 0 #840000;
+        }
+        .secondary-border-bottom {
+            box-shadow: 0 4px 0 0 #b39600;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#936e69",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-container-highest": "#e3e3de",
+                        "on-secondary-fixed": "#221b00",
+                        "surface-bright": "#faf9f4",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-secondary-container": "#6e5c00",
+                        "outline-variant": "#e8bcb5",
+                        "surface-dim": "#dbdad5",
+                        "background": "#faf9f4",
+                        "error": "#ba1a1a",
+                        "surface": "#faf9f4",
+                        "on-surface-variant": "#5e3f3a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#e7e4ff",
+                        "secondary": "#705d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#c00000",
+                        "on-primary-fixed": "#410000",
+                        "secondary-container": "#fcd400",
+                        "tertiary-fixed": "#e2e0fc",
+                        "inverse-surface": "#30312e",
+                        "on-primary-fixed-variant": "#930000",
+                        "on-background": "#1b1c19",
+                        "on-surface": "#1b1c19",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-container": "#d20000",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "surface-container": "#efeee9",
+                        "surface-container-high": "#e9e8e3",
+                        "tertiary": "#4e4d64",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdad4",
+                        "surface-variant": "#e3e3de",
+                        "tertiary-container": "#66657d",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f5f4ef",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "on-primary-container": "#ffe1dc",
+                        "error-container": "#ffdad6",
+                        "primary": "#a40000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Montserrat"],
+                        "body-md": ["Quicksand"],
+                        "headline-md": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-display-lg-mobile text-display-lg-mobile font-bold text-primary">MakedonIQ</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">Quizzes</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-body-md text-body-md" href="#">Progress</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-variant rounded-full transition-colors">language</button>
+<div class="flex items-center gap-2 bg-secondary-container px-3 py-1.5 rounded-full border-b-2 border-[#b39600]">
+<span class="material-symbols-outlined text-secondary filled-icon">local_fire_department</span>
+<span class="font-bold text-secondary">12 Days</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-variant rounded-full transition-colors">account_circle</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<!-- Welcome Hero Section -->
+<section class="mb-12 animate-slide-up">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+<div class="md:col-span-2">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2">Zdravo, Aleksandar!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">You're on a roll. You've mastered <span class="text-primary font-bold">12 new phrases</span> this week!</p>
+</div>
+<div class="flex justify-end">
+<div class="bg-surface-container-high p-6 rounded-lg text-center w-full md:w-auto shadow-sm">
+<span class="block text-primary font-display-lg text-display-lg">840</span>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Total XP Earned</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Progress Grid -->
+<section class="mb-16">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8">Category Mastery</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0px_4px_20px_rgba(78,77,100,0.04)] hover:shadow-[0px_8px_30px_rgba(78,77,100,0.08)] transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary">translate</span>
+</div>
+<h3 class="font-headline-md text-[18px] mb-4">Language</h3>
+<div class="relative pt-1">
+<div class="flex mb-2 items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
+<span class="font-label-sm text-label-sm font-bold text-primary">80%</span>
+</div>
+<div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-tertiary/10">
+<div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary rounded-full relative" style="width:80%">
+<span class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 material-symbols-outlined text-[14px] text-secondary filled-icon">star</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0px_4px_20px_rgba(78,77,100,0.04)] hover:shadow-[0px_8px_30px_rgba(78,77,100,0.08)] transition-all group border-t-4 border-secondary/20">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary">history_edu</span>
+</div>
+<h3 class="font-headline-md text-[18px] mb-4">History</h3>
+<div class="relative pt-1">
+<div class="flex mb-2 items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
+<span class="font-label-sm text-label-sm font-bold text-secondary">45%</span>
+</div>
+<div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-tertiary/10">
+<div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-secondary rounded-full" style="width:45%"></div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0px_4px_20px_rgba(78,77,100,0.04)] hover:shadow-[0px_8px_30px_rgba(78,77,100,0.08)] transition-all group">
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary">restaurant_menu</span>
+</div>
+<h3 class="font-headline-md text-[18px] mb-4">Cuisine</h3>
+<div class="relative pt-1">
+<div class="flex mb-2 items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
+<span class="font-label-sm text-label-sm font-bold text-tertiary">92%</span>
+</div>
+<div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-tertiary/10">
+<div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-tertiary rounded-full relative" style="width:92%">
+<span class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 material-symbols-outlined text-[14px] text-secondary filled-icon">star</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0px_4px_20px_rgba(78,77,100,0.04)] hover:shadow-[0px_8px_30px_rgba(78,77,100,0.08)] transition-all group">
+<div class="w-12 h-12 rounded-full bg-outline/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-outline">landscape</span>
+</div>
+<h3 class="font-headline-md text-[18px] mb-4">Geography</h3>
+<div class="relative pt-1">
+<div class="flex mb-2 items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
+<span class="font-label-sm text-label-sm font-bold text-outline">30%</span>
+</div>
+<div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-tertiary/10">
+<div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-outline rounded-full" style="width:30%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trends and Badges Section (Bento Style) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+<!-- Score Trends Chart Mockup -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-lg shadow-sm">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Score Trends</h2>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold uppercase tracking-widest">Last 30 Days</span>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-4 px-4 border-b border-outline-variant relative">
+<!-- Simple CSS Chart -->
+<div class="w-full bg-primary/20 rounded-t-lg relative group" style="height: 60%">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">72%</div>
+</div>
+<div class="w-full bg-primary/40 rounded-t-lg relative group" style="height: 45%">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">58%</div>
+</div>
+<div class="w-full bg-primary/60 rounded-t-lg relative group" style="height: 85%">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">94%</div>
+</div>
+<div class="w-full bg-primary rounded-t-lg relative group" style="height: 75%">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">82%</div>
+</div>
+<div class="w-full bg-primary/80 rounded-t-lg relative group" style="height: 95%">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">98%</div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-on-surface-variant font-label-sm text-label-sm">
+<span>Week 1</span>
+<span>Week 2</span>
+<span>Week 3</span>
+<span>Week 4</span>
+<span>Current</span>
+</div>
+</div>
+<!-- Achievements Gallery -->
+<div class="bg-surface-container-high p-8 rounded-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Recent Badges</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="aspect-square bg-surface-container-lowest rounded-full p-4 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform border-b-4 border-secondary">
+<span class="material-symbols-outlined text-secondary text-3xl filled-icon">military_tech</span>
+<span class="font-label-sm text-[10px] mt-2 font-bold uppercase">10 Streak</span>
+</div>
+<div class="aspect-square bg-surface-container-lowest rounded-full p-4 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform border-b-4 border-primary">
+<span class="material-symbols-outlined text-primary text-3xl filled-icon">school</span>
+<span class="font-label-sm text-[10px] mt-2 font-bold uppercase">Language Pro</span>
+</div>
+<div class="aspect-square bg-surface-container-lowest rounded-full p-4 flex flex-col items-center justify-center text-center shadow-sm opacity-40 grayscale">
+<span class="material-symbols-outlined text-outline text-3xl">emoji_events</span>
+<span class="font-label-sm text-[10px] mt-2 font-bold uppercase">Level 10</span>
+</div>
+<div class="aspect-square bg-surface-container-lowest rounded-full p-4 flex flex-col items-center justify-center text-center shadow-sm opacity-40 grayscale">
+<span class="material-symbols-outlined text-outline text-3xl">public</span>
+<span class="font-label-sm text-[10px] mt-2 font-bold uppercase">World Explorer</span>
+</div>
+</div>
+<button class="w-full mt-8 py-3 rounded-full border-2 border-outline-variant font-bold hover:bg-surface-container transition-colors font-body-md text-body-md">View All Achievements</button>
+</div>
+</section>
+<!-- Quiz History Table -->
+<section class="animate-slide-up" style="animation-delay: 0.2s">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8">Quiz History</h2>
+<div class="bg-surface-container-lowest rounded-lg shadow-sm overflow-hidden border border-surface-container-high">
+<table class="w-full text-left">
+<thead class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<tr>
+<th class="px-8 py-4">Quiz Name</th>
+<th class="px-8 py-4">Date</th>
+<th class="px-8 py-4">Difficulty</th>
+<th class="px-8 py-4 text-right">Score</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-body-md text-body-md">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-bold">Daily Greetings 101</td>
+<td class="px-8 py-4 text-on-surface-variant">Oct 24, 2024</td>
+<td class="px-8 py-4">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase">Easy</span>
+</td>
+<td class="px-8 py-4 text-right font-bold text-primary">100%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-bold">Alexander the Great: Era</td>
+<td class="px-8 py-4 text-on-surface-variant">Oct 22, 2024</td>
+<td class="px-8 py-4">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-bold uppercase">Hard</span>
+</td>
+<td class="px-8 py-4 text-right font-bold text-secondary">45%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-bold">Traditional Pastry Recipes</td>
+<td class="px-8 py-4 text-on-surface-variant">Oct 21, 2024</td>
+<td class="px-8 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold uppercase">Medium</span>
+</td>
+<td class="px-8 py-4 text-right font-bold text-primary">85%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-bold">Mountain Ranges of Macedonia</td>
+<td class="px-8 py-4 text-on-surface-variant">Oct 19, 2024</td>
+<td class="px-8 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold uppercase">Medium</span>
+</td>
+<td class="px-8 py-4 text-right font-bold text-primary">72%</td>
+</tr>
+</tbody>
+</table>
+<div class="p-6 text-center border-t border-surface-container-high">
+<button class="text-primary font-bold hover:underline flex items-center justify-center gap-2 mx-auto">
+                        See Older Activities
+                        <span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest border-t-4 border-secondary">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-8 max-w-container-max mx-auto">
+<div>
+<span class="font-display-lg-mobile text-display-lg-mobile text-primary font-bold mb-4 block">MakedonIQ</span>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">© 2024 MakedonIQ. Made for Macedonian families in Australia. Celebrating heritage through digital play.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm text-label-sm uppercase" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm text-label-sm uppercase" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm text-label-sm uppercase" href="#">FAQ</a>
+<a class="text-primary font-bold hover:text-primary transition-all font-label-sm text-label-sm uppercase" href="#">Bilingual Toggle (MK/EN)</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-lg border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">extension</span>
+<span class="font-label-sm text-label-sm">Quizzes</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined filled-icon">trending_up</span>
+<span class="font-label-sm text-label-sm">Progress</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple interactivity for progress cards hover state
+        document.querySelectorAll('.bg-surface-container-lowest').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

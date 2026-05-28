@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register | MakedonIQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&amp;family=Quicksand:wght@400;500&amp;family=Inter:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#936e69",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-container-highest": "#e3e3de",
+                        "on-secondary-fixed": "#221b00",
+                        "surface-bright": "#faf9f4",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-secondary-container": "#6e5c00",
+                        "outline-variant": "#e8bcb5",
+                        "surface-dim": "#dbdad5",
+                        "background": "#faf9f4",
+                        "error": "#ba1a1a",
+                        "surface": "#faf9f4",
+                        "on-surface-variant": "#5e3f3a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#e7e4ff",
+                        "secondary": "#705d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#c00000",
+                        "on-primary-fixed": "#410000",
+                        "secondary-container": "#fcd400",
+                        "tertiary-fixed": "#e2e0fc",
+                        "inverse-surface": "#30312e",
+                        "on-primary-fixed-variant": "#930000",
+                        "on-background": "#1b1c19",
+                        "on-surface": "#1b1c19",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-container": "#d20000",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "surface-container": "#efeee9",
+                        "surface-container-high": "#e9e8e3",
+                        "tertiary": "#4e4d64",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdad4",
+                        "surface-variant": "#e3e3de",
+                        "tertiary-container": "#66657d",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f5f4ef",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "on-primary-container": "#ffe1dc",
+                        "error-container": "#ffdad6",
+                        "primary": "#a40000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Montserrat"],
+                        "body-md": ["Quicksand"],
+                        "headline-md": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .btn-3d {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(2px);
+            box-shadow: none !important;
+        }
+        .soft-card {
+            background-color: #ffffff;
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+        }
+        .soft-card:hover {
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<header class="bg-surface shadow-sm docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-display-lg-mobile text-display-lg-mobile font-bold text-primary">MakedonIQ</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors duration-200" href="#">Quizzes</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors duration-200" href="#">Progress</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors duration-200" href="#">About</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary" data-icon="language">language</button>
+<a class="text-on-surface font-label-sm text-label-sm font-bold" href="#">Login</a>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-margin-mobile py-12 md:py-24">
+<div class="max-w-container-max w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+<div class="lg:col-span-7 flex flex-col justify-center order-2 lg:order-1">
+<div class="soft-card p-8 md:p-12 rounded-lg border border-surface-container">
+<div class="mb-10">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-2">Create Account</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Join our community of learners and heritage keepers.</p>
+</div>
+<form class="space-y-6" onsubmit="event.preventDefault();">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Full Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">person</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="Nikola Teslov" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Preferred Language</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">translate</span>
+<select class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md appearance-none">
+<option>English</option>
+<option>Македонски</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">mail</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="heritage@example.com.au" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">lock</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Confirm Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">verified_user</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md" placeholder="••••••••" type="password"/>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="btn-3d w-full bg-primary text-on-primary py-4 rounded-lg font-headline-md text-headline-md shadow-[0_4px_0_0_#7a0000] hover:bg-primary-container transition-all">
+                                Create Account
+                            </button>
+</div>
+<p class="text-center font-label-sm text-label-sm text-on-surface-variant">
+                            By creating an account, you agree to our <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                        </p>
+</form>
+</div>
+</div>
+<div class="lg:col-span-5 flex flex-col justify-center order-1 lg:order-2">
+<div class="relative h-full min-h-[400px] rounded-lg overflow-hidden soft-card flex flex-col bg-secondary-container p-8 border-4 border-white">
+<div class="absolute inset-0 opacity-10">
+<img class="w-full h-full object-cover" data-alt="A stylized geometric pattern inspired by traditional Macedonian embroidery, featuring intricate red and gold thread-like textures on a warm cream background. The design is modern and clean, reflecting a professional heritage-focused educational platform. Soft ambient lighting creates a premium, high-end digital atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAKdnnEL61AKya7Cd5Dj-L8AnzR6tpBZ2Ce73sjWhGR6dNVDIZBgD-Z9jnx6xCQ-2ZRNARO9e8-401WBjCH49VFOzMttPtR9wOQ65yqnEOO2bl9eflGF94ZiB0MnxYIUXKhGwU3-JhiZqQ16q04P3knTdye8ISV2tCOi2wVD2sr6fGjkS6UaZa2YWBsBVRU3W70DeB5_0NLiY6xj5xyjC14fFrT7UYBYqMCYvCMNkAsVmkmRJ7vZnPDTE1E18meS5a2opc0f-0xBk"/>
+</div>
+<div class="relative z-10 flex-grow">
+<span class="inline-block bg-primary text-on-primary px-4 py-1 rounded-full font-label-sm text-label-sm mb-6">Why Join MakedonIQ?</span>
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-secondary-container mb-8">Elevate Your Heritage Journey</h2>
+<div class="space-y-8">
+<div class="flex gap-4">
+<div class="bg-white/40 p-3 rounded-DEFAULT shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-secondary-container">Curated Learning</h3>
+<p class="font-body-md text-body-md text-on-secondary-fixed-variant">Quizzes designed by linguists and historians specifically for the Macedonian diaspora.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="bg-white/40 p-3 rounded-DEFAULT shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="trending_up">trending_up</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-secondary-container">Track Your Growth</h3>
+<p class="font-body-md text-body-md text-on-secondary-fixed-variant">Visual insights into your progress across language, history, and culture categories.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="bg-white/40 p-3 rounded-DEFAULT shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="emoji_events">emoji_events</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-secondary-container">Bilingual Mastery</h3>
+<p class="font-body-md text-body-md text-on-secondary-fixed-variant">Seamlessly switch between English and Macedonian to build confidence at your own pace.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative z-10 mt-12 bg-white/20 backdrop-blur-md p-6 rounded-lg border border-white/30">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary">
+<img data-alt="A professional portrait of a smiling middle-aged man with a warm and approachable expression. He is dressed in a clean, modern navy suit, set against a bright, minimalist studio background with soft directional lighting. The image conveys trust, wisdom, and a connection to cultural heritage in a contemporary Australian setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvqN_cCCz7-gJMaDRfLQlFcWwMecxRO1wrV0LeP1gIMV5rWqHq3dgs25ilY4b_OJ3PrTqkRdsa9-UG_8QM9QCB2Iif10Oezyev27na5zrBc6ITvm9go8Zf35WUjBKu_h-qj2DdSZRacKTmIMW6hM0Kq118_JUF3xheQvGzbDEI-R3nqelr2qYH9_0GefvxNDUU8jXQ4rGuGC1oBFtnG1UfYP5ju0evyId8JSd2NSYTp0Cny9T4MneSF1QwBqAHJpwafnvurKXkWgQ"/>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-secondary-container italic">"Finally, a modern way to teach my kids about their roots in Australia!"</p>
+<p class="font-label-sm text-label-sm font-bold text-primary mt-1">— Jovan S., Melbourne</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-surface-container-highest border-t-4 border-secondary">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-8 max-w-container-max mx-auto">
+<div>
+<div class="font-display-lg-mobile text-display-lg-mobile text-primary mb-4">MakedonIQ</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">© 2024 MakedonIQ. Made for Macedonian families in Australia. Bridging heritage through play and modern education.</p>
+</div>
+<div class="flex flex-col md:items-end justify-center gap-4">
+<div class="flex flex-wrap gap-6">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-all" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-all" href="#">Terms of Service</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-all" href="#">FAQ</a>
+</div>
+<button class="bg-white px-6 py-2 rounded-full border border-outline-variant font-label-sm text-label-sm text-primary hover:bg-primary hover:text-white transition-all">
+                    Bilingual Toggle (MK/EN)
+                </button>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for input fields
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#a40000';
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#936e69';
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MakedonIQ - History Quizzes</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&amp;family=Quicksand:wght@400;500;700&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#936e69",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-container-highest": "#e3e3de",
+                        "on-secondary-fixed": "#221b00",
+                        "surface-bright": "#faf9f4",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-secondary-container": "#6e5c00",
+                        "outline-variant": "#e8bcb5",
+                        "surface-dim": "#dbdad5",
+                        "background": "#faf9f4",
+                        "error": "#ba1a1a",
+                        "surface": "#faf9f4",
+                        "on-surface-variant": "#5e3f3a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#e7e4ff",
+                        "secondary": "#705d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#c00000",
+                        "on-primary-fixed": "#410000",
+                        "secondary-container": "#fcd400",
+                        "tertiary-fixed": "#e2e0fc",
+                        "inverse-surface": "#30312e",
+                        "on-primary-fixed-variant": "#930000",
+                        "on-background": "#1b1c19",
+                        "on-surface": "#1b1c19",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-container": "#d20000",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "surface-container": "#efeee9",
+                        "surface-container-high": "#e9e8e3",
+                        "tertiary": "#4e4d64",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdad4",
+                        "surface-variant": "#e3e3de",
+                        "tertiary-container": "#66657d",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f5f4ef",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "on-primary-container": "#ffe1dc",
+                        "error-container": "#ffdad6",
+                        "primary": "#a40000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Montserrat"],
+                        "body-md": ["Quicksand"],
+                        "headline-md": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .soft-card {
+            background-color: #ffffff;
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .soft-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+        }
+        .btn-primary-3d {
+            border-bottom: 4px solid #7a0000;
+            transition: all 0.1s active;
+        }
+        .btn-primary-3d:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+        .btn-secondary-3d {
+            border-bottom: 4px solid #b39b00;
+        }
+        .btn-secondary-3d:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-display-lg-mobile text-display-lg-mobile font-bold text-primary">MakedonIQ</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-label-sm text-label-sm text-primary border-b-2 border-primary pb-1" href="#">Quizzes</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Progress</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2">
+<button class="material-symbols-outlined text-on-surface-variant">language</button>
+<button class="material-symbols-outlined text-on-surface-variant filled-icon" style="color: #ffb4a8;">local_fire_department</button>
+<span class="font-bold text-primary">12</span>
+</div>
+<button class="hidden md:block bg-primary text-on-primary px-6 py-2 rounded-full font-bold btn-primary-3d">Start Learning</button>
+<button class="material-symbols-outlined md:hidden text-primary text-3xl">account_circle</button>
+</div>
+</div>
+</header>
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row min-h-[calc(100vh-80px)]">
+<!-- SideNav / Category Switcher (Desktop) -->
+<aside class="hidden md:flex flex-col h-auto w-64 bg-surface-container-low border-r border-outline-variant p-6 gap-4">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">history_edu</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Categories</h2>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 font-bold transition-transform duration-200 translate-x-1" href="#">
+<span class="material-symbols-outlined">history</span> History
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">translate</span> Language
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">music_note</span> Folklore
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">restaurant</span> Cuisine
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">landscape</span> Geography
+                </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<button class="w-full flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors">
+<span class="material-symbols-outlined">settings</span> Settings
+                </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-margin-mobile md:p-margin-desktop overflow-y-auto">
+<!-- Category Header -->
+<div class="mb-12 relative overflow-hidden rounded-lg p-8 bg-primary text-on-primary">
+<div class="relative z-10 max-w-2xl">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Historical Period</span>
+</div>
+<h1 class="font-display-lg text-display-lg mb-4">Ancient Macedonia</h1>
+<p class="font-body-lg text-body-lg opacity-90">Trace the roots of the Hellenistic world, from the early kings to the empire of Alexander the Great. Test your knowledge on battles, dynasties, and culture.</p>
+</div>
+<div class="absolute right-0 bottom-0 top-0 w-1/3 opacity-20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[120px]">temple_buddhist</span>
+</div>
+</div>
+<!-- Quiz Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Quiz Card 1: Completed -->
+<div class="soft-card rounded-lg flex flex-col p-6 border border-outline-variant/30">
+<div class="flex justify-between items-start mb-6">
+<div class="h-12 w-12 rounded-2xl bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-3xl">crown</span>
+</div>
+<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm filled-icon">check_circle</span> COMPLETED
+                        </span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">The Kings of Macedonia</h3>
+<div class="flex gap-4 mb-6">
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">quiz</span> 15 Questions
+                        </div>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">schedule</span> 10 mins
+                        </div>
+</div>
+<!-- Progress Section -->
+<div class="mb-8">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface-variant">Last Score: 100%</span>
+<span class="text-primary">Perfect!</span>
+</div>
+<div class="h-3 w-full bg-tertiary/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full rounded-full relative">
+<span class="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 text-secondary-container text-sm leading-none filled-icon">auto_awesome</span>
+</div>
+</div>
+</div>
+<button class="mt-auto w-full py-4 bg-surface-container-high text-on-surface font-bold rounded-lg btn-secondary-3d">Retake Quiz</button>
+</div>
+<!-- Quiz Card 2: In Progress -->
+<div class="soft-card rounded-lg flex flex-col p-6 border border-outline-variant/30">
+<div class="flex justify-between items-start mb-6">
+<div class="h-12 w-12 rounded-2xl bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">swords</span>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-xs font-bold">MEDIUM</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Alexander's Conquests</h3>
+<div class="flex gap-4 mb-6">
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">quiz</span> 20 Questions
+                        </div>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">schedule</span> 15 mins
+                        </div>
+</div>
+<div class="mb-8">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface-variant">In Progress</span>
+<span class="text-primary">40%</span>
+</div>
+<div class="h-3 w-full bg-tertiary/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[40%] rounded-full relative"></div>
+</div>
+</div>
+<button class="mt-auto w-full py-4 bg-primary text-on-primary font-bold rounded-lg btn-primary-3d">Continue Quiz</button>
+</div>
+<!-- Quiz Card 3: New -->
+<div class="soft-card rounded-lg flex flex-col p-6 border border-outline-variant/30">
+<div class="flex justify-between items-start mb-6">
+<div class="h-12 w-12 rounded-2xl bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-3xl">architecture</span>
+</div>
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant px-3 py-1 rounded-full text-xs font-bold">HARD</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Ancient Cities &amp; Art</h3>
+<div class="flex gap-4 mb-6">
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">quiz</span> 12 Questions
+                        </div>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">schedule</span> 12 mins
+                        </div>
+</div>
+<div class="mb-8 opacity-40">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface-variant">Not Started</span>
+<span>0%</span>
+</div>
+<div class="h-3 w-full bg-tertiary/10 rounded-full"></div>
+</div>
+<button class="mt-auto w-full py-4 bg-primary text-on-primary font-bold rounded-lg btn-primary-3d">Start Quiz</button>
+</div>
+<!-- Quiz Card 4: New -->
+<div class="soft-card rounded-lg flex flex-col p-6 border border-outline-variant/30">
+<div class="flex justify-between items-start mb-6">
+<div class="h-12 w-12 rounded-2xl bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">gavel</span>
+</div>
+<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">EASY</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Myths &amp; Legends</h3>
+<div class="flex gap-4 mb-6">
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">quiz</span> 10 Questions
+                        </div>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">schedule</span> 8 mins
+                        </div>
+</div>
+<div class="mb-8 opacity-40">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface-variant">Not Started</span>
+<span>0%</span>
+</div>
+<div class="h-3 w-full bg-tertiary/10 rounded-full"></div>
+</div>
+<button class="mt-auto w-full py-4 bg-primary text-on-primary font-bold rounded-lg btn-primary-3d">Start Quiz</button>
+</div>
+</div>
+<!-- Suggestion / Call to Action -->
+<section class="mt-20 p-10 bg-surface-container-high rounded-lg flex flex-col md:flex-row items-center gap-8 border-l-8 border-secondary">
+<div class="flex-1">
+<h2 class="font-headline-md text-headline-md mb-4">Want to test your family?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Host a live bilingual session! Perfect for family gatherings where generations can play together in both Macedonian and English.</p>
+</div>
+<button class="bg-secondary text-on-secondary px-8 py-4 rounded-lg font-bold btn-secondary-3d flex items-center gap-2">
+<span class="material-symbols-outlined filled-icon">group</span> Create Live Lobby
+                </button>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-highest border-t-4 border-secondary">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-8 max-w-container-max mx-auto">
+<div>
+<div class="font-display-lg-mobile text-display-lg-mobile text-primary font-bold mb-4">MakedonIQ</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">© 2024 MakedonIQ. Made for Macedonian families in Australia. Bridging heritage through play.</p>
+</div>
+<div class="flex flex-col md:items-end justify-center gap-4">
+<div class="flex flex-wrap gap-6 font-label-sm text-label-sm">
+<a class="text-on-surface-variant hover:text-primary underline" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary underline" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary underline" href="#">FAQ</a>
+<a class="text-primary font-bold" href="#">Bilingual Toggle (MK/EN)</a>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">social_leaderboard</span>
+<span class="material-symbols-outlined text-on-surface-variant">share</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-lg border-t border-outline-variant rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5 scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined filled-icon">extension</span>
+<span class="font-label-sm text-label-sm">Quizzes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-sm text-label-sm">Progress</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<!-- Visual Polish: Background Pattern (Subtle) -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[-1]" style="background-image: radial-gradient(#a40000 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+</body></html>

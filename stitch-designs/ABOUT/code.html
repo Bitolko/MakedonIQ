@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About MakedonIQ | Preserving Heritage through Play</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&amp;family=Quicksand:wght@400;500;700&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .btn-3d {
+            transition: transform 0.1s ease-in-out;
+        }
+        .btn-3d:active {
+            transform: translateY(2px);
+            box-shadow: none !important;
+        }
+        .soft-card {
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+        }
+        .soft-card:hover {
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#936e69",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-container-highest": "#e3e3de",
+                        "on-secondary-fixed": "#221b00",
+                        "surface-bright": "#faf9f4",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-secondary-container": "#6e5c00",
+                        "outline-variant": "#e8bcb5",
+                        "surface-dim": "#dbdad5",
+                        "background": "#faf9f4",
+                        "error": "#ba1a1a",
+                        "surface": "#faf9f4",
+                        "on-surface-variant": "#5e3f3a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#e7e4ff",
+                        "secondary": "#705d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#c00000",
+                        "on-primary-fixed": "#410000",
+                        "secondary-container": "#fcd400",
+                        "tertiary-fixed": "#e2e0fc",
+                        "inverse-surface": "#30312e",
+                        "on-primary-fixed-variant": "#930000",
+                        "on-background": "#1b1c19",
+                        "on-surface": "#1b1c19",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-container": "#d20000",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "surface-container": "#efeee9",
+                        "surface-container-high": "#e9e8e3",
+                        "tertiary": "#4e4d64",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdad4",
+                        "surface-variant": "#e3e3de",
+                        "tertiary-container": "#66657d",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f5f4ef",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "on-primary-container": "#ffe1dc",
+                        "error-container": "#ffdad6",
+                        "primary": "#a40000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Montserrat"],
+                        "body-md": ["Quicksand"],
+                        "headline-md": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-display-lg-mobile text-display-lg-mobile font-bold text-primary">MakedonIQ</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200" href="#">Quizzes</a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200" href="#">Progress</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-body-md" href="#">About</a>
+<div class="flex items-center gap-4 ml-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">language</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-sm btn-3d shadow-[0_4px_0_0_#410000]">Start Learning</button>
+</div>
+</nav>
+<button class="md:hidden material-symbols-outlined text-on-surface-variant text-3xl">menu</button>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<!-- Hero Section -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
+<div class="space-y-6">
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full font-label-sm uppercase tracking-wider">Our Mission</span>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg leading-tight text-primary">Preserving our Heritage, <br/>One Question at a Time.</h1>
+<p class="font-body-lg text-on-surface-variant max-w-xl">
+                    MakedonIQ is a dedicated educational platform designed specifically for the Macedonian diaspora in Australia. We believe that language is the heartbeat of culture, and we're here to keep it pulsing for generations to come.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<div class="flex items-center gap-3 bg-surface-container p-4 rounded-lg soft-card">
+<span class="material-symbols-outlined text-primary text-3xl">diversity_3</span>
+<div>
+<p class="font-bold">Community Driven</p>
+<p class="text-sm opacity-70">Built for families in AU</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container p-4 rounded-lg soft-card">
+<span class="material-symbols-outlined text-secondary text-3xl">school</span>
+<div>
+<p class="font-bold">Playful Learning</p>
+<p class="text-sm opacity-70">Gamified curriculum</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="aspect-square rounded-xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+<img alt="Heritage through Play" class="w-full h-full object-cover" data-alt="A warm, cinematic lifestyle photograph of a multi-generational Macedonian-Australian family sitting around a sunlit wooden table in a modern Melbourne home. A grandmother is smiling while showing a young child a digital tablet displaying colorful Macedonian alphabet letters. The lighting is soft and golden, emphasizing a nurturing, high-end educational atmosphere with deep red and gold accents in the home decor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPTDFA7l1-pEWhLv4QUYMtS-UuXmT8e0bWOK8dXvKCymguPBDOaex8q4JxlgfJ640_u5EwF9J9bEvKUVKvHiuZRWUy0G1cnnFioVSBbN8wu4bXITpHtwNE_903Hw_es1xspCOHRX9pmhdFmHw0zCnCyVvJyxKYBigCHfACa4KYm5F-cjBAQ9k-cVaQAHonzoeUtCntlywOhNiTdPw4zFqYMTss-ieW6qdSyVVfww8dLJjpUDW9YB7-rCD8tQUyd_nQsI-XGcSpigA"/>
+</div>
+<!-- Floating Badge -->
+<div class="absolute -bottom-6 -left-6 bg-secondary text-on-secondary p-6 rounded-lg shadow-xl max-w-[200px] animate-bounce">
+<p class="font-bold text-lg">10,000+</p>
+<p class="text-sm">Questions mastered by students across Australia</p>
+</div>
+</div>
+</section>
+<!-- Values Section - Bento Grid -->
+<section class="mb-24">
+<h2 class="font-headline-md text-display-lg-mobile text-center mb-12">Why MakedonIQ exists?</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-primary-container text-on-primary-container p-10 rounded-lg flex flex-col justify-end min-h-[300px] relative overflow-hidden group">
+<div class="z-10">
+<h3 class="text-3xl font-bold mb-4">Bridging the Gap</h3>
+<p class="text-lg opacity-90 max-w-md">We connect the wisdom of Macedonian traditions with the high-tech reality of modern Australian life, making learning accessible for kids and elders alike.</p>
+</div>
+<span class="material-symbols-outlined absolute -top-10 -right-10 text-[200px] opacity-10 group-hover:scale-110 transition-transform">link</span>
+</div>
+<div class="bg-surface-container-high p-10 rounded-lg flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-5xl text-primary mb-4">auto_stories</span>
+<h3 class="text-2xl font-bold mb-2">Language</h3>
+<p class="opacity-70">Preserving the Cyrillic script and the beautiful dialects of our ancestors.</p>
+</div>
+<div class="bg-surface-container-high p-10 rounded-lg flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-5xl text-secondary mb-4">celebration</span>
+<h3 class="text-2xl font-bold mb-2">Culture</h3>
+<p class="opacity-70">From folk dances to culinary secrets, we celebrate what makes us Macedonian.</p>
+</div>
+<div class="md:col-span-2 bg-tertiary text-on-tertiary p-10 rounded-lg flex flex-col justify-end min-h-[300px] relative overflow-hidden group">
+<div class="z-10">
+<h3 class="text-3xl font-bold mb-4">Built for Australia</h3>
+<p class="text-lg opacity-90 max-w-lg">Recognizing the unique experience of being bilingual in Australia, our content reflects local contexts while staying true to our roots.</p>
+</div>
+<span class="material-symbols-outlined absolute -top-10 -right-10 text-[200px] opacity-10 group-hover:rotate-12 transition-transform">map</span>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-surface-container-low rounded-xl p-8 md:p-16 border border-outline-variant shadow-sm" id="contact">
+<div class="lg:col-span-5 space-y-8">
+<div>
+<h2 class="font-display-lg text-display-lg-mobile text-primary mb-4">Get in touch</h2>
+<p class="text-on-surface-variant font-body-lg">Have questions about our curriculum or want to partner with us? Our team in Sydney and Melbourne is here to help.</p>
+</div>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">mail</span>
+</div>
+<div>
+<p class="font-bold">Email Us</p>
+<p class="text-on-surface-variant">zdravo@makedoniq.com.au</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">location_on</span>
+</div>
+<div>
+<p class="font-bold">Our Base</p>
+<p class="text-on-surface-variant">Surry Hills, NSW 2010</p>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface rounded-lg border border-outline-variant italic text-on-surface-variant">
+                    "This platform has helped my grandchildren finally speak to their Dedo in his own language. It's more than just an app; it's a bridge." — Elena, Sydney.
+                </div>
+</div>
+<div class="lg:col-span-7 bg-surface p-8 md:p-10 rounded-lg shadow-xl border border-outline-variant">
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-sm text-on-surface-variant px-1">Your Name</label>
+<input class="w-full bg-surface-container-low border-outline-variant focus:ring-primary focus:border-primary rounded-lg p-3" placeholder="Ime i Prezime" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-on-surface-variant px-1">Email Address</label>
+<input class="w-full bg-surface-container-low border-outline-variant focus:ring-primary focus:border-primary rounded-lg p-3" placeholder="email@example.com" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-on-surface-variant px-1">I am a...</label>
+<select class="w-full bg-surface-container-low border-outline-variant focus:ring-primary focus:border-primary rounded-lg p-3">
+<option>Student</option>
+<option>Parent / Guardian</option>
+<option>Teacher / Educator</option>
+<option>Supporter / Donor</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-on-surface-variant px-1">Your Message</label>
+<textarea class="w-full bg-surface-container-low border-outline-variant focus:ring-primary focus:border-primary rounded-lg p-3" placeholder="How can we help you today?" rows="5"></textarea>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded-lg font-bold text-lg btn-3d shadow-[0_6px_0_0_#410000] hover:opacity-90 transition-opacity" type="submit">
+                        Send Message
+                    </button>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest border-t-4 border-secondary mt-24">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-8 max-w-container-max mx-auto">
+<div class="space-y-4">
+<div class="font-display-lg-mobile text-display-lg-mobile text-primary font-bold">MakedonIQ</div>
+<p class="text-on-surface-variant max-w-sm">© 2024 MakedonIQ. Made for Macedonian families in Australia. Bridging culture and modern education.</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#"><span class="material-symbols-outlined text-sm">public</span></a>
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="#"><span class="material-symbols-outlined text-sm">share</span></a>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-3">
+<p class="font-bold text-on-surface">Legal</p>
+<ul class="space-y-2 text-label-sm">
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Terms of Service</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">FAQ</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<p class="font-bold text-on-surface">Settings</p>
+<button class="bg-surface-container text-primary font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">translate</span>
+                        MK / EN
+                    </button>
+</div>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-lg border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">extension</span>
+<span class="font-label-sm text-label-sm">Quizzes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-sm text-label-sm">Progress</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple form interaction
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Sending...';
+            btn.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                btn.innerHTML = 'Message Sent! <span class="material-symbols-outlined text-sm">check_circle</span>';
+                btn.classList.replace('bg-primary', 'bg-green-600');
+                btn.style.opacity = '1';
+                e.target.reset();
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('bg-green-600', 'bg-primary');
+                }, 3000);
+            }, 1500);
+        });
+    </script>
+</body></html>

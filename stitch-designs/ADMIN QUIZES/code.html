@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MakedonIQ Admin | Quizzes Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&amp;family=Quicksand:wght@400;500;700&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .btn-3d {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(2px);
+            box-shadow: none !important;
+        }
+        .soft-card {
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+        }
+        .soft-card:hover {
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#936e69",
+                    "inverse-primary": "#ffb4a8",
+                    "surface-container-highest": "#e3e3de",
+                    "on-secondary-fixed": "#221b00",
+                    "surface-bright": "#faf9f4",
+                    "on-tertiary-fixed": "#1a1a2e",
+                    "on-secondary-container": "#6e5c00",
+                    "outline-variant": "#e8bcb5",
+                    "surface-dim": "#dbdad5",
+                    "background": "#faf9f4",
+                    "error": "#ba1a1a",
+                    "surface": "#faf9f4",
+                    "on-surface-variant": "#5e3f3a",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#e7e4ff",
+                    "secondary": "#705d00",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#c00000",
+                    "on-primary-fixed": "#410000",
+                    "secondary-container": "#fcd400",
+                    "tertiary-fixed": "#e2e0fc",
+                    "inverse-surface": "#30312e",
+                    "on-primary-fixed-variant": "#930000",
+                    "on-background": "#1b1c19",
+                    "on-surface": "#1b1c19",
+                    "tertiary-fixed-dim": "#c6c4df",
+                    "primary-container": "#d20000",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f2f1ec",
+                    "surface-container": "#efeee9",
+                    "surface-container-high": "#e9e8e3",
+                    "tertiary": "#4e4d64",
+                    "primary-fixed-dim": "#ffb4a8",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#ffdad4",
+                    "surface-variant": "#e3e3de",
+                    "tertiary-container": "#66657d",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f5f4ef",
+                    "secondary-fixed-dim": "#e9c400",
+                    "on-secondary-fixed-variant": "#544600",
+                    "secondary-fixed": "#ffe16d",
+                    "on-tertiary-fixed-variant": "#45455b",
+                    "on-primary-container": "#ffe1dc",
+                    "error-container": "#ffdad6",
+                    "primary": "#a40000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "container-max": "1200px",
+                    "unit": "8px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": ["Montserrat"],
+                    "body-md": ["Quicksand"],
+                    "headline-md": ["Montserrat"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Montserrat"],
+                    "body-lg": ["Quicksand"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface flex min-h-screen overflow-hidden">
+<!-- SideNavBar (The Anchor) -->
+<aside class="hidden md:flex flex-col h-full border-r border-outline-variant p-6 gap-4 bg-surface-container-low w-64 shrink-0 overflow-y-auto">
+<div class="mb-8">
+<h1 class="font-display-lg-mobile text-display-lg-mobile font-black text-primary">MakedonIQ</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Admin System</p>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+                Categories
+            </a>
+<!-- Active State Logic for Quizzes -->
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 font-bold translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+                Quizzes
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+                Questions
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                Users
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Results
+            </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant flex flex-col gap-2">
+<button class="btn-3d bg-primary text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-4 border-b-[4px] border-primary-container shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Add New Quiz
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-colors text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-colors text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col h-screen overflow-hidden">
+<!-- Top Header for Desktop -->
+<header class="bg-surface shadow-sm w-full px-6 py-4 flex justify-between items-center z-10">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Manage Quizzes</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Oversee educational content for the Australian Macedonian community.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full focus:ring-2 focus:ring-primary focus:border-primary outline-none text-body-md w-64 transition-all" placeholder="Search quizzes..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container rounded-full" data-icon="notifications">notifications</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold border border-secondary shadow-sm">
+                    MK
+                </div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-grow overflow-y-auto p-6 md:p-10 space-y-8">
+<!-- Filters & Actions Bar -->
+<section class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-lg border border-outline-variant">
+<span class="font-label-sm text-label-sm uppercase opacity-60">Category:</span>
+<select class="bg-transparent border-none p-0 focus:ring-0 text-sm font-semibold cursor-pointer">
+<option>All Categories</option>
+<option>History</option>
+<option>Geography</option>
+<option>Language</option>
+<option>Folklore</option>
+</select>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-lg border border-outline-variant">
+<span class="font-label-sm text-label-sm uppercase opacity-60">Difficulty:</span>
+<select class="bg-transparent border-none p-0 focus:ring-0 text-sm font-semibold cursor-pointer">
+<option>All Levels</option>
+<option>Easy</option>
+<option>Medium</option>
+<option>Hard</option>
+</select>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-lg border border-outline-variant">
+<span class="font-label-sm text-label-sm uppercase opacity-60">Status:</span>
+<select class="bg-transparent border-none p-0 focus:ring-0 text-sm font-semibold cursor-pointer">
+<option>All Status</option>
+<option>Published</option>
+<option>Draft</option>
+</select>
+</div>
+</div>
+<button class="btn-3d bg-secondary text-on-secondary font-bold py-2.5 px-6 rounded-lg flex items-center gap-2 border-b-[4px] border-[#544600] shadow-md md:hidden">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    New Quiz
+                </button>
+</section>
+<!-- Table View: Quiz Management -->
+<section class="soft-card bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant">
+<th class="px-6 py-4 font-headline-md text-sm text-on-surface uppercase tracking-wider">Quiz Title</th>
+<th class="px-6 py-4 font-headline-md text-sm text-on-surface uppercase tracking-wider">Category</th>
+<th class="px-6 py-4 font-headline-md text-sm text-on-surface uppercase tracking-wider">Difficulty</th>
+<th class="px-6 py-4 font-headline-md text-sm text-on-surface uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-headline-md text-sm text-on-surface uppercase tracking-wider">Questions</th>
+<th class="px-6 py-4 font-headline-md text-sm text-on-surface uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="fort">fort</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">The Kings of Macedon</p>
+<p class="text-xs text-on-surface-variant">Last updated 2 days ago</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold">History</span>
+</td>
+<td class="px-6 py-4">
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full text-xs font-bold">Hard</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-sm font-medium">Published</span>
+</div>
+</td>
+<td class="px-6 py-4 font-bold text-on-surface-variant">25</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-primary/10 rounded-full text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-error/10 rounded-full text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full text-on-surface-variant" title="More">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="landscape">landscape</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Mountains &amp; Lakes</p>
+<p class="text-xs text-on-surface-variant">Last updated 5 days ago</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold">Geography</span>
+</td>
+<td class="px-6 py-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">Medium</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-sm font-medium">Published</span>
+</div>
+</td>
+<td class="px-6 py-4 font-bold text-on-surface-variant">15</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-primary/10 rounded-full text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-error/10 rounded-full text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full text-on-surface-variant" title="More">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-outline/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="translate">translate</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Common Idioms</p>
+<p class="text-xs text-on-surface-variant">Last updated 1 week ago</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold">Language</span>
+</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-xs font-bold">Easy</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="text-sm font-medium">Draft</span>
+</div>
+</td>
+<td class="px-6 py-4 font-bold text-on-surface-variant">10</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-primary/10 rounded-full text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-error/10 rounded-full text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full text-on-surface-variant" title="More">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="music_note">music_note</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Traditional Instruments</p>
+<p class="text-xs text-on-surface-variant">Last updated 1 month ago</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold">Folklore</span>
+</td>
+<td class="px-6 py-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">Medium</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-sm font-medium">Published</span>
+</div>
+</td>
+<td class="px-6 py-4 font-bold text-on-surface-variant">12</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-primary/10 rounded-full text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-error/10 rounded-full text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full text-on-surface-variant" title="More">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-high flex justify-between items-center border-t border-outline-variant">
+<span class="text-sm text-on-surface-variant">Showing 1 to 4 of 24 entries</span>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 border border-outline-variant rounded-lg bg-surface hover:bg-surface-container-low transition-colors disabled:opacity-50 text-sm font-bold" disabled="">Previous</button>
+<button class="px-4 py-1.5 border border-outline-variant rounded-lg bg-primary text-white hover:bg-primary-container transition-colors text-sm font-bold">Next</button>
+</div>
+</div>
+</section>
+<!-- Quick Stats / Heritage Insights -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-20">
+<div class="soft-card bg-surface-container-low p-6 rounded-lg border-l-4 border-primary">
+<p class="font-label-sm text-label-sm uppercase opacity-70">Total Quiz Attempts</p>
+<h3 class="font-display-lg-mobile text-3xl font-black text-primary mt-1">12,482</h3>
+<p class="text-xs text-green-600 font-bold mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+                        +14% this month
+                    </p>
+</div>
+<div class="soft-card bg-surface-container-low p-6 rounded-lg border-l-4 border-secondary">
+<p class="font-label-sm text-label-sm uppercase opacity-70">Popular Category</p>
+<h3 class="font-display-lg-mobile text-3xl font-black text-secondary mt-1">History</h3>
+<p class="text-xs text-on-surface-variant mt-2">Macedonian Kings leading by 30%</p>
+</div>
+<div class="soft-card bg-surface-container-low p-6 rounded-lg border-l-4 border-tertiary">
+<p class="font-label-sm text-label-sm uppercase opacity-70">User Success Rate</p>
+<h3 class="font-display-lg-mobile text-3xl font-black text-tertiary mt-1">68.5%</h3>
+<div class="w-full h-2 bg-surface-container-highest rounded-full mt-4">
+<div class="h-full bg-tertiary rounded-full" style="width: 68.5%;"></div>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="w-full py-6 px-margin-mobile md:px-margin-desktop bg-surface-container-highest border-t-4 border-secondary z-10 shrink-0">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body-md text-sm text-on-surface-variant">© 2024 MakedonIQ. Made for Macedonian families in Australia.</p>
+<div class="flex gap-6">
+<a class="text-sm font-label-sm text-on-surface-variant hover:text-primary underline transition-all" href="#">Privacy Policy</a>
+<a class="text-sm font-label-sm text-on-surface-variant hover:text-primary underline transition-all" href="#">Terms of Service</a>
+<a class="text-sm font-label-sm text-on-surface-variant hover:text-primary underline transition-all" href="#">Bilingual Toggle (MK/EN)</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Mobile Navigation (Visible only on mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-lg border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 px-4 py-1.5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5 scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="extension">extension</span>
+<span class="font-label-sm text-label-sm mt-1">Quizzes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 px-4 py-1.5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-label-sm text-label-sm mt-1">Progress</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 px-4 py-1.5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple row hover micro-interactions
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'scale(1.002)';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-105');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-105');
+        });
+    </script>
+</body></html>

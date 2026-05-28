@@ -1,0 +1,85 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.vue';
+@source '../js/**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-heritage-red: #a40000;
+    --color-heritage-red-dark: #760000;
+    --color-heritage-red-soft: #ffdad4;
+    --color-heritage-gold: #f4c430;
+    --color-heritage-gold-soft: #ffe16d;
+    --color-heritage-gold-deep: #705d00;
+    --color-heritage-navy: #202136;
+    --color-heritage-ink: #1b1c19;
+    --color-heritage-muted: #5e3f3a;
+    --color-heritage-bg: #faf9f4;
+    --color-heritage-panel: #f5f4ef;
+    --color-heritage-line: #e8bcb5;
+    --color-heritage-white: #ffffff;
+    --shadow-soft: 0 8px 30px rgba(78, 77, 100, 0.08);
+    --shadow-card: 0 4px 20px rgba(78, 77, 100, 0.05);
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-heritage-bg text-heritage-ink antialiased;
+    }
+
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        @apply outline-none;
+    }
+}
+
+@layer components {
+    .page-shell {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .soft-card {
+        @apply rounded-2xl border border-heritage-line/50 bg-white shadow-card transition-all duration-200;
+    }
+
+    .soft-card-hover {
+        @apply hover:-translate-y-1 hover:shadow-soft;
+    }
+
+    .pressable-red {
+        @apply bg-heritage-red text-white shadow-[0_4px_0_0_#760000] transition active:translate-y-0.5 active:shadow-[0_2px_0_0_#760000];
+    }
+
+    .pressable-gold {
+        @apply bg-heritage-gold text-heritage-navy shadow-[0_4px_0_0_#b38f00] transition active:translate-y-0.5 active:shadow-[0_2px_0_0_#b38f00];
+    }
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 rounded-full bg-heritage-gold-soft px-4 py-1.5 text-xs font-bold uppercase text-heritage-gold-deep;
+    }
+
+    .field {
+        @apply w-full rounded-2xl border border-heritage-line bg-heritage-panel px-4 py-3 text-heritage-ink transition focus:border-heritage-red focus:bg-white focus:ring-4 focus:ring-heritage-red/10;
+    }
+
+    .label {
+        @apply text-xs font-bold uppercase text-heritage-muted;
+    }
+
+    .heritage-pattern {
+        background:
+            linear-gradient(135deg, rgba(164, 0, 0, 0.88), rgba(32, 33, 54, 0.92)),
+            repeating-linear-gradient(45deg, rgba(244, 196, 48, 0.28) 0 10px, transparent 10px 24px);
+    }
+}

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quiz Results - MakedonIQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&amp;family=Quicksand:wght@400;500;700&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#936e69",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-container-highest": "#e3e3de",
+                        "on-secondary-fixed": "#221b00",
+                        "surface-bright": "#faf9f4",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-secondary-container": "#6e5c00",
+                        "outline-variant": "#e8bcb5",
+                        "surface-dim": "#dbdad5",
+                        "background": "#faf9f4",
+                        "error": "#ba1a1a",
+                        "surface": "#faf9f4",
+                        "on-surface-variant": "#5e3f3a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#e7e4ff",
+                        "secondary": "#705d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#c00000",
+                        "on-primary-fixed": "#410000",
+                        "secondary-container": "#fcd400",
+                        "tertiary-fixed": "#e2e0fc",
+                        "inverse-surface": "#30312e",
+                        "on-primary-fixed-variant": "#930000",
+                        "on-background": "#1b1c19",
+                        "on-surface": "#1b1c19",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-container": "#d20000",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "surface-container": "#efeee9",
+                        "surface-container-high": "#e9e8e3",
+                        "tertiary": "#4e4d64",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdad4",
+                        "surface-variant": "#e3e3de",
+                        "tertiary-container": "#66657d",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f5f4ef",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "on-primary-container": "#ffe1dc",
+                        "error-container": "#ffdad6",
+                        "primary": "#a40000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Montserrat"],
+                        "body-md": ["Quicksand"],
+                        "headline-md": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-card {
+            background-color: #FFFFFF;
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+            transition: all 0.3s ease;
+        }
+        .soft-card:hover {
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+            transform: translateY(-2px);
+        }
+        .btn-press {
+            border-bottom: 4px solid rgba(0, 0, 0, 0.2);
+            transition: all 0.1s active;
+        }
+        .btn-press:active {
+            transform: translateY(2px);
+            border-bottom-width: 0px;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #a40000;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-display-lg-mobile text-display-lg-mobile font-bold text-primary dark:text-inverse-primary">MakedonIQ</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-body-md text-body-md" href="#">Quizzes</a>
+<a class="text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1 font-body-md text-body-md" href="#">Progress</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-body-md text-body-md" href="#">About</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-sm text-label-sm text-on-surface">5 Day Streak</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant p-2 rounded-full hover:bg-surface-container" data-icon="account_circle">account_circle</button>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 relative">
+<!-- Confetti Container -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden" id="confetti-cannon"></div>
+<div class="flex flex-col items-center max-w-3xl mx-auto space-y-12">
+<!-- Celebration Header -->
+<section class="text-center space-y-4 animate-fade-in-up">
+<div class="relative inline-block">
+<div class="absolute -top-12 -left-12 w-24 h-24 bg-secondary-container/30 rounded-full blur-2xl animate-pulse"></div>
+<div class="absolute -bottom-8 -right-8 w-20 h-20 bg-primary-container/20 rounded-full blur-xl animate-pulse"></div>
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-2">Great Job!</h1>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant">You've successfully mastered the "Kingdom of Philip II" quiz.</p>
+</section>
+<!-- Bento Stats Grid -->
+<section class="w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Score Card -->
+<div class="soft-card p-8 rounded-lg flex flex-col items-center justify-center text-center space-y-2 border-b-4 border-secondary-container">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">Accuracy</span>
+<div class="relative">
+<svg class="w-24 h-24 -rotate-90">
+<circle class="text-surface-container-high" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="25.12" stroke-width="8"></circle>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center font-headline-md text-headline-md text-on-surface">90%</span>
+</div>
+</div>
+<!-- Stats Detail Card -->
+<div class="soft-card p-8 rounded-lg flex flex-col items-center justify-center text-center space-y-4 border-b-4 border-primary">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">Questions</span>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-4xl" data-icon="task_alt">task_alt</span>
+<div class="text-left">
+<p class="font-headline-md text-headline-md leading-none">9/10</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Correct</p>
+</div>
+</div>
+</div>
+<!-- Points Card -->
+<div class="soft-card p-8 rounded-lg flex flex-col items-center justify-center text-center space-y-4 border-b-4 border-tertiary">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">XP Gained</span>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary-container text-4xl" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+<div class="text-left">
+<p class="font-headline-md text-headline-md leading-none text-secondary">+50</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Points</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Achievement Section -->
+<section class="w-full soft-card p-8 rounded-lg overflow-hidden relative">
+<div class="absolute right-0 top-0 w-32 h-full opacity-10 pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Close-up macro photography of an ancient gold coin with Macedonian iconography. The lighting is warm and dramatic, highlighting the intricate embossed textures of the metal. The visual style is premium and educational, with soft focus blurring the background into a deep, elegant navy blue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-DLhc6orxyukxn9J3PJNwp_CYHvX28LwqTM49lY_9gdVuRYn0zkyS2NYdXHggXWNrHTcVJ5p0CS8hpbxzQ42mrS41Dgs4t8-b1CquMOONgIJUASq1JpdT80EHc0J27XuPapXCgMNSDI4dHim2Z8ptAcnZtjQ_j7wN9IYmhSCdrlKZ8Ke0rqlzrIa3ePsVs8Fm3N5cQSdYavv3DxQ-LKyP7VWD4KoNoxMTTLFb3l_EPBMzzkX2hSvbUay7WOr6YSSNZxF3gBF2EKU"/>
+</div>
+<div class="flex flex-col md:flex-row items-center gap-8">
+<div class="w-32 h-32 flex-shrink-0 bg-secondary-container rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+<span class="material-symbols-outlined text-on-secondary-container text-6xl" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex-grow text-center md:text-left space-y-2">
+<span class="font-label-sm text-label-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">New Achievement</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Macedonian History Enthusiast</h2>
+<p class="text-on-surface-variant">You've unlocked this badge by completing all history modules with a score over 85%!</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-DEFAULT font-bold btn-press hover:opacity-90 whitespace-nowrap shadow-md">
+                        Claim Badge
+                    </button>
+</div>
+</section>
+<!-- Primary Actions -->
+<section class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+<button class="flex items-center justify-center gap-2 px-8 py-4 bg-primary text-on-primary rounded-DEFAULT font-bold text-body-lg btn-press shadow-lg border-b-primary-container">
+<span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    Continue Learning
+                </button>
+<button class="flex items-center justify-center gap-2 px-8 py-4 bg-secondary-container text-on-secondary-container rounded-DEFAULT font-bold text-body-lg btn-press shadow-md border-b-secondary">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+                    Try Again
+                </button>
+<button class="flex items-center justify-center gap-2 px-8 py-4 bg-surface-container-high text-on-surface rounded-DEFAULT font-bold text-body-lg hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+                    Review Answers
+                </button>
+</section>
+<!-- Social Sharing -->
+<section class="flex flex-col items-center gap-6 pt-8 border-t border-outline-variant w-full">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-[0.2em]">Share your achievements</p>
+<div class="flex gap-4">
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-highest text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-highest text-on-surface-variant hover:text-[#1877F2] transition-colors">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-highest text-on-surface-variant hover:text-[#1DA1F2] transition-colors">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path></svg>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface dark:bg-surface-dim border-t border-outline-variant dark:border-outline shadow-lg">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant/70 px-4 py-1.5 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant/70 px-4 py-1.5 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="extension">extension</span>
+<span class="font-label-sm text-label-sm">Quizzes</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-xl px-4 py-1.5 active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-label-sm text-label-sm">Progress</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant/70 px-4 py-1.5 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</button>
+</nav>
+<!-- Footer -->
+<footer class="w-full py-12 px-margin-mobile md:px-margin-desktop bg-surface-container-highest dark:bg-inverse-surface border-t-4 border-secondary mt-12 pb-24 md:pb-12">
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<div class="font-display-lg-mobile text-display-lg-mobile text-primary dark:text-inverse-primary font-bold">MakedonIQ</div>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">© 2024 MakedonIQ. Made for Macedonian families in Australia.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col space-y-2">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col space-y-2">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm" href="#">FAQ</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary underline transition-all font-label-sm text-label-sm font-bold" href="#">MK/EN Toggle</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Simple confetti effect for celebration
+        function createConfetti() {
+            const container = document.getElementById('confetti-cannon');
+            const colors = ['#a40000', '#705d00', '#d20000', '#fcd400', '#4e4d64'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.top = -20 + 'px';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                const animation = confetti.animate([
+                    { transform: `translate3d(0, 0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${(Math.random() - 0.5) * 300}px, ${window.innerHeight}px, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 3000,
+                    easing: 'cubic-bezier(0, .9, .57, 1)',
+                    delay: Math.random() * 1000
+                });
+
+                container.appendChild(confetti);
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        // Trigger celebration on load
+        window.addEventListener('load', () => {
+            setTimeout(createConfetti, 500);
+        });
+
+        // Interactive hover sound effect simulation
+        const cards = document.querySelectorAll('.soft-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential logic for micro-interaction sounds or light pulses
+            });
+        });
+    </script>
+</body></html>
