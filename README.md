@@ -42,8 +42,53 @@ Then run:
 
 ```bash
 php artisan config:clear
-php artisan migrate
+php artisan migrate --seed
 ```
+
+To rebuild the local database from scratch with the starter quiz content:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+## MakedonIQ Quiz Database
+
+The core quiz schema includes:
+
+- `categories`: bilingual quiz categories such as language, alphabet, history, geography, culture, and food/music.
+- `quizzes`: bilingual quizzes that belong to a category.
+- `questions`: bilingual questions that belong to a quiz.
+- `answers`: bilingual answer options that belong to a question.
+- `quiz_attempts`: score summaries for a user taking a quiz.
+- `quiz_attempt_answers`: selected answers and points awarded inside an attempt.
+
+Each seeded question has exactly four answers and exactly one correct answer. A portable database-level constraint for "only one correct answer per question" is intentionally not added yet because partial unique indexes differ across database engines; this should be enforced in the future admin/application layer.
+
+## Seeded Starter Content
+
+Running `php artisan migrate:fresh --seed` creates:
+
+- Macedonian Language: Basic Macedonian Greetings
+- Macedonian Alphabet: Cyrillic Alphabet Basics
+- History of Macedonia: Macedonia History Basics
+- Geography: Macedonian Geography Basics
+- Culture and Traditions: Macedonian Culture Basics
+- Food and Music: Macedonian Food and Music Basics
+
+Each starter quiz includes at least five beginner-friendly bilingual questions.
+
+## Read-Only API Endpoints
+
+These public JSON endpoints are available for future frontend integration:
+
+```text
+GET /api/categories
+GET /api/categories/{slug}/quizzes
+GET /api/quizzes/{slug}
+GET /api/quizzes/{slug}/questions
+```
+
+The public questions endpoint returns published questions and answer choices without exposing `is_correct`.
 
 ## About Laravel
 
