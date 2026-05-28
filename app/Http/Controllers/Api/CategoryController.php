@@ -24,7 +24,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function quizzes(string $slug): JsonResponse
+    public function show(string $slug): JsonResponse
     {
         $category = Category::query()
             ->published()
@@ -59,6 +59,11 @@ class CategoryController extends Controller
                 'quizzes' => $quizzes,
             ],
         ]);
+    }
+
+    public function quizzes(string $slug): JsonResponse
+    {
+        return $this->show($slug);
     }
 
     private function categoryPayload(Category $category): array

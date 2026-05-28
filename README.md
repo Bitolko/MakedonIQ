@@ -83,12 +83,38 @@ These public JSON endpoints are available for future frontend integration:
 
 ```text
 GET /api/categories
+GET /api/categories/{slug}
 GET /api/categories/{slug}/quizzes
 GET /api/quizzes/{slug}
 GET /api/quizzes/{slug}/questions
 ```
 
 The public questions endpoint returns published questions and answer choices without exposing `is_correct`.
+
+## Public Quiz Routes
+
+The quiz frontend now loads public quiz data from the API/database.
+
+Examples:
+
+```text
+/quizzes
+/quizzes/history-of-macedonia
+/quizzes/history-of-macedonia/macedonia-history-basics/start
+/quizzes/history-of-macedonia/macedonia-history-basics/active
+/quizzes/history-of-macedonia/macedonia-history-basics/results
+```
+
+The older history URLs still work as aliases:
+
+```text
+/quizzes/history
+/quizzes/history/start
+/quizzes/history/active
+/quizzes/history/results
+```
+
+Quiz submission, backend scoring, saved attempts, review answers, and real result calculations are intentionally not built yet. Those should be added in the next backend step so correct answers remain protected server-side.
 
 ## About Laravel
 
