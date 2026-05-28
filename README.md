@@ -91,6 +91,45 @@ GET /api/quizzes/{slug}/questions
 
 The public questions endpoint returns published questions and answer choices without exposing `is_correct`.
 
+## Quiz Submission API
+
+Quiz scoring is handled on the backend. The active quiz page sends selected answer IDs only; Laravel checks correctness using the private `answers.is_correct` value.
+
+Authenticated endpoints:
+
+```text
+POST /api/quizzes/{quizSlug}/attempts
+GET /api/quiz-attempts/{attemptId}
+```
+
+Submission payload:
+
+```json
+{
+  "answers": [
+    {
+      "question_id": 1,
+      "answer_id": 4
+    }
+  ]
+}
+```
+
+The submission endpoint validates that every submitted question belongs to the quiz and every selected answer belongs to its question. It creates a `quiz_attempt`, creates matching `quiz_attempt_answers`, calculates score, percentage, points, and pass/fail, then returns a result URL.
+
+Attempt results are authenticated and owner-only. Correct answers and explanations are returned only from the completed-attempt endpoint, after the current user has been authorized to view that attempt.
+
+Local test flow:
+
+```text
+1. Register or log in.
+2. Open /quizzes/history-of-macedonia/macedonia-history-basics/active.
+3. Answer every question.
+4. Submit the quiz.
+5. Confirm the browser opens /quizzes/history-of-macedonia/macedonia-history-basics/results/{attemptId}.
+6. Review the real score and answer breakdown.
+```
+
 ## Public Quiz Routes
 
 The quiz frontend now loads public quiz data from the API/database.
@@ -114,7 +153,7 @@ The older history URLs still work as aliases:
 /quizzes/history/results
 ```
 
-Quiz submission, backend scoring, saved attempts, review answers, and real result calculations are intentionally not built yet. Those should be added in the next backend step so correct answers remain protected server-side.
+Backend scoring, saved attempts, and real result display are now built. Admin CRUD, roles, payments, subscriptions, and dashboard/progress analytics are intentionally not built yet.
 
 ## About Laravel
 

@@ -15,6 +15,7 @@ Route::get('/quizzes/history/results', $page('Quizzes.Results'))->name('quizzes.
 Route::get('/quizzes/{categorySlug}', $page('Quizzes.Category'))->name('quizzes.category');
 Route::get('/quizzes/{categorySlug}/{quizSlug}/start', $page('Quizzes.Start'))->name('quizzes.start');
 Route::get('/quizzes/{categorySlug}/{quizSlug}/active', $page('Quizzes.Active'))->name('quizzes.active');
+Route::get('/quizzes/{categorySlug}/{quizSlug}/results/{attempt}', $page('Quizzes.Results'))->name('quizzes.results.show');
 Route::get('/quizzes/{categorySlug}/{quizSlug}/results', $page('Quizzes.Results'))->name('quizzes.results');
 Route::get('/about', $page('About'))->name('about');
 Route::get('/contact', $page('Contact'))->name('contact');

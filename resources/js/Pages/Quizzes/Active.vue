@@ -2,11 +2,14 @@
 import { computed, onMounted, ref } from 'vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import {
+    ApiError,
     categoryUrl,
     currentCategorySlug,
     currentQuizSlug,
+    currentUser,
     fetchJson,
     quizResultsUrl,
+    submitQuizAttempt,
 } from '../../api/makedoniq';
 
 const language = ref('EN');
@@ -15,10 +18,14 @@ const questions = ref([]);
 const selectedAnswers = ref({});
 const currentIndex = ref(0);
 const isLoading = ref(true);
+const isSubmitting = ref(false);
 const error = ref('');
+const submitError = ref('');
+const showAuthPrompt = ref(false);
 
 const categorySlug = currentCategorySlug();
 const quizSlug = currentQuizSlug();
+const user = currentUser();
 const optionLabels = ['A', 'B', 'C', 'D'];
 
 const currentQuestion = computed(() => questions.value[currentIndex.value] || null);
@@ -26,8 +33,9 @@ const selectedAnswerId = computed(() => selectedAnswers.value[currentQuestion.va
 const totalQuestions = computed(() => questions.value.length);
 const answeredCount = computed(() => Object.keys(selectedAnswers.value).length);
 const isLastQuestion = computed(() => currentIndex.value >= totalQuestions.value - 1);
+const allAnswered = computed(() => totalQuestions.value > 0 && answeredCount.value === totalQuestions.value);
 const categoryHref = computed(() => categoryUrl(quiz.value?.category?.slug || categorySlug));
-const resultsHref = computed(() => quizResultsUrl(quiz.value?.category?.slug || categorySlug, quiz.value?.slug || quizSlug));
+const placeholderResultsHref = computed(() => quizResultsUrl(quiz.value?.category?.slug || categorySlug, quiz.value?.slug || quizSlug));
 const progressPercent = computed(() => {
     if (!totalQuestions.value) {
         return 0;
@@ -55,11 +63,64 @@ function selectAnswer(answerId) {
         ...selectedAnswers.value,
         [currentQuestion.value.id]: answerId,
     };
+    submitError.value = '';
+    showAuthPrompt.value = false;
 }
 
 function goNext() {
     if (!isLastQuestion.value) {
         currentIndex.value += 1;
+    }
+}
+
+function goPrevious() {
+    if (currentIndex.value > 0) {
+        currentIndex.value -= 1;
+    }
+}
+
+async function submitAttempt() {
+    submitError.value = '';
+
+    if (!allAnswered.value) {
+        submitError.value = 'Please answer every question before submitting.';
+        return;
+    }
+
+    if (!user) {
+        showAuthPrompt.value = true;
+        return;
+    }
+
+    isSubmitting.value = true;
+
+    try {
+        const payload = questions.value.map((question) => ({
+            question_id: question.id,
+            answer_id: selectedAnswers.value[question.id],
+        }));
+
+        const response = await submitQuizAttempt(quiz.value.slug, payload);
+        window.location.href = response.data.result_url;
+    } catch (exception) {
+        if (exception instanceof ApiError && exception.status === 401) {
+            showAuthPrompt.value = true;
+            return;
+        }
+
+        if (exception instanceof ApiError && exception.status === 422) {
+            submitError.value = exception.payload?.message || 'Please check your answers and try again.';
+            return;
+        }
+
+        if (exception instanceof ApiError && exception.status === 419) {
+            submitError.value = 'Your session expired. Refresh the page and try again.';
+            return;
+        }
+
+        submitError.value = 'The quiz could not be submitted. Please try again.';
+    } finally {
+        isSubmitting.value = false;
     }
 }
 
@@ -93,7 +154,7 @@ onMounted(async () => {
                             <button :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'EN' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'EN'">EN</button>
                             <button :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'MK' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'MK'">MK</button>
                         </div>
-                        <div class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">{{ answeredCount }} saved</div>
+                        <div class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">{{ answeredCount }} / {{ totalQuestions || 0 }}</div>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center gap-3 sm:hidden">
@@ -130,7 +191,7 @@ onMounted(async () => {
                         </h1>
                         <div class="mx-auto mt-8 rounded-[2rem] bg-heritage-panel p-4">
                             <p class="text-sm font-bold leading-7 text-heritage-muted">
-                                Choose the answer that feels right. Final scoring will be checked securely on the backend in the next step.
+                                Pick one answer for each question. Your score is calculated securely after submission.
                             </p>
                         </div>
                     </div>
@@ -158,18 +219,37 @@ onMounted(async () => {
         </main>
 
         <footer class="border-t-4 border-heritage-gold bg-white">
-            <div class="page-shell flex flex-col items-center justify-between gap-5 py-5 md:flex-row">
+            <div class="page-shell grid gap-5 py-5 md:grid-cols-[1fr_auto] md:items-center">
                 <div class="flex items-center gap-4 text-center md:text-left">
-                    <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-heritage-gold-faint text-lg font-black text-heritage-gold-deep">
+                    <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-heritage-gold-faint text-lg font-black text-heritage-gold-deep">
                         {{ selectedAnswerId ? 'OK' : '?' }}
                     </div>
                     <div>
                         <p class="text-xl font-black text-heritage-ink">{{ selectedAnswerId ? 'Answer saved' : 'Choose an answer' }}</p>
-                        <p class="text-sm text-heritage-muted">Correctness is not exposed in this public quiz screen. Secure scoring comes next.</p>
+                        <p class="text-sm text-heritage-muted">
+                            {{ allAnswered ? 'Ready to submit when you reach the end.' : `${answeredCount} of ${totalQuestions || 0} questions answered.` }}
+                        </p>
+                        <p v-if="submitError" class="mt-2 text-sm font-bold text-heritage-red">{{ submitError }}</p>
+                        <div v-if="showAuthPrompt" class="mt-3 flex flex-col gap-2 sm:flex-row">
+                            <a class="button-soft rounded-2xl px-4 py-2 text-sm font-black" href="/login">Login to save score</a>
+                            <a class="pressable-gold rounded-2xl px-4 py-2 text-sm font-black" href="/register">Create account</a>
+                        </div>
                     </div>
                 </div>
-                <PrimaryButton v-if="isLastQuestion" :href="resultsHref" size="lg">Submit quiz</PrimaryButton>
-                <PrimaryButton v-else size="lg" @click="goNext">Next</PrimaryButton>
+                <div class="flex flex-col gap-3 sm:flex-row md:justify-end">
+                    <PrimaryButton v-if="currentIndex > 0" variant="soft" size="lg" @click="goPrevious">Previous</PrimaryButton>
+                    <PrimaryButton v-if="!isLastQuestion" size="lg" @click="goNext">Next</PrimaryButton>
+                    <PrimaryButton
+                        v-else
+                        size="lg"
+                        :disabled="!allAnswered || isSubmitting"
+                        :class="{ 'pointer-events-none opacity-50': !allAnswered || isSubmitting }"
+                        @click="submitAttempt"
+                    >
+                        {{ isSubmitting ? 'Submitting...' : 'Submit quiz' }}
+                    </PrimaryButton>
+                    <PrimaryButton v-if="!user" :href="placeholderResultsHref" variant="ghost" size="lg">Results info</PrimaryButton>
+                </div>
             </div>
         </footer>
     </div>
