@@ -64,6 +64,14 @@ export async function getQuizAttempt(attemptId) {
     return fetchJson(`/api/quiz-attempts/${attemptId}`);
 }
 
+export async function getDashboard() {
+    return fetchJson('/api/me/dashboard');
+}
+
+export async function getProgress() {
+    return fetchJson('/api/me/progress');
+}
+
 export function quizPathParts() {
     return window.location.pathname.split('/').filter(Boolean);
 }

@@ -1,13 +1,93 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue';
 import DashboardLayout from '../Components/DashboardLayout.vue';
 import StatCard from '../Components/StatCard.vue';
 import ProgressBar from '../Components/ProgressBar.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import AppBadge from '../Components/AppBadge.vue';
-import { dashboardStats, historyQuizzes, progressCategories, recentResults } from '../data/makedoniq';
+import { currentUser, getDashboard } from '../api/makedoniq';
 
-const user = window.MakedonIQ?.auth?.user;
-const displayName = user?.name || 'learner';
+const loading = ref(true);
+const error = ref('');
+const dashboard = ref(null);
+
+onMounted(async () => {
+    try {
+        const response = await getDashboard();
+        dashboard.value = response.data;
+    } catch (caughtError) {
+        error.value = caughtError.message || 'Unable to load your dashboard right now.';
+    } finally {
+        loading.value = false;
+    }
+});
+
+const user = computed(() => dashboard.value?.user || currentUser() || {});
+const displayName = computed(() => user.value.name || 'learner');
+const recentAttempts = computed(() => dashboard.value?.recent_attempts || []);
+const recommendedQuizzes = computed(() => dashboard.value?.recommended_quizzes || []);
+const categoryProgress = computed(() => dashboard.value?.category_progress || []);
+
+const heroStats = computed(() => [
+    {
+        value: `${dashboard.value?.current_streak || 0}`,
+        label: 'day streak',
+    },
+    {
+        value: formatNumber(dashboard.value?.completed_quizzes_count),
+        label: 'quizzes',
+    },
+    {
+        value: formatNumber(dashboard.value?.total_points),
+        label: 'points',
+    },
+]);
+
+const statCards = computed(() => [
+    {
+        label: 'Total points',
+        value: formatNumber(dashboard.value?.total_points),
+        detail: `${formatNumber(dashboard.value?.passed_attempts_count)} passed attempts`,
+        icon: 'XP',
+        tone: 'gold',
+    },
+    {
+        label: 'Completed quizzes',
+        value: formatNumber(dashboard.value?.completed_quizzes_count),
+        detail: `${formatNumber(dashboard.value?.total_attempts_count)} total attempts`,
+        icon: 'OK',
+        tone: 'red',
+    },
+    {
+        label: 'Average score',
+        value: formatPercentage(dashboard.value?.average_percentage),
+        detail: `Best score ${formatPercentage(dashboard.value?.best_percentage)}`,
+        icon: '%',
+        tone: 'navy',
+    },
+]);
+
+function formatNumber(value) {
+    return new Intl.NumberFormat('en-AU').format(Number(value || 0));
+}
+
+function formatPercentage(value) {
+    const percentage = Number(value || 0);
+
+    return `${Number.isInteger(percentage) ? percentage : percentage.toFixed(1)}%`;
+}
+
+function formatDate(value) {
+    if (!value) {
+        return 'Not dated';
+    }
+
+    return new Intl.DateTimeFormat('en-AU', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(value));
+}
 </script>
 
 <template>
@@ -17,89 +97,125 @@ const displayName = user?.name || 'learner';
                 <div>
                     <AppBadge variant="gold">Learner dashboard</AppBadge>
                     <h1 class="mt-4 text-4xl font-black md:text-5xl">Welcome back, {{ displayName }}!</h1>
-                    <p class="mt-3 max-w-2xl text-lg leading-8 text-white/80">You are on a roll. Continue a quiz, review recent results, and keep exploring your Macedonian heritage.</p>
+                    <p class="mt-3 max-w-2xl text-lg leading-8 text-white/80">Continue a quiz, review recent results, and keep exploring your Macedonian heritage.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    <div class="rounded-2xl bg-white/10 p-4 text-center">
-                        <p class="text-2xl font-black text-heritage-gold">5</p>
-                        <p class="text-xs font-bold text-white/70">day streak</p>
-                    </div>
-                    <div class="rounded-2xl bg-white/10 p-4 text-center">
-                        <p class="text-2xl font-black text-heritage-gold">12</p>
-                        <p class="text-xs font-bold text-white/70">quizzes</p>
-                    </div>
-                    <div class="col-span-2 rounded-2xl bg-white/10 p-4 text-center sm:col-span-1">
-                        <p class="text-2xl font-black text-heritage-gold">1,250</p>
-                        <p class="text-xs font-bold text-white/70">points</p>
+                    <div v-for="item in heroStats" :key="item.label" class="rounded-2xl bg-white/10 p-4 text-center">
+                        <p class="text-2xl font-black text-heritage-gold">{{ item.value }}</p>
+                        <p class="text-xs font-bold text-white/70">{{ item.label }}</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="grid gap-6 md:grid-cols-3">
-            <StatCard v-for="stat in dashboardStats" :key="stat.label" :stat="stat" />
-        </section>
+        <article v-if="loading" class="section-panel">
+            <AppBadge variant="navy">Loading</AppBadge>
+            <h2 class="mt-4 text-2xl font-black text-heritage-ink">Loading your dashboard</h2>
+            <p class="mt-2 text-heritage-muted">Your quiz attempts and learning stats are being gathered.</p>
+        </article>
 
-        <section class="mt-10 grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-            <div class="space-y-8">
-                <article class="soft-card overflow-hidden">
-                    <div class="bg-white p-6 md:p-8">
-                        <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
+        <article v-else-if="error" class="section-panel">
+            <AppBadge variant="red">Dashboard error</AppBadge>
+            <h2 class="mt-4 text-2xl font-black text-heritage-ink">We could not load your dashboard</h2>
+            <p class="mt-2 text-heritage-muted">{{ error }}</p>
+            <PrimaryButton href="/login" class="mt-6" variant="gold">Log in again</PrimaryButton>
+        </article>
+
+        <template v-else>
+            <section class="grid gap-6 md:grid-cols-3">
+                <StatCard v-for="stat in statCards" :key="stat.label" :stat="stat" />
+            </section>
+
+            <section class="mt-10 grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+                <div class="space-y-8">
+                    <article class="section-panel">
+                        <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                             <div>
-                                <AppBadge variant="red">Continue learning</AppBadge>
-                                <h2 class="mt-4 text-3xl font-black text-heritage-ink">Ancient Macedonia Basics</h2>
-                                <p class="mt-3 max-w-xl text-heritage-muted">Pick up where you left off and finish the history starter quiz.</p>
+                                <h2 class="text-2xl font-black text-heritage-ink">Recent results</h2>
+                                <p class="mt-1 text-sm text-heritage-muted">Your latest completed quiz attempts.</p>
                             </div>
-                            <div class="rounded-2xl bg-heritage-gold-faint px-5 py-4 text-center">
-                                <p class="text-2xl font-black text-heritage-gold-deep">80%</p>
-                                <p class="text-xs font-black uppercase text-heritage-muted">Complete</p>
+                            <PrimaryButton href="/progress" variant="soft" size="sm">View progress</PrimaryButton>
+                        </div>
+
+                        <div v-if="recentAttempts.length" class="grid gap-3">
+                            <a
+                                v-for="attempt in recentAttempts"
+                                :key="attempt.id"
+                                :href="attempt.result_url || '/progress'"
+                                class="rounded-2xl border border-heritage-line/50 bg-heritage-panel p-4 transition hover:bg-white hover:shadow-card"
+                            >
+                                <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                                    <div>
+                                        <p class="font-black text-heritage-ink">{{ attempt.quiz_title }}</p>
+                                        <p class="mt-1 text-sm text-heritage-muted">{{ attempt.category_name }} / {{ formatDate(attempt.completed_at) }}</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span :class="['rounded-full px-3 py-1 text-xs font-black uppercase', attempt.passed ? 'bg-emerald-50 text-emerald-800' : 'bg-heritage-red-faint text-heritage-red']">
+                                            {{ attempt.passed ? 'Passed' : 'Review' }}
+                                        </span>
+                                        <span class="text-2xl font-black text-heritage-red">{{ formatPercentage(attempt.percentage) }}</span>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-sm font-semibold text-heritage-muted">
+                                    {{ attempt.correct_answers }} of {{ attempt.total_questions }} correct / {{ formatNumber(attempt.score) }} points
+                                </p>
+                            </a>
+                        </div>
+
+                        <div v-else class="rounded-2xl bg-heritage-panel p-5 text-heritage-muted">
+                            Complete a quiz to see your recent results here.
+                        </div>
+                    </article>
+
+                    <article class="section-panel">
+                        <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                            <div>
+                                <h2 class="text-2xl font-black text-heritage-ink">Recommended quizzes</h2>
+                                <p class="mt-1 text-sm text-heritage-muted">Published quizzes selected from your current learning history.</p>
+                            </div>
+                            <PrimaryButton href="/quizzes" variant="soft" size="sm">View all</PrimaryButton>
+                        </div>
+
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <a
+                                v-for="quiz in recommendedQuizzes"
+                                :key="quiz.id"
+                                :href="quiz.start_url"
+                                class="rounded-2xl border border-heritage-line/50 bg-heritage-panel p-5 transition hover:bg-white hover:shadow-card"
+                            >
+                                <p class="font-black text-heritage-ink">{{ quiz.title }}</p>
+                                <p class="mt-2 text-sm text-heritage-muted">{{ quiz.category_name }} / {{ quiz.questions_count }} questions / {{ quiz.estimated_minutes || 8 }} min</p>
+                                <div class="mt-4">
+                                    <AppBadge variant="neutral">{{ quiz.difficulty }}</AppBadge>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+
+                <aside class="space-y-8">
+                    <article class="section-panel">
+                        <h2 class="text-2xl font-black text-heritage-ink">Progress by category</h2>
+                        <div class="mt-5 grid gap-5">
+                            <div v-for="category in categoryProgress" :key="category.slug">
+                                <ProgressBar :value="Number(category.progress_percentage || 0)" :label="category.name" />
+                                <p class="mt-2 text-sm text-heritage-muted">
+                                    {{ category.completed_quizzes }} of {{ category.total_published_quizzes }} quizzes completed
+                                    <span v-if="category.best_percentage !== null"> / best {{ formatPercentage(category.best_percentage) }}</span>
+                                </p>
                             </div>
                         </div>
-                        <div class="mt-6">
-                            <ProgressBar :value="80" label="Quiz progress" tone="navy" />
-                        </div>
-                        <PrimaryButton href="/quizzes/history/start" class="mt-6">Continue quiz</PrimaryButton>
-                    </div>
-                </article>
+                    </article>
 
-                <article class="section-panel">
-                    <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <h2 class="text-2xl font-black text-heritage-ink">Recommended quizzes</h2>
-                            <p class="mt-1 text-sm text-heritage-muted">Short lessons based on your recent history progress.</p>
+                    <article class="section-panel">
+                        <h2 class="text-2xl font-black text-heritage-ink">Learning streak</h2>
+                        <div class="mt-5 rounded-2xl bg-heritage-gold-faint p-5">
+                            <p class="text-4xl font-black text-heritage-gold-deep">{{ dashboard.current_streak || 0 }} days</p>
+                            <p class="mt-2 text-sm font-semibold text-heritage-muted">Based on consecutive days with completed quiz attempts.</p>
                         </div>
-                        <PrimaryButton href="/quizzes" variant="soft" size="sm">View all</PrimaryButton>
-                    </div>
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <div v-for="quiz in historyQuizzes.slice(1, 5)" :key="quiz.title" class="rounded-2xl border border-heritage-line/50 bg-heritage-panel p-5 transition hover:bg-white hover:shadow-card">
-                            <p class="font-black text-heritage-ink">{{ quiz.title }}</p>
-                            <p class="mt-2 text-sm text-heritage-muted">{{ quiz.questions }} questions / {{ quiz.time }}</p>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <aside class="space-y-8">
-                <article class="section-panel">
-                    <h2 class="text-2xl font-black text-heritage-ink">Progress by category</h2>
-                    <div class="mt-5 grid gap-5">
-                        <ProgressBar v-for="category in progressCategories.slice(0, 5)" :key="category.title" :value="category.progress" :label="category.title" />
-                    </div>
-                </article>
-
-                <article class="section-panel">
-                    <h2 class="text-2xl font-black text-heritage-ink">Recent results</h2>
-                    <div class="mt-5 grid gap-3">
-                        <div v-for="result in recentResults" :key="result.quiz" class="rounded-2xl bg-heritage-panel p-4">
-                            <div class="flex items-center justify-between gap-4">
-                                <p class="font-black text-heritage-ink">{{ result.quiz }}</p>
-                                <span class="font-black text-heritage-red">{{ result.score }}</span>
-                            </div>
-                            <p class="mt-1 text-sm text-heritage-muted">{{ result.points }} points / {{ result.date }}</p>
-                        </div>
-                    </div>
-                </article>
-            </aside>
-        </section>
+                    </article>
+                </aside>
+            </section>
+        </template>
     </DashboardLayout>
 </template>

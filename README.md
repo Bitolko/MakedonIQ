@@ -100,6 +100,8 @@ Authenticated endpoints:
 ```text
 POST /api/quizzes/{quizSlug}/attempts
 GET /api/quiz-attempts/{attemptId}
+GET /api/me/dashboard
+GET /api/me/progress
 ```
 
 Submission payload:
@@ -118,6 +120,47 @@ Submission payload:
 The submission endpoint validates that every submitted question belongs to the quiz and every selected answer belongs to its question. It creates a `quiz_attempt`, creates matching `quiz_attempt_answers`, calculates score, percentage, points, and pass/fail, then returns a result URL.
 
 Attempt results are authenticated and owner-only. Correct answers and explanations are returned only from the completed-attempt endpoint, after the current user has been authorized to view that attempt.
+
+## Dashboard And Progress API
+
+Dashboard and progress analytics now use Laravel session/cookie authentication. Vue requests include `Accept: application/json` and `credentials: same-origin`; unsafe requests continue to include the CSRF token. Token auth, Breeze, and Inertia are not used.
+
+Authenticated analytics endpoints:
+
+```text
+GET /api/me/dashboard
+GET /api/me/progress
+```
+
+Current dashboard analytics:
+
+- User summary with name and email.
+- Total points, completed quiz count, total attempts, passed attempts, average score, best score, and a simple completed-day streak.
+- Latest five completed attempts with result URLs.
+- Recommended published quizzes the user has not completed yet, with latest published quizzes as a fallback.
+- Category progress across published categories and published quizzes.
+
+Current progress analytics:
+
+- Overall points, attempts, completed quizzes, average score, best score, and passed attempts.
+- Category progress with completed quiz counts and best category score.
+- Latest 20 completed quiz attempts.
+- Derived achievements: First Quiz Completed, Scored 70%+, Perfect Score, Completed 3 Quizzes, and Macedonian Explorer.
+- Recent score trend percentages. No chart library is used.
+
+Analytics are scoped to the authenticated user with `quiz_attempts.user_id`; users cannot fetch another user's dashboard, progress, or attempt result data through these endpoints.
+
+Local dashboard/progress test flow:
+
+```text
+1. Run php artisan migrate:fresh --seed.
+2. Register a new user or log in with test@example.com / password.
+3. Complete at least one quiz.
+4. Visit /dashboard and confirm points, attempt counts, category progress, recommendations, and recent results are real.
+5. Visit /progress and confirm quiz history, achievements, and score trends are real.
+6. Log out and confirm /dashboard, /progress, /api/me/dashboard, and /api/me/progress require authentication.
+7. Log in as a second user and confirm the second user does not see the first user's attempts.
+```
 
 Local test flow:
 
@@ -153,7 +196,7 @@ The older history URLs still work as aliases:
 /quizzes/history/results
 ```
 
-Backend scoring, saved attempts, and real result display are now built. Admin CRUD, roles, payments, subscriptions, and dashboard/progress analytics are intentionally not built yet.
+Backend scoring, saved attempts, real result display, and authenticated dashboard/progress analytics are now built. Admin CRUD, roles, payments, subscriptions, and advanced analytics are intentionally not built yet.
 
 ## About Laravel
 
