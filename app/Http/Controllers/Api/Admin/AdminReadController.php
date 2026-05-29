@@ -130,8 +130,15 @@ class AdminReadController extends Controller
             ->select('questions.*')
             ->join('quizzes', 'quizzes.id', '=', 'questions.quiz_id')
             ->join('categories', 'categories.id', '=', 'quizzes.category_id')
-            ->with(['quiz.category', 'correctAnswer'])
-            ->withCount(['answers as answers_count'])
+            ->with([
+                'quiz.category',
+                'correctAnswer',
+                'answers' => fn ($query) => $query->ordered(),
+            ])
+            ->withCount([
+                'answers as answers_count',
+                'attemptAnswers as attempt_answers_count',
+            ])
             ->orderBy('categories.sort_order')
             ->orderBy('categories.name_en')
             ->orderBy('quizzes.sort_order')
@@ -154,8 +161,17 @@ class AdminReadController extends Controller
                 'points' => $question->points,
                 'is_published' => $question->is_published,
                 'answers_count' => $question->answers_count,
+                'attempt_answers_count' => $question->attempt_answers_count,
+                'used_in_attempts' => $question->attempt_answers_count > 0,
                 'correct_answer_en' => $question->correctAnswer?->answer_en,
                 'correct_answer_mk' => $question->correctAnswer?->answer_mk,
+                'answers' => $question->answers->map(fn ($answer): array => [
+                    'id' => $answer->id,
+                    'answer_en' => $answer->answer_en,
+                    'answer_mk' => $answer->answer_mk,
+                    'sort_order' => $answer->sort_order,
+                    'is_correct' => $answer->is_correct,
+                ])->values(),
                 'created_at' => $question->created_at?->toISOString(),
                 'updated_at' => $question->updated_at?->toISOString(),
             ])

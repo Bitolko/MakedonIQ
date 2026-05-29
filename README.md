@@ -158,6 +158,7 @@ Protected admin web routes:
 
 ```text
 /admin
+/admin/categories
 /admin/quizzes
 /admin/questions
 ```
@@ -190,7 +191,25 @@ GET /api/admin/questions
 GET /api/admin/attempts
 ```
 
-All admin API endpoints require an authenticated admin user. Category and quiz slugs are generated from the English name/title when left blank, with numeric suffixes added when needed for uniqueness. Deleting categories is blocked when they contain quizzes. Deleting quizzes is blocked when they contain questions or attempts, so unpublishing is the safer recommended action. Question and answer CRUD is still coming soon.
+Admin question builder endpoints:
+
+```text
+GET /api/admin/quizzes/{quiz}/questions
+POST /api/admin/quizzes/{quiz}/questions
+GET /api/admin/questions/{question}
+PATCH /api/admin/questions/{question}
+DELETE /api/admin/questions/{question}
+```
+
+All admin API endpoints require an authenticated admin user. Category and quiz slugs are generated from the English name/title when left blank, with numeric suffixes added when needed for uniqueness. Deleting categories is blocked when they contain quizzes. Deleting quizzes is blocked when they contain questions or attempts, so unpublishing is the safer recommended action.
+
+Question builder rules:
+
+- Each question must have exactly four answers.
+- Exactly one answer must be marked correct.
+- Public quiz-taking endpoints still return answer text and IDs without exposing `is_correct`.
+- Questions used in saved attempts cannot be deleted.
+- Questions used in saved attempts cannot have their answer set replaced; unpublish the old question and create a replacement instead.
 
 To make a local user an admin, run:
 
@@ -204,7 +223,7 @@ Then update the user by email:
 App\Models\User::where('email', 'your-email@example.com')->update(['is_admin' => true]);
 ```
 
-After changing admin status, log out and log back in so the frontend auth payload includes the latest `is_admin` value. Admin category and quiz CRUD are available; question/answer CRUD and advanced content management are intentionally not built yet.
+After changing admin status, log out and log back in so the frontend auth payload includes the latest `is_admin` value. Admin category, quiz, question, and answer-option management are available. Payments, subscriptions, and advanced reporting are intentionally not built yet.
 
 Local dashboard/progress test flow:
 

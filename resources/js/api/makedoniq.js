@@ -142,6 +142,26 @@ export async function getAdminQuestions() {
     return fetchJson('/api/admin/questions');
 }
 
+export async function getAdminQuizQuestions(quizId) {
+    return fetchJson(`/api/admin/quizzes/${quizId}/questions`);
+}
+
+export async function createAdminQuestion(quizId, payload) {
+    return postJson(`/api/admin/quizzes/${quizId}/questions`, payload);
+}
+
+export async function getAdminQuestion(questionId) {
+    return fetchJson(`/api/admin/questions/${questionId}`);
+}
+
+export async function updateAdminQuestion(questionId, payload) {
+    return patchJson(`/api/admin/questions/${questionId}`, payload);
+}
+
+export async function deleteAdminQuestion(questionId) {
+    return deleteJson(`/api/admin/questions/${questionId}`);
+}
+
 export async function getAdminAttempts() {
     return fetchJson('/api/admin/attempts');
 }
