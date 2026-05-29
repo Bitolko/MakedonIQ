@@ -135,31 +135,86 @@ GET /api/me/progress
 Current dashboard analytics:
 
 - User summary with name and email.
-- Total points, completed quiz count, total attempts, passed attempts, average score, best score, and a simple completed-day streak.
-- Latest five completed attempts with result URLs.
+- Summary stats for total points, completed quiz count, total attempts, passed attempts, average score, best score, and a simple completed-day streak.
+- Latest five completed attempts with bilingual quiz/category labels and result URLs.
 - Recommended published quizzes the user has not completed yet, with latest published quizzes as a fallback.
-- Category progress across published categories and published quizzes.
+- Category progress across published categories and published quizzes, including completed quiz count, best score, and points.
 
 Current progress analytics:
 
-- Overall points, attempts, completed quizzes, average score, best score, and passed attempts.
-- Category progress with completed quiz counts and best category score.
-- Latest 20 completed quiz attempts.
-- Derived achievements: First Quiz Completed, Scored 70%+, Perfect Score, Completed 3 Quizzes, and Macedonian Explorer.
+- Overall points, attempts, completed quizzes, average score, best score, passed attempts, and current streak.
+- Category progress with completed quiz counts, best category score, and points.
+- Latest 20 completed quiz attempts with bilingual quiz/category labels.
+- Derived achievements: First Quiz Completed, Passed First Quiz, Perfect Score, Completed 3 Quizzes, Macedonian Explorer, and Dedicated Learner.
 - Recent score trend percentages. No chart library is used.
 
-Analytics are scoped to the authenticated user with `quiz_attempts.user_id`; users cannot fetch another user's dashboard, progress, or attempt result data through these endpoints.
+Dashboard and progress stats are generated from `quiz_attempts`, `quiz_attempt_answers`, `quizzes`, and `categories`. Analytics are scoped to the authenticated user with `quiz_attempts.user_id`; users cannot fetch another user's dashboard, progress, or attempt result data through these endpoints.
+
+## Admin Access
+
+Admin pages are protected with Laravel session auth plus a simple `users.is_admin` boolean. Normal registered users are not admins by default.
+
+Protected admin web routes:
+
+```text
+/admin
+/admin/quizzes
+/admin/questions
+```
+
+Admin category CRUD endpoints:
+
+```text
+GET /api/admin/categories
+POST /api/admin/categories
+GET /api/admin/categories/{category}
+PATCH /api/admin/categories/{category}
+DELETE /api/admin/categories/{category}
+```
+
+Admin quiz CRUD endpoints:
+
+```text
+GET /api/admin/quizzes
+POST /api/admin/quizzes
+GET /api/admin/quizzes/{quiz}
+PATCH /api/admin/quizzes/{quiz}
+DELETE /api/admin/quizzes/{quiz}
+```
+
+Admin read-only reporting endpoints:
+
+```text
+GET /api/admin/overview
+GET /api/admin/questions
+GET /api/admin/attempts
+```
+
+All admin API endpoints require an authenticated admin user. Category and quiz slugs are generated from the English name/title when left blank, with numeric suffixes added when needed for uniqueness. Deleting categories is blocked when they contain quizzes. Deleting quizzes is blocked when they contain questions or attempts, so unpublishing is the safer recommended action. Question and answer CRUD is still coming soon.
+
+To make a local user an admin, run:
+
+```bash
+php artisan tinker
+```
+
+Then update the user by email:
+
+```php
+App\Models\User::where('email', 'your-email@example.com')->update(['is_admin' => true]);
+```
+
+After changing admin status, log out and log back in so the frontend auth payload includes the latest `is_admin` value. Admin category and quiz CRUD are available; question/answer CRUD and advanced content management are intentionally not built yet.
 
 Local dashboard/progress test flow:
 
 ```text
-1. Run php artisan migrate:fresh --seed.
-2. Register a new user or log in with test@example.com / password.
-3. Complete at least one quiz.
-4. Visit /dashboard and confirm points, attempt counts, category progress, recommendations, and recent results are real.
-5. Visit /progress and confirm quiz history, achievements, and score trends are real.
-6. Log out and confirm /dashboard, /progress, /api/me/dashboard, and /api/me/progress require authentication.
-7. Log in as a second user and confirm the second user does not see the first user's attempts.
+1. Register a new user or log in with test@example.com / password.
+2. Complete at least one quiz.
+3. Visit /dashboard and confirm points, attempt counts, category progress, recommendations, and recent results are real.
+4. Visit /progress and confirm quiz history, achievements, and score trends are real.
+5. Log out and confirm /dashboard, /progress, /api/me/dashboard, and /api/me/progress require authentication.
+6. Log in as a second user and confirm the second user does not see the first user's attempts.
 ```
 
 Local test flow:

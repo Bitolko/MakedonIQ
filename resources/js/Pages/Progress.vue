@@ -64,6 +64,13 @@ const statCards = computed(() => [
         icon: 'PB',
         tone: 'gold',
     },
+    {
+        label: 'Current streak',
+        value: `${formatNumber(overall.value.current_streak)} days`,
+        detail: 'Consecutive completed quiz days',
+        icon: 'ST',
+        tone: 'navy',
+    },
 ]);
 
 function formatNumber(value) {
@@ -86,6 +93,17 @@ function formatDate(value) {
         month: 'short',
         year: 'numeric',
     }).format(new Date(value));
+}
+
+function achievementIcon(key) {
+    return {
+        first_quiz_completed: '01',
+        passed_first_quiz: '70',
+        perfect_score: '100',
+        completed_three_quizzes: '03',
+        macedonian_explorer: 'MK',
+        dedicated_learner: 'ST',
+    }[key] || 'IQ';
 }
 </script>
 
@@ -120,7 +138,7 @@ function formatDate(value) {
         </article>
 
         <template v-else>
-            <section class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <section class="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
                 <StatCard v-for="stat in statCards" :key="stat.label" :stat="stat" />
             </section>
 
@@ -128,7 +146,7 @@ function formatDate(value) {
                 <article v-for="category in categoryProgress" :key="category.slug" class="soft-card soft-card-hover p-6">
                     <div class="mb-5 flex items-center justify-between gap-4">
                         <div>
-                            <p class="text-xl font-black text-heritage-ink">{{ category.name }}</p>
+                            <p class="text-xl font-black text-heritage-ink">{{ category.name_en }}</p>
                             <p class="mt-1 text-sm text-heritage-muted">{{ category.completed_quizzes }} of {{ category.total_published_quizzes }} quizzes completed</p>
                         </div>
                         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-heritage-panel text-sm font-black text-heritage-red">{{ category.icon || 'IQ' }}</span>
@@ -137,6 +155,7 @@ function formatDate(value) {
                     <p class="mt-3 text-sm font-semibold text-heritage-muted">
                         Best score:
                         <span class="text-heritage-ink">{{ category.best_percentage === null ? 'No attempts yet' : formatPercentage(category.best_percentage) }}</span>
+                        / {{ formatNumber(category.total_points) }} points
                     </p>
                 </article>
             </section>
@@ -161,9 +180,10 @@ function formatDate(value) {
                             <tbody>
                                 <tr v-for="attempt in quizHistory" :key="attempt.id" class="border-t border-heritage-line/40">
                                     <td class="px-6 py-4">
-                                        <a :href="attempt.result_url || '/progress'" class="font-bold text-heritage-ink hover:text-heritage-red">{{ attempt.quiz_title }}</a>
+                                        <a :href="attempt.result_url || '/progress'" class="font-bold text-heritage-ink hover:text-heritage-red">{{ attempt.quiz_title_en }}</a>
+                                        <p class="mt-1 text-xs font-semibold text-heritage-muted">{{ attempt.correct_answers }} of {{ attempt.total_questions }} correct</p>
                                     </td>
-                                    <td class="px-6 py-4 text-heritage-muted">{{ attempt.category }}</td>
+                                    <td class="px-6 py-4 text-heritage-muted">{{ attempt.category_name_en }}</td>
                                     <td class="px-6 py-4 font-black text-heritage-red">{{ formatPercentage(attempt.percentage) }}</td>
                                     <td class="px-6 py-4">
                                         <span :class="['rounded-full px-3 py-1 text-xs font-black uppercase', attempt.passed ? 'bg-emerald-50 text-emerald-800' : 'bg-heritage-red-faint text-heritage-red']">
@@ -176,7 +196,9 @@ function formatDate(value) {
                         </table>
                     </div>
                     <div v-else class="p-6 text-heritage-muted">
-                        Complete a quiz to start building your history.
+                        <p class="font-bold text-heritage-ink">No quiz history yet.</p>
+                        <p class="mt-2 text-sm">Explore a category and complete a quiz to start building your progress timeline.</p>
+                        <PrimaryButton href="/quizzes" class="mt-5" size="sm">Explore quizzes</PrimaryButton>
                     </div>
                 </article>
 
@@ -186,19 +208,18 @@ function formatDate(value) {
                         <div class="mt-5 grid gap-3">
                             <div
                                 v-for="achievement in achievements"
-                                :key="achievement.title"
-                                :class="['flex gap-4 rounded-2xl p-4', achievement.earned ? 'bg-heritage-panel' : 'bg-white opacity-60 ring-1 ring-heritage-line/50']"
+                                :key="achievement.key"
+                                :class="['flex gap-4 rounded-2xl p-4', achievement.unlocked ? 'bg-heritage-panel' : 'bg-white opacity-60 ring-1 ring-heritage-line/50']"
                             >
-                                <span :class="['flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl font-black', achievement.earned ? 'bg-heritage-gold-faint text-heritage-gold-deep' : 'bg-heritage-panel text-heritage-muted']">
-                                    {{ achievement.icon }}
+                                <span :class="['flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl font-black', achievement.unlocked ? 'bg-heritage-gold-faint text-heritage-gold-deep' : 'bg-heritage-panel text-heritage-muted']">
+                                    {{ achievementIcon(achievement.key) }}
                                 </span>
                                 <div>
                                     <div class="flex flex-wrap items-center gap-2">
                                         <p class="font-black text-heritage-ink">{{ achievement.title }}</p>
-                                        <AppBadge :variant="achievement.earned ? 'green' : 'neutral'">{{ achievement.earned ? 'Earned' : 'Not yet' }}</AppBadge>
+                                        <AppBadge :variant="achievement.unlocked ? 'green' : 'neutral'">{{ achievement.unlocked ? 'Unlocked' : 'Locked' }}</AppBadge>
                                     </div>
                                     <p class="text-sm text-heritage-muted">{{ achievement.description }}</p>
-                                    <p v-if="achievement.earned_at" class="mt-1 text-xs font-bold text-heritage-muted">{{ formatDate(achievement.earned_at) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -207,7 +228,7 @@ function formatDate(value) {
                     <article class="section-panel">
                         <h2 class="text-2xl font-black text-heritage-ink">Score trends</h2>
                         <div v-if="scoreTrends.length" class="mt-6 flex h-44 items-end gap-3 rounded-2xl bg-heritage-panel p-4">
-                            <div v-for="trend in scoreTrends" :key="trend.id" class="flex h-full w-full flex-col justify-end gap-2">
+                            <div v-for="trend in scoreTrends" :key="trend.attempt_id" class="flex h-full w-full flex-col justify-end gap-2">
                                 <div
                                     class="w-full rounded-t-xl bg-linear-to-t from-heritage-red to-heritage-gold transition-all"
                                     :style="{ height: `${Math.max(Number(trend.percentage || 0), 6)}%` }"

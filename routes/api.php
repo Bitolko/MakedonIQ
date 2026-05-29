@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminCategoryController;
+use App\Http\Controllers\Api\Admin\AdminQuizController;
+use App\Http\Controllers\Api\Admin\AdminReadController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\QuizAttemptController;
@@ -18,3 +21,22 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('/quizzes/{quiz:slug}/attempts', [QuizAttemptController::class, 'store'])->name('api.quizzes.attempts.store');
     Route::get('/quiz-attempts/{attempt}', [QuizAttemptController::class, 'show'])->name('api.quiz-attempts.show');
 });
+
+Route::middleware(['web', 'auth', 'admin'])
+    ->prefix('admin')
+    ->name('api.admin.')
+    ->group(function (): void {
+        Route::get('/overview', [AdminReadController::class, 'overview'])->name('overview');
+        Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{category}', [AdminCategoryController::class, 'show'])->name('categories.show');
+        Route::match(['put', 'patch'], '/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
+        Route::post('/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
+        Route::get('/quizzes/{quiz}', [AdminQuizController::class, 'show'])->name('quizzes.show');
+        Route::match(['put', 'patch'], '/quizzes/{quiz}', [AdminQuizController::class, 'update'])->name('quizzes.update');
+        Route::delete('/quizzes/{quiz}', [AdminQuizController::class, 'destroy'])->name('quizzes.destroy');
+        Route::get('/questions', [AdminReadController::class, 'questions'])->name('questions');
+        Route::get('/attempts', [AdminReadController::class, 'attempts'])->name('attempts');
+    });

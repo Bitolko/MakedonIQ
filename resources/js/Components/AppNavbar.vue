@@ -15,12 +15,14 @@ const appState = window.MakedonIQ || {};
 const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 const user = computed(() => appState.auth?.user || null);
 const isAuthenticated = computed(() => Boolean(user.value));
+const isAdmin = computed(() => Boolean(user.value?.is_admin));
 const displayName = computed(() => user.value?.name || 'Learner');
 
 const navItems = computed(() => {
     if (props.variant === 'admin') {
         return [
             { label: 'Admin Dashboard', href: '/admin' },
+            { label: 'Categories', href: '/admin/categories' },
             { label: 'Quizzes', href: '/admin/quizzes' },
             { label: 'Questions', href: '/admin/questions' },
             { label: 'Users', href: '/admin', soon: true },
@@ -29,11 +31,17 @@ const navItems = computed(() => {
     }
 
     if (props.variant === 'dashboard') {
-        return [
+        const items = [
             { label: 'Dashboard', href: '/dashboard' },
             { label: 'Quizzes', href: '/quizzes' },
             { label: 'Progress', href: '/progress' },
         ];
+
+        if (isAdmin.value) {
+            items.push({ label: 'Admin', href: '/admin' });
+        }
+
+        return items;
     }
 
     return [
@@ -91,6 +99,7 @@ const isActive = (href) => {
                 </div>
 
                 <div v-else-if="variant === 'public' && isAuthenticated" class="hidden items-center gap-3 md:flex">
+                    <a v-if="isAdmin" href="/admin" class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">Admin</a>
                     <a href="/dashboard" class="rounded-full bg-heritage-panel px-4 py-2 text-sm font-black text-heritage-red">Dashboard</a>
                     <form action="/logout" method="POST">
                         <input type="hidden" name="_token" :value="csrfToken">
@@ -122,6 +131,7 @@ const isActive = (href) => {
                     <a href="/login" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Login</a>
                 </div>
                 <div v-else-if="variant === 'public' && isAuthenticated" class="grid grid-cols-2 gap-3">
+                    <a v-if="isAdmin" href="/admin" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-gold-deep shadow-card">Admin</a>
                     <a href="/dashboard" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Dashboard</a>
                     <form action="/logout" method="POST">
                         <input type="hidden" name="_token" :value="csrfToken">

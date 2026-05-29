@@ -23,6 +23,7 @@ onMounted(async () => {
 });
 
 const user = computed(() => dashboard.value?.user || currentUser() || {});
+const summary = computed(() => dashboard.value?.summary || {});
 const displayName = computed(() => user.value.name || 'learner');
 const recentAttempts = computed(() => dashboard.value?.recent_attempts || []);
 const recommendedQuizzes = computed(() => dashboard.value?.recommended_quizzes || []);
@@ -30,15 +31,15 @@ const categoryProgress = computed(() => dashboard.value?.category_progress || []
 
 const heroStats = computed(() => [
     {
-        value: `${dashboard.value?.current_streak || 0}`,
+        value: `${summary.value.current_streak || 0}`,
         label: 'day streak',
     },
     {
-        value: formatNumber(dashboard.value?.completed_quizzes_count),
+        value: formatNumber(summary.value.completed_quizzes_count),
         label: 'quizzes',
     },
     {
-        value: formatNumber(dashboard.value?.total_points),
+        value: formatNumber(summary.value.total_points),
         label: 'points',
     },
 ]);
@@ -46,24 +47,31 @@ const heroStats = computed(() => [
 const statCards = computed(() => [
     {
         label: 'Total points',
-        value: formatNumber(dashboard.value?.total_points),
-        detail: `${formatNumber(dashboard.value?.passed_attempts_count)} passed attempts`,
+        value: formatNumber(summary.value.total_points),
+        detail: `${formatNumber(summary.value.passed_attempts_count)} passed attempts`,
         icon: 'XP',
         tone: 'gold',
     },
     {
         label: 'Completed quizzes',
-        value: formatNumber(dashboard.value?.completed_quizzes_count),
-        detail: `${formatNumber(dashboard.value?.total_attempts_count)} total attempts`,
+        value: formatNumber(summary.value.completed_quizzes_count),
+        detail: `${formatNumber(summary.value.total_attempts_count)} total attempts`,
         icon: 'OK',
         tone: 'red',
     },
     {
         label: 'Average score',
-        value: formatPercentage(dashboard.value?.average_percentage),
-        detail: `Best score ${formatPercentage(dashboard.value?.best_percentage)}`,
+        value: formatPercentage(summary.value.average_percentage),
+        detail: `Best score ${formatPercentage(summary.value.best_percentage)}`,
         icon: '%',
         tone: 'navy',
+    },
+    {
+        label: 'Current streak',
+        value: `${formatNumber(summary.value.current_streak)} days`,
+        detail: 'Completed quiz days in a row',
+        icon: 'ST',
+        tone: 'gold',
     },
 ]);
 
@@ -122,7 +130,7 @@ function formatDate(value) {
         </article>
 
         <template v-else>
-            <section class="grid gap-6 md:grid-cols-3">
+            <section class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 <StatCard v-for="stat in statCards" :key="stat.label" :stat="stat" />
             </section>
 
@@ -146,8 +154,8 @@ function formatDate(value) {
                             >
                                 <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                                     <div>
-                                        <p class="font-black text-heritage-ink">{{ attempt.quiz_title }}</p>
-                                        <p class="mt-1 text-sm text-heritage-muted">{{ attempt.category_name }} / {{ formatDate(attempt.completed_at) }}</p>
+                                        <p class="font-black text-heritage-ink">{{ attempt.quiz_title_en }}</p>
+                                        <p class="mt-1 text-sm text-heritage-muted">{{ attempt.category_name_en }} / {{ formatDate(attempt.completed_at) }}</p>
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <span :class="['rounded-full px-3 py-1 text-xs font-black uppercase', attempt.passed ? 'bg-emerald-50 text-emerald-800' : 'bg-heritage-red-faint text-heritage-red']">
@@ -162,8 +170,10 @@ function formatDate(value) {
                             </a>
                         </div>
 
-                        <div v-else class="rounded-2xl bg-heritage-panel p-5 text-heritage-muted">
-                            Complete a quiz to see your recent results here.
+                        <div v-else class="rounded-2xl bg-heritage-panel p-5">
+                            <p class="font-bold text-heritage-ink">No completed quizzes yet.</p>
+                            <p class="mt-2 text-sm text-heritage-muted">Start your first quiz to unlock points, results, and progress tracking.</p>
+                            <PrimaryButton href="/quizzes" class="mt-5" size="sm">Start your first quiz</PrimaryButton>
                         </div>
                     </article>
 
@@ -183,8 +193,8 @@ function formatDate(value) {
                                 :href="quiz.start_url"
                                 class="rounded-2xl border border-heritage-line/50 bg-heritage-panel p-5 transition hover:bg-white hover:shadow-card"
                             >
-                                <p class="font-black text-heritage-ink">{{ quiz.title }}</p>
-                                <p class="mt-2 text-sm text-heritage-muted">{{ quiz.category_name }} / {{ quiz.questions_count }} questions / {{ quiz.estimated_minutes || 8 }} min</p>
+                                <p class="font-black text-heritage-ink">{{ quiz.title_en }}</p>
+                                <p class="mt-2 text-sm text-heritage-muted">{{ quiz.category_name_en }} / {{ quiz.question_count }} questions / {{ quiz.estimated_minutes || 8 }} min</p>
                                 <div class="mt-4">
                                     <AppBadge variant="neutral">{{ quiz.difficulty }}</AppBadge>
                                 </div>
@@ -198,9 +208,9 @@ function formatDate(value) {
                         <h2 class="text-2xl font-black text-heritage-ink">Progress by category</h2>
                         <div class="mt-5 grid gap-5">
                             <div v-for="category in categoryProgress" :key="category.slug">
-                                <ProgressBar :value="Number(category.progress_percentage || 0)" :label="category.name" />
+                                <ProgressBar :value="Number(category.progress_percentage || 0)" :label="category.name_en" />
                                 <p class="mt-2 text-sm text-heritage-muted">
-                                    {{ category.completed_quizzes }} of {{ category.total_published_quizzes }} quizzes completed
+                                    {{ category.completed_quizzes }} of {{ category.total_published_quizzes }} quizzes completed / {{ formatNumber(category.total_points) }} points
                                     <span v-if="category.best_percentage !== null"> / best {{ formatPercentage(category.best_percentage) }}</span>
                                 </p>
                             </div>
@@ -210,7 +220,7 @@ function formatDate(value) {
                     <article class="section-panel">
                         <h2 class="text-2xl font-black text-heritage-ink">Learning streak</h2>
                         <div class="mt-5 rounded-2xl bg-heritage-gold-faint p-5">
-                            <p class="text-4xl font-black text-heritage-gold-deep">{{ dashboard.current_streak || 0 }} days</p>
+                            <p class="text-4xl font-black text-heritage-gold-deep">{{ summary.current_streak || 0 }} days</p>
                             <p class="mt-2 text-sm font-semibold text-heritage-muted">Based on consecutive days with completed quiz attempts.</p>
                         </div>
                     </article>
