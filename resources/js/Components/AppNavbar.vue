@@ -106,7 +106,7 @@ const isActive = (href) => {
                 </nav>
 
                 <div v-if="variant === 'public' && !isAuthenticated" class="hidden items-center gap-3 md:flex">
-                    <button class="rounded-full border border-heritage-line bg-white px-3 py-2 text-xs font-black text-heritage-muted shadow-card">EN / MK</button>
+                    <span class="rounded-full border border-heritage-line bg-white px-3 py-2 text-xs font-black text-heritage-muted shadow-card">EN / MK</span>
                     <a href="/login" class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red">Login</a>
                     <PrimaryButton href="/register" size="sm">Start Learning</PrimaryButton>
                 </div>
@@ -122,7 +122,7 @@ const isActive = (href) => {
                 </div>
 
                 <div v-else-if="variant === 'dashboard'" class="hidden items-center gap-3 md:flex">
-                    <span class="rounded-full bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep">5 day streak</span>
+                    <span class="rounded-full bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep">Learning hub</span>
                     <span class="rounded-full bg-heritage-panel px-3 py-2 text-xs font-black text-heritage-muted">{{ displayName }}</span>
                     <form action="/logout" method="POST">
                         <input type="hidden" name="_token" :value="csrfToken">
@@ -141,7 +141,7 @@ const isActive = (href) => {
 
             <div v-if="open" class="grid gap-3 border-t border-heritage-line/40 py-4 md:hidden">
                 <div v-if="variant === 'public' && !isAuthenticated" class="grid grid-cols-2 gap-3">
-                    <button class="rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-muted shadow-card">EN / MK</button>
+                    <span class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-muted shadow-card">EN / MK</span>
                     <a href="/login" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Login</a>
                 </div>
                 <div v-else-if="variant === 'public' && isAuthenticated" class="grid grid-cols-2 gap-3">

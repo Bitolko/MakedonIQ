@@ -152,7 +152,7 @@ function formatDate(value) {
         </article>
 
         <template v-else>
-            <div v-if="error" class="mb-5 rounded-2xl border border-heritage-red/20 bg-heritage-red-faint px-5 py-4 text-sm font-bold text-heritage-red-dark">
+            <div v-if="error" class="mb-5 rounded-2xl border border-heritage-red/20 bg-heritage-red-faint px-5 py-4 text-sm font-bold text-heritage-red-dark" role="alert">
                 {{ error }}
             </div>
 
@@ -189,19 +189,19 @@ function formatDate(value) {
                             <p class="mt-1 text-sm text-heritage-muted">Your admin status cannot be changed here.</p>
                         </div>
 
-                        <div v-if="profileSuccess" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-800">
+                        <div v-if="profileSuccess" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-800" role="status">
                             {{ profileSuccess }}
                         </div>
 
                         <div class="grid gap-5 md:grid-cols-2">
                             <label class="block">
                                 <span class="label">Name</span>
-                                <input v-model="profileForm.name" class="field mt-2" type="text">
+                                <input v-model="profileForm.name" class="field mt-2" type="text" autocomplete="name">
                                 <span v-if="fieldError(profileErrors, 'name')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError(profileErrors, 'name') }}</span>
                             </label>
                             <label class="block">
                                 <span class="label">Email</span>
-                                <input v-model="profileForm.email" class="field mt-2" type="email">
+                                <input v-model="profileForm.email" class="field mt-2" type="email" autocomplete="email">
                                 <span v-if="fieldError(profileErrors, 'email')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError(profileErrors, 'email') }}</span>
                             </label>
                         </div>
@@ -230,7 +230,7 @@ function formatDate(value) {
                             <p class="mt-1 text-sm text-heritage-muted">Enter your current password before choosing a new one.</p>
                         </div>
 
-                        <div v-if="passwordSuccess" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-800">
+                        <div v-if="passwordSuccess" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-800" role="status">
                             {{ passwordSuccess }}
                         </div>
 

@@ -28,11 +28,14 @@ const old = appState.old || {};
                         </div>
                         <div>
                             <label class="label" for="preferred_language">Preferred language</label>
-                            <select id="preferred_language" class="field mt-2" name="preferred_language" :value="old.preferred_language || 'English'">
-                                <option value="English">English</option>
-                                <option value="Македонски">Македонски</option>
+                            <select id="preferred_language" class="field mt-2" name="preferred_language" :value="old.preferred_language || 'en'">
+                                <option value="en">English</option>
+                                <option value="mk">Македонски</option>
                             </select>
-                            <p class="mt-2 text-xs font-semibold text-heritage-muted">Saved later when learner profiles are added.</p>
+                            <p class="mt-2 text-xs font-semibold text-heritage-muted">Used as your default quiz language where bilingual content is available.</p>
+                            <div v-if="errors.preferred_language" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
+                                <p v-for="error in errors.preferred_language" :key="error">{{ error }}</p>
+                            </div>
                         </div>
                     </div>
                     <div>

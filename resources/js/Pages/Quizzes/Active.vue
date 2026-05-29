@@ -152,8 +152,8 @@ onMounted(async () => {
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="rounded-full bg-heritage-panel p-1">
-                            <button :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'EN' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'EN'">EN</button>
-                            <button :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'MK' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'MK'">MK</button>
+                            <button type="button" :aria-pressed="language === 'EN'" :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'EN' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'EN'">EN</button>
+                            <button type="button" :aria-pressed="language === 'MK'" :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'MK' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'MK'">MK</button>
                         </div>
                         <div class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">{{ answeredCount }} / {{ totalQuestions || 0 }}</div>
                     </div>
@@ -203,6 +203,7 @@ onMounted(async () => {
                         v-for="(answer, index) in currentQuestion.answers"
                         :key="answer.id"
                         type="button"
+                        :aria-pressed="selectedAnswerId === answer.id"
                         :class="[
                             'relative flex min-h-20 items-center rounded-2xl border-2 p-5 text-left shadow-card transition active:scale-[0.99]',
                             selectedAnswerId === answer.id ? 'border-heritage-gold bg-heritage-gold-faint text-heritage-gold-deep' : 'border-heritage-line bg-white text-heritage-ink hover:border-heritage-gold hover:bg-heritage-gold-faint/40',
@@ -230,7 +231,7 @@ onMounted(async () => {
                         <p class="text-sm text-heritage-muted">
                             {{ allAnswered ? 'Ready to submit when you reach the end.' : `${answeredCount} of ${totalQuestions || 0} questions answered.` }}
                         </p>
-                        <p v-if="submitError" class="mt-2 text-sm font-bold text-heritage-red">{{ submitError }}</p>
+                        <p v-if="submitError" class="mt-2 text-sm font-bold text-heritage-red" role="alert">{{ submitError }}</p>
                         <div v-if="showAuthPrompt" class="mt-3 flex flex-col gap-2 sm:flex-row">
                             <a class="button-soft rounded-2xl px-4 py-2 text-sm font-black" href="/login">Login to save score</a>
                             <a class="pressable-gold rounded-2xl px-4 py-2 text-sm font-black" href="/register">Create account</a>
@@ -244,7 +245,6 @@ onMounted(async () => {
                         v-else
                         size="lg"
                         :disabled="!allAnswered || isSubmitting"
-                        :class="{ 'pointer-events-none opacity-50': !allAnswered || isSubmitting }"
                         @click="submitAttempt"
                     >
                         {{ isSubmitting ? 'Submitting...' : 'Submit quiz' }}

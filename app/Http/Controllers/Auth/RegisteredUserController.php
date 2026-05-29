@@ -19,12 +19,14 @@ class RegisteredUserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'preferred_language' => ['nullable', 'in:en,mk'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => Str::lower($validated['email']),
+            'preferred_language' => $validated['preferred_language'] ?? 'en',
             'password' => Hash::make($validated['password']),
         ]);
 

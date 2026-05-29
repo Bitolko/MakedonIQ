@@ -99,7 +99,7 @@ onMounted(async () => {
             <template v-else>
             <section class="mx-auto max-w-4xl text-center">
                 <AppBadge :variant="resultAttempt?.passed ? 'green' : 'gold'">
-                    {{ hasAttempt ? 'Quiz result' : 'Result placeholder' }}
+                    {{ hasAttempt ? 'Quiz result' : 'Results preview' }}
                 </AppBadge>
                 <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
                     {{ hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First' }}

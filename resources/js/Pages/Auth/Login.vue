@@ -30,7 +30,7 @@ const old = appState.old || {};
                     <div>
                         <div class="flex items-center justify-between gap-4">
                             <label class="label" for="password">Password</label>
-                            <button class="text-sm font-bold text-heritage-red" type="button">Forgot password?</button>
+                            <button class="text-sm font-bold text-heritage-muted opacity-70" type="button" disabled aria-disabled="true">Password reset soon</button>
                         </div>
                         <input id="password" class="field mt-2" type="password" name="password" placeholder="Password" autocomplete="current-password" required>
                         <div v-if="errors.password" class="mt-2 rounded-2xl bg-heritage-red-faint px-4 py-3 text-sm font-bold text-heritage-red">
@@ -47,9 +47,9 @@ const old = appState.old || {};
                         <span class="text-xs font-black text-heritage-muted">OR</span>
                         <div class="h-px flex-1 bg-heritage-line" />
                     </div>
-                    <button class="button-ghost flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-3 text-sm font-black" type="button">
+                    <button class="button-ghost flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-2xl px-6 py-3 text-sm font-black opacity-60" type="button" disabled aria-disabled="true">
                         <span class="flex h-6 w-6 items-center justify-center rounded-full bg-heritage-panel text-xs font-black text-heritage-red">G</span>
-                        Continue with Google
+                        Google sign-in coming soon
                     </button>
                 </form>
 

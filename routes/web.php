@@ -38,3 +38,11 @@ Route::middleware(['auth', 'admin'])->group(function () use ($page): void {
     Route::get('/admin/quizzes', $page('Admin.Quizzes'))->name('admin.quizzes');
     Route::get('/admin/questions', $page('Admin.Questions'))->name('admin.questions');
 });
+
+Route::fallback(function () {
+    if (request()->is('api/*')) {
+        abort(404);
+    }
+
+    return response()->view('errors.404', [], 404);
+});

@@ -18,6 +18,10 @@ const props = defineProps({
         type: String,
         default: 'md',
     },
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const variantClasses = {
@@ -38,14 +42,15 @@ const classes = computed(() => [
     'inline-flex items-center justify-center gap-2 font-black transition',
     sizeClasses[props.size] || sizeClasses.md,
     variantClasses[props.variant] || variantClasses.red,
+    props.disabled ? 'pointer-events-none cursor-not-allowed opacity-60' : '',
 ]);
 </script>
 
 <template>
-    <a v-if="href" :href="href" :class="classes">
+    <a v-if="href" :href="disabled ? undefined : href" :class="classes" :aria-disabled="disabled">
         <slot />
     </a>
-    <button v-else :type="type" :class="classes">
+    <button v-else :type="type" :class="classes" :disabled="disabled">
         <slot />
     </button>
 </template>
