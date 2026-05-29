@@ -3,19 +3,20 @@ import { computed, onMounted, ref } from 'vue';
 import PublicLayout from '../../Components/PublicLayout.vue';
 import CategoryCard from '../../Components/CategoryCard.vue';
 import AppBadge from '../../Components/AppBadge.vue';
-import { categoryUrl, fetchJson } from '../../api/makedoniq';
+import { categoryUrl, fetchJson, localizedText, preferredLanguage } from '../../api/makedoniq';
 
 const categories = ref([]);
 const isLoading = ref(true);
 const error = ref('');
 const search = ref('');
+const language = preferredLanguage();
 
 const tones = ['red', 'gold', 'navy'];
 
 const categoryCards = computed(() => categories.value.map((category, index) => ({
     slug: category.slug,
-    title: category.name_en,
-    description: category.description_en,
+    title: localizedText(category, 'name', language),
+    description: localizedText(category, 'description', language),
     level: 'Published',
     quizzes: category.quizzes_count || 0,
     icon: category.icon || category.name_en.slice(0, 2).toUpperCase(),

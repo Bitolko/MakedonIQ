@@ -5,6 +5,7 @@ import About from './Pages/About.vue';
 import Contact from './Pages/Contact.vue';
 import Dashboard from './Pages/Dashboard.vue';
 import Progress from './Pages/Progress.vue';
+import Profile from './Pages/Profile.vue';
 import Login from './Pages/Auth/Login.vue';
 import Register from './Pages/Auth/Register.vue';
 import QuizIndex from './Pages/Quizzes/Index.vue';
@@ -30,6 +31,7 @@ const pages = {
     Contact: { component: Contact, title: 'Contact | MakedonIQ' },
     Dashboard: { component: Dashboard, title: 'Dashboard | MakedonIQ' },
     Progress: { component: Progress, title: 'My Progress | MakedonIQ' },
+    Profile: { component: Profile, title: 'Profile | MakedonIQ' },
     'Auth.Login': { component: Login, title: 'Login | MakedonIQ' },
     'Auth.Register': { component: Register, title: 'Register | MakedonIQ' },
     'Quizzes.Index': { component: QuizIndex, title: 'Quiz Categories | MakedonIQ' },

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\AdminQuestionController;
 use App\Http\Controllers\Api\Admin\AdminQuizController;
 use App\Http\Controllers\Api\Admin\AdminReadController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\QuizAttemptController;
 use App\Http\Controllers\Api\UserStatsController;
@@ -17,6 +18,9 @@ Route::get('/quizzes/{slug}', [QuizController::class, 'show'])->name('api.quizze
 Route::get('/quizzes/{slug}/questions', [QuizController::class, 'questions'])->name('api.quizzes.questions');
 
 Route::middleware(['web', 'auth'])->group(function (): void {
+    Route::get('/me', [ProfileController::class, 'show'])->name('api.me.show');
+    Route::patch('/me/profile', [ProfileController::class, 'updateProfile'])->name('api.me.profile.update');
+    Route::patch('/me/password', [ProfileController::class, 'updatePassword'])->name('api.me.password.update');
     Route::get('/me/dashboard', [UserStatsController::class, 'dashboard'])->name('api.me.dashboard');
     Route::get('/me/progress', [UserStatsController::class, 'progress'])->name('api.me.progress');
     Route::post('/quizzes/{quiz:slug}/attempts', [QuizAttemptController::class, 'store'])->name('api.quizzes.attempts.store');

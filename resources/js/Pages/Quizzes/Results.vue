@@ -10,6 +10,8 @@ import {
     currentQuizSlug,
     fetchJson,
     getQuizAttempt,
+    localizedText,
+    preferredLanguage,
     quizActiveUrl,
     quizStartUrl,
 } from '../../api/makedoniq';
@@ -18,6 +20,7 @@ const attemptResult = ref(null);
 const quiz = ref(null);
 const isLoading = ref(true);
 const error = ref('');
+const language = preferredLanguage();
 
 const categorySlug = currentCategorySlug();
 const quizSlug = currentQuizSlug();
@@ -40,6 +43,8 @@ const scoreMessage = computed(() => {
         ? 'Excellent work. You passed this quiz and saved your progress.'
         : 'Good effort. Review the answers and try again when you are ready.';
 });
+const resultQuizTitle = computed(() => localizedText(resultQuiz.value, 'title', language));
+const resultCategoryName = computed(() => localizedText(resultCategory.value, 'name', language));
 
 function formatDate(value) {
     if (!value) {
@@ -100,8 +105,8 @@ onMounted(async () => {
                     {{ hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First' }}
                 </h1>
                 <p class="mt-4 text-lg text-heritage-muted">
-                    <span v-if="hasAttempt">You completed {{ resultQuiz.title_en }}. {{ scoreMessage }}</span>
-                    <span v-else>Start {{ resultQuiz?.title_en || 'a quiz' }} and submit your answers to see a real saved result here.</span>
+                    <span v-if="hasAttempt">You completed {{ resultQuizTitle }}. {{ scoreMessage }}</span>
+                    <span v-else>Start {{ resultQuizTitle || 'a quiz' }} and submit your answers to see a real saved result here.</span>
                 </p>
                 <p v-if="resultAttempt?.completed_at" class="mt-2 text-sm font-bold text-heritage-muted">
                     Completed {{ formatDate(resultAttempt.completed_at) }}
@@ -132,7 +137,7 @@ onMounted(async () => {
                     </div>
                     <h2 class="mt-5 text-2xl font-black">{{ resultAttempt?.passed ? 'Badge earned' : 'Practice mode' }}</h2>
                     <p class="mt-2 font-semibold text-white/80">
-                        {{ resultAttempt?.passed ? `${resultCategory?.name_en || 'MakedonIQ'} Starter` : 'Review and try again' }}
+                        {{ resultAttempt?.passed ? `${resultCategoryName || 'MakedonIQ'} Starter` : 'Review and try again' }}
                     </p>
                 </article>
                 <article class="soft-card p-8">
@@ -163,9 +168,9 @@ onMounted(async () => {
                                     {{ answer.is_correct ? 'Correct' : 'Review' }}
                                 </AppBadge>
                                 <h3 class="mt-3 text-xl font-black text-heritage-ink">
-                                    {{ index + 1 }}. {{ answer.question.question_en }}
+                                    {{ index + 1 }}. {{ localizedText(answer.question, 'question', language) }}
                                 </h3>
-                                <p v-if="answer.question.question_mk" class="mt-2 font-semibold text-heritage-muted">{{ answer.question.question_mk }}</p>
+                                <p v-if="language !== 'mk' && answer.question.question_mk" class="mt-2 font-semibold text-heritage-muted">{{ answer.question.question_mk }}</p>
                             </div>
                             <div class="rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-black text-heritage-muted">
                                 {{ answer.points_awarded }} pts
@@ -175,16 +180,16 @@ onMounted(async () => {
                         <div class="mt-5 grid gap-3 md:grid-cols-2">
                             <div :class="['rounded-2xl border p-4', answer.is_correct ? 'border-emerald-200 bg-emerald-50' : 'border-heritage-red/20 bg-heritage-red-faint']">
                                 <p class="label">Your answer</p>
-                                <p class="mt-2 font-black text-heritage-ink">{{ answer.selected_answer.answer_en }}</p>
+                                <p class="mt-2 font-black text-heritage-ink">{{ localizedText(answer.selected_answer, 'answer', language) }}</p>
                             </div>
                             <div class="rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint p-4">
                                 <p class="label">Correct answer</p>
-                                <p class="mt-2 font-black text-heritage-ink">{{ answer.correct_answer.answer_en }}</p>
+                                <p class="mt-2 font-black text-heritage-ink">{{ localizedText(answer.correct_answer, 'answer', language) }}</p>
                             </div>
                         </div>
 
-                        <p v-if="answer.question.explanation_en" class="mt-4 rounded-2xl bg-white/70 p-4 leading-7 text-heritage-muted">
-                            {{ answer.question.explanation_en }}
+                        <p v-if="localizedText(answer.question, 'explanation', language)" class="mt-4 rounded-2xl bg-white/70 p-4 leading-7 text-heritage-muted">
+                            {{ localizedText(answer.question, 'explanation', language) }}
                         </p>
                     </article>
                 </div>

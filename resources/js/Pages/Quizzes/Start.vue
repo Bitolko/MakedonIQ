@@ -9,6 +9,8 @@ import {
     currentQuizSlug,
     difficultyLabel,
     fetchJson,
+    localizedText,
+    preferredLanguage,
     quizActiveUrl,
 } from '../../api/makedoniq';
 
@@ -16,6 +18,7 @@ const quiz = ref(null);
 const questions = ref([]);
 const isLoading = ref(true);
 const error = ref('');
+const language = preferredLanguage();
 
 const categorySlug = currentCategorySlug();
 const quizSlug = currentQuizSlug();
@@ -30,8 +33,12 @@ const learnItems = computed(() => {
         ];
     }
 
-    return questions.value.slice(0, 4).map((question) => question.question_en);
+    return questions.value.slice(0, 4).map((question) => localizedText(question, 'question', language));
 });
+
+const categoryName = computed(() => localizedText(quiz.value?.category, 'name', language));
+const quizTitle = computed(() => localizedText(quiz.value, 'title', language));
+const quizDescription = computed(() => localizedText(quiz.value, 'description', language));
 
 const activeUrl = computed(() => (
     quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : quizActiveUrl(categorySlug, quizSlug)
@@ -85,12 +92,12 @@ onMounted(async () => {
 
             <template v-else>
             <section>
-                <AppBadge>{{ quiz.category.name_en }}</AppBadge>
+                <AppBadge>{{ categoryName }}</AppBadge>
                 <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-5xl">
-                    {{ quiz.title_en }}
+                    {{ quizTitle }}
                 </h1>
                 <p class="mt-5 max-w-3xl text-lg leading-8 text-heritage-muted">
-                    {{ quiz.description_en }}
+                    {{ quizDescription }}
                 </p>
 
                 <div class="mt-8 grid gap-4 sm:grid-cols-3">

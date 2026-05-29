@@ -94,6 +94,18 @@ export async function getProgress() {
     return fetchJson('/api/me/progress');
 }
 
+export async function getMe() {
+    return fetchJson('/api/me');
+}
+
+export async function updateProfile(payload) {
+    return patchJson('/api/me/profile', payload);
+}
+
+export async function updatePassword(payload) {
+    return patchJson('/api/me/password', payload);
+}
+
 export async function getAdminOverview() {
     return fetchJson('/api/admin/overview');
 }
@@ -219,4 +231,23 @@ export function difficultyLabel(value) {
     }
 
     return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+export function preferredLanguage(defaultValue = 'en') {
+    return currentUser()?.preferred_language || defaultValue;
+}
+
+export function preferredLanguageToggleValue(defaultValue = 'EN') {
+    return preferredLanguage(defaultValue.toLowerCase()) === 'mk' ? 'MK' : 'EN';
+}
+
+export function localizedText(record, baseKey, language = preferredLanguage()) {
+    if (!record) {
+        return '';
+    }
+
+    const english = record[`${baseKey}_en`] || '';
+    const macedonian = record[`${baseKey}_mk`] || '';
+
+    return language === 'mk' && macedonian ? macedonian : english || macedonian;
 }

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import PrimaryButton from './PrimaryButton.vue';
 
 const props = defineProps({
@@ -13,10 +13,22 @@ const open = ref(false);
 const currentPath = window.location.pathname;
 const appState = window.MakedonIQ || {};
 const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-const user = computed(() => appState.auth?.user || null);
+const user = ref(appState.auth?.user || null);
 const isAuthenticated = computed(() => Boolean(user.value));
 const isAdmin = computed(() => Boolean(user.value?.is_admin));
 const displayName = computed(() => user.value?.name || 'Learner');
+
+function handleAuthUserUpdated(event) {
+    user.value = event.detail?.user || appState.auth?.user || null;
+}
+
+onMounted(() => {
+    window.addEventListener('makedoniq:auth-user-updated', handleAuthUserUpdated);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('makedoniq:auth-user-updated', handleAuthUserUpdated);
+});
 
 const navItems = computed(() => {
     if (props.variant === 'admin') {
@@ -35,6 +47,7 @@ const navItems = computed(() => {
             { label: 'Dashboard', href: '/dashboard' },
             { label: 'Quizzes', href: '/quizzes' },
             { label: 'Progress', href: '/progress' },
+            { label: 'Profile', href: '/profile' },
         ];
 
         if (isAdmin.value) {
@@ -101,6 +114,7 @@ const isActive = (href) => {
                 <div v-else-if="variant === 'public' && isAuthenticated" class="hidden items-center gap-3 md:flex">
                     <a v-if="isAdmin" href="/admin" class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">Admin</a>
                     <a href="/dashboard" class="rounded-full bg-heritage-panel px-4 py-2 text-sm font-black text-heritage-red">Dashboard</a>
+                    <a href="/profile" class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red">Profile</a>
                     <form action="/logout" method="POST">
                         <input type="hidden" name="_token" :value="csrfToken">
                         <button class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red" type="submit">Logout</button>
@@ -133,6 +147,7 @@ const isActive = (href) => {
                 <div v-else-if="variant === 'public' && isAuthenticated" class="grid grid-cols-2 gap-3">
                     <a v-if="isAdmin" href="/admin" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-gold-deep shadow-card">Admin</a>
                     <a href="/dashboard" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Dashboard</a>
+                    <a href="/profile" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-muted shadow-card">Profile</a>
                     <form action="/logout" method="POST">
                         <input type="hidden" name="_token" :value="csrfToken">
                         <button class="w-full rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-muted shadow-card" type="submit">Logout</button>

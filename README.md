@@ -150,6 +150,27 @@ Current progress analytics:
 
 Dashboard and progress stats are generated from `quiz_attempts`, `quiz_attempt_answers`, `quizzes`, and `categories`. Analytics are scoped to the authenticated user with `quiz_attempts.user_id`; users cannot fetch another user's dashboard, progress, or attempt result data through these endpoints.
 
+## Profile And Preferences
+
+The profile page is available at `/profile` and requires login. Profile requests use the same Laravel session/cookie authentication and CSRF-protected JSON PATCH requests as the rest of the SPA-style API.
+
+Authenticated profile endpoints:
+
+```text
+GET /api/me
+PATCH /api/me/profile
+PATCH /api/me/password
+```
+
+Current profile features:
+
+- Users can update their name, email, and preferred language.
+- `preferred_language` supports `en` and `mk`; existing and new users default to `en`.
+- Preferred language sets the default quiz display mode where bilingual quiz/category/question text is available.
+- Users can still manually toggle EN/MK on the active quiz page.
+- Users can update their password only by providing the current password.
+- Profile endpoints never accept or update `is_admin`; admin status remains backend-controlled.
+
 ## Admin Access
 
 Admin pages are protected with Laravel session auth plus a simple `users.is_admin` boolean. Normal registered users are not admins by default.

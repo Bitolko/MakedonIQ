@@ -10,6 +10,7 @@
                 'id' => auth()->user()->id,
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
+                'preferred_language' => auth()->user()->preferred_language ?? 'en',
                 'is_admin' => auth()->user()->is_admin,
             ] : null;
         @endphp

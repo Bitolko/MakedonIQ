@@ -29,6 +29,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->midd
 Route::middleware('auth')->group(function () use ($page): void {
     Route::get('/dashboard', $page('Dashboard'))->name('dashboard');
     Route::get('/progress', $page('Progress'))->name('progress');
+    Route::get('/profile', $page('Profile'))->name('profile');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () use ($page): void {

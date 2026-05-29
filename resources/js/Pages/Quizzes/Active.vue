@@ -8,11 +8,12 @@ import {
     currentQuizSlug,
     currentUser,
     fetchJson,
+    preferredLanguageToggleValue,
     quizResultsUrl,
     submitQuizAttempt,
 } from '../../api/makedoniq';
 
-const language = ref('EN');
+const language = ref(preferredLanguageToggleValue());
 const quiz = ref(null);
 const questions = ref([]);
 const selectedAnswers = ref({});
