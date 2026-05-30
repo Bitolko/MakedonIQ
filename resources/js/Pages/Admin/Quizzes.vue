@@ -433,11 +433,11 @@ function formatDate(value) {
                                 <td class="px-6 py-4">
                                     <div class="flex flex-wrap gap-2">
                                         <a class="rounded-xl bg-heritage-navy-soft px-3 py-2 text-xs font-black text-heritage-navy" :href="`/admin/questions?quiz=${quiz.id}`">Questions</a>
-                                        <button class="button-soft rounded-xl px-3 py-2 text-xs font-black" type="button" @click="openEditForm(quiz)">Edit</button>
-                                        <button class="rounded-xl bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep" type="button" @click="togglePublished(quiz)">
+                                        <button class="button-soft rounded-xl px-3 py-2 text-xs font-black" type="button" :disabled="saving" @click="openEditForm(quiz)">Edit</button>
+                                        <button class="rounded-xl bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep" type="button" :disabled="saving" @click="togglePublished(quiz)">
                                             {{ quiz.is_published ? 'Unpublish' : 'Publish' }}
                                         </button>
-                                        <button class="rounded-xl bg-heritage-red-faint px-3 py-2 text-xs font-black text-heritage-red" type="button" @click="removeQuiz(quiz)">Delete</button>
+                                        <button class="rounded-xl bg-heritage-red-faint px-3 py-2 text-xs font-black text-heritage-red" type="button" :disabled="saving" @click="removeQuiz(quiz)">Delete</button>
                                     </div>
                                 </td>
                             </tr>

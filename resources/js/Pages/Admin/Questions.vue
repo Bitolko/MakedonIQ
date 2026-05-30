@@ -518,11 +518,11 @@ function formatDate(value) {
                                 <td class="px-6 py-4 text-heritage-muted">{{ formatDate(question.updated_at) }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex flex-wrap gap-2">
-                                        <button class="button-soft rounded-xl px-3 py-2 text-xs font-black" type="button" @click="openEditForm(question)">Edit</button>
-                                        <button class="rounded-xl bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep" type="button" @click="togglePublished(question)">
+                                        <button class="button-soft rounded-xl px-3 py-2 text-xs font-black" type="button" :disabled="saving" @click="openEditForm(question)">Edit</button>
+                                        <button class="rounded-xl bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep" type="button" :disabled="saving" @click="togglePublished(question)">
                                             {{ question.is_published ? 'Unpublish' : 'Publish' }}
                                         </button>
-                                        <button class="rounded-xl bg-heritage-red-faint px-3 py-2 text-xs font-black text-heritage-red" type="button" @click="removeQuestion(question)">Delete</button>
+                                        <button class="rounded-xl bg-heritage-red-faint px-3 py-2 text-xs font-black text-heritage-red" type="button" :disabled="saving" @click="removeQuestion(question)">Delete</button>
                                     </div>
                                 </td>
                             </tr>

@@ -67,7 +67,7 @@ function formatDate(value) {
                 <h1 class="text-4xl font-black text-heritage-ink">Dashboard Overview</h1>
                 <p class="mt-2 text-heritage-muted">Live read-only reporting from learners, quizzes, questions, and saved attempts.</p>
             </div>
-            <PrimaryButton variant="soft">Add Quiz: Coming soon</PrimaryButton>
+            <PrimaryButton variant="soft" disabled>Add quiz coming soon</PrimaryButton>
         </section>
 
         <article v-if="loading" class="section-panel">
