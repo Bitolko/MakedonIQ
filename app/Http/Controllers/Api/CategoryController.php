@@ -36,6 +36,7 @@ class CategoryController extends Controller
             ->ordered()
             ->withCount([
                 'questions as questions_count' => fn ($query) => $query->published(),
+                'questions as map_questions_count' => fn ($query) => $query->published()->where('question_type', 'map_guess'),
             ])
             ->get()
             ->map(fn ($quiz): array => [
@@ -51,6 +52,8 @@ class CategoryController extends Controller
                 'points_per_question' => $quiz->points_per_question,
                 'sort_order' => $quiz->sort_order,
                 'questions_count' => $quiz->questions_count,
+                'map_questions_count' => $quiz->map_questions_count,
+                'has_map_questions' => (int) $quiz->map_questions_count > 0,
             ]);
 
         return response()->json([

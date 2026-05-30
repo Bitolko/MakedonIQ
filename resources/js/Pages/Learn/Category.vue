@@ -105,6 +105,19 @@ onMounted(async () => {
                         <p class="mt-3 text-heritage-muted">Published lessons for this category will appear here.</p>
                     </section>
                 </section>
+
+                <section v-if="category.slug === 'geography'" class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-heritage-gold-faint p-6 md:p-8">
+                    <AppBadge variant="gold">Map practice</AppBadge>
+                    <div class="mt-4 grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                        <div>
+                            <h2 class="text-2xl font-black text-heritage-ink">Try the Macedonia Map Challenge</h2>
+                            <p class="mt-2 leading-7 text-heritage-gold-deep">
+                                After reading the geography lesson, guess highlighted Macedonian cities, lakes, and landmarks on a simple map.
+                            </p>
+                        </div>
+                        <PrimaryButton href="/map-challenge" variant="gold">Open challenge</PrimaryButton>
+                    </div>
+                </section>
             </template>
         </main>
     </PublicLayout>

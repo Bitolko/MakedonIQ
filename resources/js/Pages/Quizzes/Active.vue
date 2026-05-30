@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import MacedoniaMap from '../../Components/MacedoniaMap.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import {
     ApiError,
@@ -38,6 +39,13 @@ const allAnswered = computed(() => totalQuestions.value > 0 && answeredCount.val
 const categoryHref = computed(() => categoryUrl(quiz.value?.category?.slug || categorySlug));
 const placeholderResultsHref = computed(() => quizResultsUrl(quiz.value?.category?.slug || categorySlug, quiz.value?.slug || quizSlug));
 const relatedLesson = computed(() => quiz.value?.related_lesson || null);
+const isMapQuestion = computed(() => currentQuestion.value?.question_type === 'map_guess');
+const mapMetadata = computed(() => currentQuestion.value?.metadata || {});
+const mapPrompt = computed(() => {
+    const targetType = mapMetadata.value.target_type || 'place';
+
+    return `Which ${targetType} is highlighted on the map?`;
+});
 const progressPercent = computed(() => {
     if (!totalQuestions.value) {
         return 0;
@@ -191,6 +199,16 @@ onMounted(async () => {
                         <h1 class="mt-6 text-3xl font-black leading-tight text-heritage-ink md:text-5xl">
                             {{ displayQuestion }}
                         </h1>
+                        <div v-if="isMapQuestion" class="mt-8">
+                            <MacedoniaMap
+                                :x="mapMetadata.map_x"
+                                :y="mapMetadata.map_y"
+                                :target-type="mapMetadata.target_type || 'place'"
+                            />
+                            <p class="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-red shadow-card">
+                                {{ mapPrompt }}
+                            </p>
+                        </div>
                         <div class="mx-auto mt-8 rounded-[2rem] bg-heritage-panel p-4">
                             <p class="text-sm font-bold leading-7 text-heritage-muted">
                                 Pick one answer for each question. Your score is calculated securely after submission.

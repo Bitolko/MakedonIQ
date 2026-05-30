@@ -32,6 +32,7 @@ const blankAnswers = () => [1, 2, 3, 4].map((sortOrder, index) => ({
 }));
 
 const blankForm = () => ({
+    question_type: 'multiple_choice',
     question_en: '',
     question_mk: '',
     explanation_en: '',
@@ -39,6 +40,14 @@ const blankForm = () => ({
     sort_order: nextSortOrder(),
     points: '',
     is_published: true,
+    metadata: {
+        map_x: 50,
+        map_y: 50,
+        target_type: 'city',
+        map_target_key: '',
+        map_target_label_en: '',
+        map_target_label_mk: '',
+    },
     answers: blankAnswers(),
 });
 
@@ -123,6 +132,7 @@ function openEditForm(question) {
     editingQuestion.value = question;
     correctIndex.value = existingCorrectIndex >= 0 ? existingCorrectIndex : 0;
     form.value = {
+        question_type: question.question_type || 'multiple_choice',
         question_en: question.question_en || '',
         question_mk: question.question_mk || '',
         explanation_en: question.explanation_en || '',
@@ -130,6 +140,7 @@ function openEditForm(question) {
         sort_order: question.sort_order ?? 0,
         points: question.points ?? '',
         is_published: Boolean(question.is_published),
+        metadata: normalizedMetadata(question.metadata),
         answers,
     };
     formErrors.value = {};
@@ -227,6 +238,8 @@ async function removeQuestion(question) {
 function questionPayload(source, selectedCorrectIndex = correctIndex.value) {
     return {
         question_en: source.question_en,
+        question_type: source.question_type || 'multiple_choice',
+        metadata: source.question_type === 'map_guess' ? normalizedMetadata(source.metadata) : null,
         question_mk: nullableString(source.question_mk),
         explanation_en: nullableString(source.explanation_en),
         explanation_mk: nullableString(source.explanation_mk),
@@ -239,6 +252,17 @@ function questionPayload(source, selectedCorrectIndex = correctIndex.value) {
             sort_order: index + 1,
             is_correct: index === selectedCorrectIndex,
         })),
+    };
+}
+
+function normalizedMetadata(metadata = {}) {
+    return {
+        map_x: numberOrDefault(metadata?.map_x, 50),
+        map_y: numberOrDefault(metadata?.map_y, 50),
+        target_type: metadata?.target_type || 'city',
+        map_target_key: metadata?.map_target_key || '',
+        map_target_label_en: metadata?.map_target_label_en || '',
+        map_target_label_mk: metadata?.map_target_label_mk || '',
     };
 }
 
@@ -410,7 +434,15 @@ function formatDate(value) {
                     </label>
                 </div>
 
-                <div class="grid gap-5 md:grid-cols-[12rem_12rem_1fr] md:items-end">
+                <div class="grid gap-5 md:grid-cols-[14rem_10rem_10rem_1fr] md:items-end">
+                    <label class="block">
+                        <span class="label">Question type</span>
+                        <select v-model="form.question_type" class="field mt-2">
+                            <option value="multiple_choice">Multiple choice</option>
+                            <option value="map_guess">Map guess</option>
+                        </select>
+                        <span v-if="fieldError('question_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('question_type') }}</span>
+                    </label>
                     <label class="block">
                         <span class="label">Points optional</span>
                         <input v-model.number="form.points" class="field mt-2" min="1" max="100" type="number">
@@ -426,6 +458,53 @@ function formatDate(value) {
                         Published publicly
                     </label>
                 </div>
+
+                <section v-if="form.question_type === 'map_guess'" class="grid gap-5 rounded-[1.5rem] border border-heritage-gold/40 bg-heritage-gold-faint p-5">
+                    <div>
+                        <h3 class="text-xl font-black text-heritage-ink">Map marker metadata</h3>
+                        <p class="mt-1 text-sm font-semibold text-heritage-gold-deep">Use X/Y percentages to place the marker on the Macedonia map. These labels stay admin-only.</p>
+                        <span v-if="fieldError('metadata')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata') }}</span>
+                    </div>
+                    <div class="grid gap-5 md:grid-cols-3">
+                        <label class="block">
+                            <span class="label">Map X percentage</span>
+                            <input v-model.number="form.metadata.map_x" class="field mt-2 bg-white" min="0" max="100" type="number">
+                            <span v-if="fieldError('metadata.map_x')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_x') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Map Y percentage</span>
+                            <input v-model.number="form.metadata.map_y" class="field mt-2 bg-white" min="0" max="100" type="number">
+                            <span v-if="fieldError('metadata.map_y')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_y') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Target type</span>
+                            <select v-model="form.metadata.target_type" class="field mt-2 bg-white">
+                                <option value="city">City</option>
+                                <option value="lake">Lake</option>
+                                <option value="landmark">Landmark</option>
+                                <option value="region">Region</option>
+                            </select>
+                            <span v-if="fieldError('metadata.target_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.target_type') }}</span>
+                        </label>
+                    </div>
+                    <div class="grid gap-5 md:grid-cols-3">
+                        <label class="block">
+                            <span class="label">Target key admin-only</span>
+                            <input v-model="form.metadata.map_target_key" class="field mt-2 bg-white" placeholder="skopje" type="text">
+                            <span v-if="fieldError('metadata.map_target_key')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_target_key') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Target label English</span>
+                            <input v-model="form.metadata.map_target_label_en" class="field mt-2 bg-white" type="text">
+                            <span v-if="fieldError('metadata.map_target_label_en')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_target_label_en') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Target label Macedonian</span>
+                            <input v-model="form.metadata.map_target_label_mk" class="field mt-2 bg-white" type="text">
+                            <span v-if="fieldError('metadata.map_target_label_mk')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_target_label_mk') }}</span>
+                        </label>
+                    </div>
+                </section>
 
                 <section class="grid gap-4">
                     <div>
@@ -504,6 +583,7 @@ function formatDate(value) {
                                 <td class="max-w-[390px] px-6 py-4">
                                     <p class="font-bold leading-snug text-heritage-ink">{{ question.question_en }}</p>
                                     <p v-if="question.question_mk" class="mt-2 text-xs font-semibold leading-snug text-heritage-muted">{{ question.question_mk }}</p>
+                                    <AppBadge v-if="question.question_type === 'map_guess'" class="mt-3" variant="gold">Map guess</AppBadge>
                                     <AppBadge v-if="question.used_in_attempts" class="mt-3" variant="red">Has attempts</AppBadge>
                                 </td>
                                 <td class="max-w-[260px] px-6 py-4">

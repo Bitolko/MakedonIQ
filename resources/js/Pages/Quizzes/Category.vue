@@ -30,6 +30,7 @@ const quizCards = computed(() => quizzes.value.map((quiz) => ({
     progress: 0,
     status: 'Start',
     href: quizStartUrl(category.value?.slug || activeSlug, quiz.slug),
+    isMapChallenge: Boolean(quiz.has_map_questions),
 })));
 
 const categoryName = computed(() => localizedText(category.value, 'name', language));
@@ -103,6 +104,17 @@ onMounted(async () => {
                         <ProgressBar :value="0" label="Category progress will appear after scoring is added" tone="gold" />
                     </div>
                 </div>
+
+                <section v-if="activeSlug === 'geography'" class="mt-8 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
+                    <AppBadge variant="gold">Interactive geography</AppBadge>
+                    <div class="mt-4 grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                        <div>
+                            <h2 class="text-2xl font-black text-heritage-ink">Macedonia Map Challenge</h2>
+                            <p class="mt-2 leading-7 text-heritage-muted">Practise geography by guessing the highlighted city, lake, or landmark on a simple illustrated map.</p>
+                        </div>
+                        <a href="/map-challenge" class="pressable-gold inline-flex justify-center rounded-2xl px-6 py-3 text-sm font-black">Open challenge</a>
+                    </div>
+                </section>
 
                 <div class="mt-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>

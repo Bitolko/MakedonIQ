@@ -18,6 +18,7 @@
                 <div class="mt-4 grid gap-2 text-sm font-semibold text-heritage-muted">
                     <a class="hover:text-heritage-red" href="/">Home</a>
                     <a class="hover:text-heritage-red" href="/learn">Learn</a>
+                    <a class="hover:text-heritage-red" href="/map-challenge">Map Challenge</a>
                     <a class="hover:text-heritage-red" href="/quizzes">Quizzes</a>
                     <a class="hover:text-heritage-red" href="/about">About</a>
                     <a class="hover:text-heritage-red" href="/contact">Contact</a>

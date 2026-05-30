@@ -44,6 +44,7 @@ const navItems = computed(() => {
         const items = [
             { label: 'Dashboard', href: '/dashboard' },
             { label: 'Learn', href: '/learn' },
+            { label: 'Map', href: '/map-challenge' },
             { label: 'Quizzes', href: '/quizzes' },
             { label: 'Progress', href: '/progress' },
             { label: 'Profile', href: '/profile' },
@@ -59,6 +60,7 @@ const navItems = computed(() => {
     return [
         { label: 'Home', href: '/' },
         { label: 'Learn', href: '/learn' },
+        { label: 'Map', href: '/map-challenge' },
         { label: 'Quizzes', href: '/quizzes' },
         { label: 'About', href: '/about' },
         { label: 'Contact', href: '/contact' },

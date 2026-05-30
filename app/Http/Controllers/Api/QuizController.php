@@ -14,6 +14,7 @@ class QuizController extends Controller
         $quiz = $this->publishedQuiz($slug)
             ->withCount([
                 'questions as questions_count' => fn ($query) => $query->published(),
+                'questions as map_questions_count' => fn ($query) => $query->published()->where('question_type', 'map_guess'),
             ])
             ->firstOrFail();
 
@@ -40,6 +41,10 @@ class QuizController extends Controller
         $questions = $quiz->questions->map(fn ($question): array => [
             'id' => $question->id,
             'quiz_id' => $question->quiz_id,
+            'question_type' => $question->question_type,
+            'metadata' => $question->question_type === 'map_guess'
+                ? $this->publicQuestionMetadata($question->metadata ?? [])
+                : null,
             'question_en' => $question->question_en,
             'question_mk' => $question->question_mk,
             'sort_order' => $question->sort_order,
@@ -90,7 +95,31 @@ class QuizController extends Controller
             'points_per_question' => $quiz->points_per_question,
             'sort_order' => $quiz->sort_order,
             'questions_count' => $quiz->questions_count ?? $quiz->questions->count(),
+            'map_questions_count' => $this->mapQuestionsCount($quiz),
+            'has_map_questions' => $this->mapQuestionsCount($quiz) > 0,
             'related_lesson' => $this->lessonPayload($quiz),
+        ];
+    }
+
+    private function mapQuestionsCount(Quiz $quiz): int
+    {
+        if ($quiz->relationLoaded('questions')) {
+            return $quiz->questions
+                ->where('question_type', 'map_guess')
+                ->count();
+        }
+
+        return (int) ($quiz->map_questions_count ?? 0);
+    }
+
+    private function publicQuestionMetadata(?array $metadata): array
+    {
+        $metadata = $metadata ?? [];
+
+        return [
+            'map_x' => isset($metadata['map_x']) ? (int) $metadata['map_x'] : null,
+            'map_y' => isset($metadata['map_y']) ? (int) $metadata['map_y'] : null,
+            'target_type' => $metadata['target_type'] ?? null,
         ];
     }
 

@@ -42,6 +42,7 @@ const quizDescription = computed(() => localizedText(quiz.value, 'description', 
 const relatedLesson = computed(() => quiz.value?.related_lesson || null);
 const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
+const isMapChallenge = computed(() => Boolean(quiz.value?.has_map_questions || questions.value.some((question) => question.question_type === 'map_guess')));
 
 const activeUrl = computed(() => (
     quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : quizActiveUrl(categorySlug, quizSlug)
@@ -95,7 +96,10 @@ onMounted(async () => {
 
             <template v-else>
             <section>
-                <AppBadge>{{ categoryName }}</AppBadge>
+                <div class="flex flex-wrap gap-2">
+                    <AppBadge>{{ categoryName }}</AppBadge>
+                    <AppBadge v-if="isMapChallenge" variant="gold">Map Challenge</AppBadge>
+                </div>
                 <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-5xl">
                     {{ quizTitle }}
                 </h1>
@@ -119,7 +123,10 @@ onMounted(async () => {
                 </div>
 
                 <section class="section-panel mt-8">
-                    <h2 class="text-2xl font-black text-heritage-ink">What you will learn</h2>
+                    <h2 class="text-2xl font-black text-heritage-ink">{{ isMapChallenge ? 'How the challenge works' : 'What you will learn' }}</h2>
+                    <p v-if="isMapChallenge" class="mt-3 leading-7 text-heritage-muted">
+                        Guess the highlighted Macedonian city, lake, or landmark from the map clue, then submit normally for secure backend scoring.
+                    </p>
                     <div class="mt-6 grid gap-4">
                         <div v-for="(item, index) in learnItems" :key="item" class="flex gap-3 rounded-2xl bg-heritage-panel p-4">
                             <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white">{{ index + 1 }}</span>
@@ -144,7 +151,7 @@ onMounted(async () => {
                         Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.
                     </p>
                 </div>
-                <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">Start Quiz</PrimaryButton>
+                <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">{{ isMapChallenge ? 'Start Map Challenge' : 'Start Quiz' }}</PrimaryButton>
                 <PrimaryButton :href="backUrl" variant="soft" class="mt-4 w-full">Back to quizzes</PrimaryButton>
             </aside>
             </template>

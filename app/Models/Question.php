@@ -17,6 +17,8 @@ class Question extends Model
 
     protected $fillable = [
         'quiz_id',
+        'question_type',
+        'metadata',
         'question_en',
         'question_mk',
         'explanation_en',
@@ -30,6 +32,7 @@ class Question extends Model
     {
         return [
             'quiz_id' => 'integer',
+            'metadata' => 'array',
             'sort_order' => 'integer',
             'points' => 'integer',
             'is_published' => 'boolean',

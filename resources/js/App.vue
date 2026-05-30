@@ -11,6 +11,7 @@ import Register from './Pages/Auth/Register.vue';
 import LearnIndex from './Pages/Learn/Index.vue';
 import LearnCategory from './Pages/Learn/Category.vue';
 import LearnShow from './Pages/Learn/Show.vue';
+import MapChallenge from './Pages/MapChallenge.vue';
 import QuizIndex from './Pages/Quizzes/Index.vue';
 import QuizCategory from './Pages/Quizzes/Category.vue';
 import QuizStart from './Pages/Quizzes/Start.vue';
@@ -35,6 +36,7 @@ const pages = {
     'Learn.Index': { component: LearnIndex, title: 'Learn | MakedonIQ' },
     'Learn.Category': { component: LearnCategory, title: 'Learn Category | MakedonIQ' },
     'Learn.Show': { component: LearnShow, title: 'Lesson | MakedonIQ' },
+    MapChallenge: { component: MapChallenge, title: 'Macedonia Map Challenge | MakedonIQ' },
     Dashboard: { component: Dashboard, title: 'Dashboard | MakedonIQ' },
     Progress: { component: Progress, title: 'My Progress | MakedonIQ' },
     Profile: { component: Profile, title: 'Profile | MakedonIQ' },

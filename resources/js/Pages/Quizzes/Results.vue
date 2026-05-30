@@ -37,6 +37,7 @@ const continueUrl = computed(() => categoryUrl(resultCategory.value?.slug || cat
 const relatedLesson = computed(() => resultQuiz.value?.related_lesson || null);
 const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
+const isMapChallenge = computed(() => Boolean(resultQuiz.value?.has_map_questions));
 const scoreMessage = computed(() => {
     if (!resultAttempt.value) {
         return 'Complete a quiz to see your saved result.';
@@ -102,10 +103,10 @@ onMounted(async () => {
             <template v-else>
             <section class="mx-auto max-w-4xl text-center">
                 <AppBadge :variant="resultAttempt?.passed ? 'green' : 'gold'">
-                    {{ hasAttempt ? 'Quiz result' : 'Results preview' }}
+                    {{ isMapChallenge ? 'Map Challenge result' : (hasAttempt ? 'Quiz result' : 'Results preview') }}
                 </AppBadge>
                 <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
-                    {{ hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First' }}
+                    {{ isMapChallenge && hasAttempt ? 'Map Challenge completed' : (hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First') }}
                 </h1>
                 <p class="mt-4 text-lg text-heritage-muted">
                     <span v-if="hasAttempt">You completed {{ resultQuizTitle }}. {{ scoreMessage }}</span>

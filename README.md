@@ -7,6 +7,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Manual Laravel authentication: register, login, logout.
 - Public Learn section with short bilingual lessons.
 - Lessons connected to quiz themes so learners can read before taking a quiz.
+- Macedonia Map Challenge, a lightweight geography quiz mode with local SVG-style map markers.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
 - Secure backend quiz scoring; the frontend never receives correct-answer flags during quiz taking.
@@ -109,6 +110,7 @@ Public:
 /learn
 /learn/{categorySlug}
 /learn/{categorySlug}/{lessonSlug}
+/map-challenge
 /quizzes
 /quizzes/{categorySlug}
 /quizzes/{categorySlug}/{quizSlug}/start
@@ -165,6 +167,8 @@ Learn APIs return published lessons only, and only when the related category is 
 
 The public questions endpoint returns answer IDs and text only. It does not expose `is_correct`.
 
+Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
+
 Authenticated quiz and learner APIs:
 
 ```text
@@ -193,6 +197,16 @@ lessons
 categories
 quizzes.lesson_id
 ```
+
+The Macedonia Map Challenge is seeded as a published Geography quiz at:
+
+```text
+/map-challenge
+/quizzes/geography/macedonia-map-challenge/start
+/quizzes/geography/macedonia-map-challenge/active
+```
+
+It uses the normal authenticated quiz attempt endpoint for saved scoring, so backend scoring remains the source of truth.
 
 Admin APIs require session auth plus `admin` middleware:
 
@@ -225,6 +239,7 @@ GET /api/admin/attempts
 - Quizzes with questions or attempts cannot be deleted; unpublish instead.
 - Questions must have exactly four answers.
 - Exactly one answer must be correct.
+- Map guess questions can store marker metadata for the local illustrated map.
 - Questions used in attempts are protected from destructive delete/answer replacement.
 - Admin lesson CRUD is not built yet; lessons are currently seeded and read publicly when published.
 
@@ -273,9 +288,11 @@ Public:
 7. Category page loads.
 8. Quiz start loads and shows related lesson when available.
 9. Active quiz loads.
-10. Public questions endpoint hides is_correct.
-11. About and contact load.
-12. Invalid paths show the friendly 404 page.
+10. Macedonia Map Challenge loads and shows a marker without revealing the answer.
+11. Public questions endpoint hides is_correct.
+12. Public map metadata does not expose answer-revealing target labels.
+13. About and contact load.
+14. Invalid paths show the friendly 404 page.
 ```
 
 Auth/user:
@@ -335,6 +352,7 @@ Also confirm:
 - Payments and subscriptions.
 - Full site i18n.
 - Admin lesson CRUD.
+- Complex clickable map coordinates or external map integrations.
 - Mobile app.
 - Audio pronunciation.
 - School accounts.

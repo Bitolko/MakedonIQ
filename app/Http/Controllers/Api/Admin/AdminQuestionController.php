@@ -94,6 +94,14 @@ class AdminQuestionController extends Controller
     private function validatedData(Request $request): array
     {
         $validated = $request->validate([
+            'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess'],
+            'metadata' => ['nullable', 'array'],
+            'metadata.map_x' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'metadata.map_y' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'metadata.target_type' => ['nullable', 'string', 'in:city,lake,landmark,region'],
+            'metadata.map_target_key' => ['nullable', 'string', 'max:100'],
+            'metadata.map_target_label_en' => ['nullable', 'string', 'max:255'],
+            'metadata.map_target_label_mk' => ['nullable', 'string', 'max:255'],
             'question_en' => ['required', 'string'],
             'question_mk' => ['nullable', 'string'],
             'explanation_en' => ['nullable', 'string'],
@@ -118,12 +126,24 @@ class AdminQuestionController extends Controller
             ]);
         }
 
+        if (($validated['question_type'] ?? 'multiple_choice') === 'map_guess') {
+            $metadata = $validated['metadata'] ?? [];
+
+            if (! isset($metadata['map_x'], $metadata['map_y'])) {
+                throw ValidationException::withMessages([
+                    'metadata' => 'Map guess questions need map X and map Y percentages.',
+                ]);
+            }
+        }
+
         return $validated;
     }
 
     private function questionAttributes(array $validated): array
     {
         return [
+            'question_type' => $validated['question_type'] ?? 'multiple_choice',
+            'metadata' => $this->metadataAttributes($validated),
             'question_en' => $validated['question_en'],
             'question_mk' => $this->nullableString($validated['question_mk'] ?? null),
             'explanation_en' => $this->nullableString($validated['explanation_en'] ?? null),
@@ -145,6 +165,24 @@ class AdminQuestionController extends Controller
                 'is_correct' => $this->booleanValue($answer['is_correct']),
             ])
             ->all();
+    }
+
+    private function metadataAttributes(array $validated): ?array
+    {
+        if (($validated['question_type'] ?? 'multiple_choice') !== 'map_guess') {
+            return null;
+        }
+
+        $metadata = $validated['metadata'] ?? [];
+
+        return [
+            'map_x' => isset($metadata['map_x']) ? (int) $metadata['map_x'] : null,
+            'map_y' => isset($metadata['map_y']) ? (int) $metadata['map_y'] : null,
+            'target_type' => $this->nullableString($metadata['target_type'] ?? 'city') ?? 'city',
+            'map_target_key' => $this->nullableString($metadata['map_target_key'] ?? null),
+            'map_target_label_en' => $this->nullableString($metadata['map_target_label_en'] ?? null),
+            'map_target_label_mk' => $this->nullableString($metadata['map_target_label_mk'] ?? null),
+        ];
     }
 
     private function answersMatch(Question $question, array $answers): bool
@@ -204,6 +242,8 @@ class AdminQuestionController extends Controller
             'quiz_slug' => $question->quiz->slug,
             'category_name_en' => $question->quiz->category->name_en,
             'category_slug' => $question->quiz->category->slug,
+            'question_type' => $question->question_type,
+            'metadata' => $question->metadata,
             'question_en' => $question->question_en,
             'question_mk' => $question->question_mk,
             'explanation_en' => $question->explanation_en,

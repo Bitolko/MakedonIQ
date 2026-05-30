@@ -4,6 +4,7 @@ import CategoryCard from '../Components/CategoryCard.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import AppBadge from '../Components/AppBadge.vue';
 import ProgressBar from '../Components/ProgressBar.vue';
+import MacedoniaMap from '../Components/MacedoniaMap.vue';
 import { categories, historyQuizzes } from '../data/makedoniq';
 
 const steps = [
@@ -86,6 +87,25 @@ const steps = [
                     </div>
                     <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         <CategoryCard v-for="category in categories.slice(0, 5)" :key="category.slug" :category="category" />
+                    </div>
+                </div>
+            </section>
+
+            <section class="page-shell py-16">
+                <div class="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+                    <MacedoniaMap :x="52" :y="28" target-type="city" />
+                    <div>
+                        <AppBadge variant="gold">New geography mode</AppBadge>
+                        <h2 class="mt-5 text-3xl font-black leading-tight text-heritage-ink md:text-4xl">
+                            Try the Macedonia Map Challenge
+                        </h2>
+                        <p class="mt-4 text-lg leading-8 text-heritage-muted">
+                            Guess the highlighted Macedonian city, lake, or landmark from a lightweight illustrated map. It uses the same secure quiz scoring when you submit.
+                        </p>
+                        <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+                            <PrimaryButton href="/map-challenge">Open Map Challenge</PrimaryButton>
+                            <PrimaryButton href="/learn/geography" variant="soft">Learn geography first</PrimaryButton>
+                        </div>
                     </div>
                 </div>
             </section>

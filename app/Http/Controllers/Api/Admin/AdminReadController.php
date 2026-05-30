@@ -84,6 +84,7 @@ class AdminReadController extends Controller
             ->withCount([
                 'questions as questions_count',
                 'questions as published_questions_count' => fn ($query) => $query->published(),
+                'questions as map_questions_count' => fn ($query) => $query->where('question_type', 'map_guess'),
                 'attempts as attempts_count' => fn ($query) => $query->whereNotNull('completed_at'),
             ])
             ->selectSub(function ($query): void {
@@ -114,6 +115,8 @@ class AdminReadController extends Controller
                 'is_published' => $quiz->is_published,
                 'questions_count' => $quiz->questions_count,
                 'published_questions_count' => $quiz->published_questions_count,
+                'map_questions_count' => $quiz->map_questions_count,
+                'has_map_questions' => (int) $quiz->map_questions_count > 0,
                 'attempts_count' => $quiz->attempts_count,
                 'average_percentage' => $quiz->average_percentage === null ? null : $this->percentageOrZero($quiz->average_percentage),
                 'created_at' => $quiz->created_at?->toISOString(),
@@ -153,6 +156,8 @@ class AdminReadController extends Controller
                 'quiz_slug' => $question->quiz->slug,
                 'category_name_en' => $question->quiz->category->name_en,
                 'category_slug' => $question->quiz->category->slug,
+                'question_type' => $question->question_type,
+                'metadata' => $question->metadata,
                 'question_en' => $question->question_en,
                 'question_mk' => $question->question_mk,
                 'explanation_en' => $question->explanation_en,

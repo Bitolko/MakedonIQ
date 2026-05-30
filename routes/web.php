@@ -10,6 +10,7 @@ Route::get('/', $page('Home'))->name('home');
 Route::get('/learn', $page('Learn.Index'))->name('learn.index');
 Route::get('/learn/{categorySlug}', $page('Learn.Category'))->name('learn.category');
 Route::get('/learn/{categorySlug}/{lessonSlug}', $page('Learn.Show'))->name('learn.show');
+Route::get('/map-challenge', $page('MapChallenge'))->name('map-challenge');
 Route::get('/quizzes', $page('Quizzes.Index'))->name('quizzes.index');
 Route::get('/quizzes/history', $page('Quizzes.Category'))->name('quizzes.history');
 Route::get('/quizzes/history/start', $page('Quizzes.Start'))->name('quizzes.history.start');

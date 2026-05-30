@@ -24,7 +24,7 @@ const difficultyVariant = {
                 Q
             </div>
             <AppBadge :variant="quiz.status === 'Completed' ? 'green' : difficultyVariant[quiz.difficulty]">
-                {{ quiz.status }}
+                {{ quiz.isMapChallenge ? 'Map' : quiz.status }}
             </AppBadge>
         </div>
         <h3 class="mt-6 text-2xl font-black text-heritage-ink">{{ quiz.title }}</h3>

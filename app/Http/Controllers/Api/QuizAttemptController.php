@@ -156,6 +156,9 @@ class QuizAttemptController extends Controller
                     'difficulty' => $attempt->quiz->difficulty,
                     'estimated_minutes' => $attempt->quiz->estimated_minutes,
                     'points_per_question' => $attempt->quiz->points_per_question,
+                    'has_map_questions' => $attempt->quiz->questions()
+                        ->where('question_type', 'map_guess')
+                        ->exists(),
                     'related_lesson' => $this->lessonPayload($attempt->quiz),
                 ],
                 'category' => [
