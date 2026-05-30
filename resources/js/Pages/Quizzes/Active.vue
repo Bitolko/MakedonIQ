@@ -37,6 +37,7 @@ const isLastQuestion = computed(() => currentIndex.value >= totalQuestions.value
 const allAnswered = computed(() => totalQuestions.value > 0 && answeredCount.value === totalQuestions.value);
 const categoryHref = computed(() => categoryUrl(quiz.value?.category?.slug || categorySlug));
 const placeholderResultsHref = computed(() => quizResultsUrl(quiz.value?.category?.slug || categorySlug, quiz.value?.slug || quizSlug));
+const relatedLesson = computed(() => quiz.value?.related_lesson || null);
 const progressPercent = computed(() => {
     if (!totalQuestions.value) {
         return 0;
@@ -152,8 +153,8 @@ onMounted(async () => {
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="rounded-full bg-heritage-panel p-1">
-                            <button type="button" :aria-pressed="language === 'EN'" :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'EN' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'EN'">EN</button>
-                            <button type="button" :aria-pressed="language === 'MK'" :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'MK' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'MK'">MK</button>
+                            <button type="button" aria-label="Show English quiz text" :aria-pressed="language === 'EN'" :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'EN' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'EN'">EN</button>
+                            <button type="button" aria-label="Show Macedonian quiz text" :aria-pressed="language === 'MK'" :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'MK' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']" @click="language = 'MK'">MK</button>
                         </div>
                         <div class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">{{ answeredCount }} / {{ totalQuestions || 0 }}</div>
                     </div>
@@ -203,6 +204,7 @@ onMounted(async () => {
                         v-for="(answer, index) in currentQuestion.answers"
                         :key="answer.id"
                         type="button"
+                        :aria-label="`Answer ${optionLabels[index] || index + 1}: ${answerText(answer)}`"
                         :aria-pressed="selectedAnswerId === answer.id"
                         :class="[
                             'relative flex min-h-20 items-center rounded-2xl border-2 p-5 text-left shadow-card transition active:scale-[0.99]',
@@ -213,7 +215,7 @@ onMounted(async () => {
                         <span :class="['mr-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-black', selectedAnswerId === answer.id ? 'bg-heritage-red text-white' : 'bg-heritage-panel text-heritage-muted']">
                             {{ optionLabels[index] || index + 1 }}
                         </span>
-                        <span class="text-lg font-black">{{ answerText(answer) }}</span>
+                        <span class="min-w-0 break-words text-lg font-black">{{ answerText(answer) }}</span>
                         <span v-if="selectedAnswerId === answer.id" class="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-heritage-gold text-sm font-black text-heritage-navy">OK</span>
                     </button>
                 </section>
@@ -222,34 +224,38 @@ onMounted(async () => {
 
         <footer class="border-t-4 border-heritage-gold bg-white">
             <div class="page-shell grid gap-5 py-5 md:grid-cols-[1fr_auto] md:items-center">
-                <div class="flex items-center gap-4 text-center md:text-left">
-                    <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-heritage-gold-faint text-lg font-black text-heritage-gold-deep">
+                <div class="flex items-start gap-4 text-left">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-heritage-gold-faint text-base font-black text-heritage-gold-deep sm:h-14 sm:w-14 sm:text-lg">
                         {{ selectedAnswerId ? 'OK' : '?' }}
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <p class="text-xl font-black text-heritage-ink">{{ selectedAnswerId ? 'Answer saved' : 'Choose an answer' }}</p>
                         <p class="text-sm text-heritage-muted">
                             {{ allAnswered ? 'Ready to submit when you reach the end.' : `${answeredCount} of ${totalQuestions || 0} questions answered.` }}
                         </p>
                         <p v-if="submitError" class="mt-2 text-sm font-bold text-heritage-red" role="alert">{{ submitError }}</p>
                         <div v-if="showAuthPrompt" class="mt-3 flex flex-col gap-2 sm:flex-row">
-                            <a class="button-soft rounded-2xl px-4 py-2 text-sm font-black" href="/login">Login to save score</a>
-                            <a class="pressable-gold rounded-2xl px-4 py-2 text-sm font-black" href="/register">Create account</a>
+                            <a class="button-soft rounded-2xl px-4 py-2 text-center text-sm font-black" href="/login">Login to save score</a>
+                            <a class="pressable-gold rounded-2xl px-4 py-2 text-center text-sm font-black" href="/register">Create account</a>
                         </div>
+                        <a v-if="relatedLesson" :href="relatedLesson.url" class="mt-3 inline-flex text-sm font-black text-heritage-red hover:text-heritage-red-dark">
+                            Need help? Review lesson
+                        </a>
                     </div>
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row md:justify-end">
-                    <PrimaryButton v-if="currentIndex > 0" variant="soft" size="lg" @click="goPrevious">Previous</PrimaryButton>
-                    <PrimaryButton v-if="!isLastQuestion" size="lg" @click="goNext">Next</PrimaryButton>
+                    <PrimaryButton v-if="currentIndex > 0" class="w-full sm:w-auto" variant="soft" size="lg" @click="goPrevious">Previous</PrimaryButton>
+                    <PrimaryButton v-if="!isLastQuestion" class="w-full sm:w-auto" size="lg" @click="goNext">Next</PrimaryButton>
                     <PrimaryButton
                         v-else
+                        class="w-full sm:w-auto"
                         size="lg"
                         :disabled="!allAnswered || isSubmitting"
                         @click="submitAttempt"
                     >
                         {{ isSubmitting ? 'Submitting...' : 'Submit quiz' }}
                     </PrimaryButton>
-                    <PrimaryButton v-if="!user" :href="placeholderResultsHref" variant="ghost" size="lg">Results info</PrimaryButton>
+                    <PrimaryButton v-if="!user" class="w-full sm:w-auto" :href="placeholderResultsHref" variant="ghost" size="lg">Results info</PrimaryButton>
                 </div>
             </div>
         </footer>

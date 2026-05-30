@@ -39,6 +39,9 @@ const learnItems = computed(() => {
 const categoryName = computed(() => localizedText(quiz.value?.category, 'name', language));
 const quizTitle = computed(() => localizedText(quiz.value, 'title', language));
 const quizDescription = computed(() => localizedText(quiz.value, 'description', language));
+const relatedLesson = computed(() => quiz.value?.related_lesson || null);
+const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
+const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 
 const activeUrl = computed(() => (
     quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : quizActiveUrl(categorySlug, quizSlug)
@@ -123,6 +126,13 @@ onMounted(async () => {
                             <span class="font-semibold text-heritage-muted">{{ item }}</span>
                         </div>
                     </div>
+                </section>
+
+                <section v-if="relatedLesson" class="mt-8 rounded-[2rem] border border-heritage-gold/40 bg-heritage-gold-faint p-6">
+                    <AppBadge variant="gold">Recommended lesson</AppBadge>
+                    <h2 class="mt-4 text-2xl font-black text-heritage-ink">{{ relatedLessonTitle }}</h2>
+                    <p class="mt-3 leading-7 text-heritage-gold-deep">{{ relatedLessonSummary }}</p>
+                    <PrimaryButton :href="relatedLesson.url" class="mt-5" variant="soft">Read lesson first</PrimaryButton>
                 </section>
             </section>
 

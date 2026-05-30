@@ -227,13 +227,15 @@ function achievementIcon(key) {
 
                     <article class="section-panel">
                         <h2 class="text-2xl font-black text-heritage-ink">Score trends</h2>
-                        <div v-if="scoreTrends.length" class="mt-6 flex h-44 items-end gap-3 rounded-2xl bg-heritage-panel p-4">
-                            <div v-for="trend in scoreTrends" :key="trend.attempt_id" class="flex h-full w-full flex-col justify-end gap-2">
-                                <div
-                                    class="w-full rounded-t-xl bg-linear-to-t from-heritage-red to-heritage-gold transition-all"
-                                    :style="{ height: `${Math.max(Number(trend.percentage || 0), 6)}%` }"
-                                />
-                                <p class="text-center text-xs font-black text-heritage-muted">{{ Math.round(trend.percentage) }}</p>
+                        <div v-if="scoreTrends.length" class="mt-6 overflow-x-auto rounded-2xl bg-heritage-panel p-4">
+                            <div class="flex h-44 min-w-[26rem] items-end gap-3">
+                                <div v-for="trend in scoreTrends" :key="trend.attempt_id" class="flex h-full w-full min-w-7 flex-col justify-end gap-2">
+                                    <div
+                                        class="w-full rounded-t-xl bg-linear-to-t from-heritage-red to-heritage-gold transition-all"
+                                        :style="{ height: `${Math.max(Number(trend.percentage || 0), 6)}%` }"
+                                    />
+                                    <p class="text-center text-xs font-black text-heritage-muted">{{ Math.round(trend.percentage) }}</p>
+                                </div>
                             </div>
                         </div>
                         <div v-else class="mt-6 rounded-2xl bg-heritage-panel p-5 text-heritage-muted">

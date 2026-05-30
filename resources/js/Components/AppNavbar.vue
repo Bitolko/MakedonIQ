@@ -37,14 +37,13 @@ const navItems = computed(() => {
             { label: 'Categories', href: '/admin/categories' },
             { label: 'Quizzes', href: '/admin/quizzes' },
             { label: 'Questions', href: '/admin/questions' },
-            { label: 'Users', href: '/admin', soon: true },
-            { label: 'Results', href: '/admin', soon: true },
         ];
     }
 
     if (props.variant === 'dashboard') {
         const items = [
             { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Learn', href: '/learn' },
             { label: 'Quizzes', href: '/quizzes' },
             { label: 'Progress', href: '/progress' },
             { label: 'Profile', href: '/profile' },
@@ -59,6 +58,7 @@ const navItems = computed(() => {
 
     return [
         { label: 'Home', href: '/' },
+        { label: 'Learn', href: '/learn' },
         { label: 'Quizzes', href: '/quizzes' },
         { label: 'About', href: '/about' },
         { label: 'Contact', href: '/contact' },
@@ -88,7 +88,7 @@ const isActive = (href) => {
                     </span>
                 </a>
 
-                <nav class="hidden items-center gap-1 rounded-full bg-heritage-panel p-1 md:flex">
+                <nav class="hidden items-center gap-1 rounded-full bg-heritage-panel p-1 lg:flex">
                     <a
                         v-for="item in navItems"
                         :key="item.label"
@@ -105,13 +105,13 @@ const isActive = (href) => {
                     </a>
                 </nav>
 
-                <div v-if="variant === 'public' && !isAuthenticated" class="hidden items-center gap-3 md:flex">
+                <div v-if="variant === 'public' && !isAuthenticated" class="hidden items-center gap-3 lg:flex">
                     <span class="rounded-full border border-heritage-line bg-white px-3 py-2 text-xs font-black text-heritage-muted shadow-card">EN / MK</span>
                     <a href="/login" class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red">Login</a>
                     <PrimaryButton href="/register" size="sm">Start Learning</PrimaryButton>
                 </div>
 
-                <div v-else-if="variant === 'public' && isAuthenticated" class="hidden items-center gap-3 md:flex">
+                <div v-else-if="variant === 'public' && isAuthenticated" class="hidden items-center gap-3 lg:flex">
                     <a v-if="isAdmin" href="/admin" class="rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep">Admin</a>
                     <a href="/dashboard" class="rounded-full bg-heritage-panel px-4 py-2 text-sm font-black text-heritage-red">Dashboard</a>
                     <a href="/profile" class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red">Profile</a>
@@ -121,7 +121,7 @@ const isActive = (href) => {
                     </form>
                 </div>
 
-                <div v-else-if="variant === 'dashboard'" class="hidden items-center gap-3 md:flex">
+                <div v-else-if="variant === 'dashboard'" class="hidden items-center gap-3 lg:flex">
                     <span class="rounded-full bg-heritage-gold-faint px-3 py-2 text-xs font-black text-heritage-gold-deep">Learning hub</span>
                     <span class="rounded-full bg-heritage-panel px-3 py-2 text-xs font-black text-heritage-muted">{{ displayName }}</span>
                     <form action="/logout" method="POST">
@@ -130,16 +130,20 @@ const isActive = (href) => {
                     </form>
                 </div>
 
-                <div v-else class="hidden items-center gap-3 md:flex">
-                    <span class="rounded-full bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-800">System online</span>
+                <div v-else class="hidden items-center gap-3 lg:flex">
+                    <a href="/dashboard" class="rounded-full bg-heritage-panel px-4 py-2 text-sm font-black text-heritage-red">Learner dashboard</a>
+                    <form action="/logout" method="POST">
+                        <input type="hidden" name="_token" :value="csrfToken">
+                        <button class="rounded-full px-4 py-2 text-sm font-black text-heritage-muted hover:bg-heritage-panel hover:text-heritage-red" type="submit">Logout</button>
+                    </form>
                 </div>
 
-                <button class="rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-black text-heritage-red md:hidden" type="button" :aria-expanded="open" @click="open = !open">
+                <button class="rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-black text-heritage-red lg:hidden" type="button" :aria-expanded="open" aria-controls="mobile-nav" @click="open = !open">
                     {{ open ? 'Close' : 'Menu' }}
                 </button>
             </div>
 
-            <div v-if="open" class="grid gap-3 border-t border-heritage-line/40 py-4 md:hidden">
+            <div v-if="open" id="mobile-nav" class="grid gap-3 border-t border-heritage-line/40 py-4 lg:hidden">
                 <div v-if="variant === 'public' && !isAuthenticated" class="grid grid-cols-2 gap-3">
                     <span class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-muted shadow-card">EN / MK</span>
                     <a href="/login" class="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-heritage-red shadow-card">Login</a>
@@ -169,6 +173,13 @@ const isActive = (href) => {
                     <input type="hidden" name="_token" :value="csrfToken">
                     <button class="w-full rounded-2xl bg-heritage-panel px-4 py-3 text-left text-sm font-black text-heritage-muted" type="submit">Logout</button>
                 </form>
+                <template v-if="variant === 'admin'">
+                    <a href="/dashboard" class="rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-black text-heritage-red">Learner dashboard</a>
+                    <form action="/logout" method="POST">
+                        <input type="hidden" name="_token" :value="csrfToken">
+                        <button class="w-full rounded-2xl bg-heritage-panel px-4 py-3 text-left text-sm font-black text-heritage-muted" type="submit">Logout</button>
+                    </form>
+                </template>
                 <template v-if="variant === 'public' && !isAuthenticated">
                     <a href="/register" class="rounded-2xl bg-heritage-red px-4 py-3 text-center text-sm font-black text-white">Start Learning</a>
                 </template>

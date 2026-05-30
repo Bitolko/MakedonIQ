@@ -39,7 +39,7 @@ const sizeClasses = {
 };
 
 const classes = computed(() => [
-    'inline-flex items-center justify-center gap-2 font-black transition',
+    'inline-flex min-w-0 items-center justify-center gap-2 text-center font-black transition',
     sizeClasses[props.size] || sizeClasses.md,
     variantClasses[props.variant] || variantClasses.red,
     props.disabled ? 'pointer-events-none cursor-not-allowed opacity-60' : '',
@@ -47,7 +47,7 @@ const classes = computed(() => [
 </script>
 
 <template>
-    <a v-if="href" :href="disabled ? undefined : href" :class="classes" :aria-disabled="disabled">
+    <a v-if="href" :href="disabled ? undefined : href" :class="classes" :aria-disabled="disabled" :tabindex="disabled ? -1 : undefined">
         <slot />
     </a>
     <button v-else :type="type" :class="classes" :disabled="disabled">

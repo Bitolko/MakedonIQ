@@ -5,6 +5,8 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 ## Features Completed
 
 - Manual Laravel authentication: register, login, logout.
+- Public Learn section with short bilingual lessons.
+- Lessons connected to quiz themes so learners can read before taking a quiz.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
 - Secure backend quiz scoring; the frontend never receives correct-answer flags during quiz taking.
@@ -104,6 +106,9 @@ Public:
 
 ```text
 /
+/learn
+/learn/{categorySlug}
+/learn/{categorySlug}/{lessonSlug}
 /quizzes
 /quizzes/{categorySlug}
 /quizzes/{categorySlug}/{quizSlug}/start
@@ -146,12 +151,17 @@ Legacy history quiz aliases are still available for compatibility:
 Public category and quiz APIs:
 
 ```text
+GET /api/lessons
+GET /api/lessons/{lesson}
+GET /api/categories/{category}/lessons
 GET /api/categories
 GET /api/categories/{slug}
 GET /api/categories/{slug}/quizzes
 GET /api/quizzes/{slug}
 GET /api/quizzes/{slug}/questions
 ```
+
+Learn APIs return published lessons only, and only when the related category is published. Lesson details can include related quizzes with start URLs.
 
 The public questions endpoint returns answer IDs and text only. It does not expose `is_correct`.
 
@@ -174,6 +184,14 @@ quiz_attempts
 quiz_attempt_answers
 quizzes
 categories
+```
+
+Lessons are generated from:
+
+```text
+lessons
+categories
+quizzes.lesson_id
 ```
 
 Admin APIs require session auth plus `admin` middleware:
@@ -208,6 +226,26 @@ GET /api/admin/attempts
 - Questions must have exactly four answers.
 - Exactly one answer must be correct.
 - Questions used in attempts are protected from destructive delete/answer replacement.
+- Admin lesson CRUD is not built yet; lessons are currently seeded and read publicly when published.
+
+## Learn Section
+
+The Learn section creates a simple learning loop:
+
+```text
+Read lesson -> Take related quiz -> Review results -> Revisit lesson
+```
+
+Seeded lessons currently cover:
+
+- Basic Macedonian greetings.
+- Introduction to the Macedonian Cyrillic alphabet.
+- Beginner-friendly Macedonia history basics.
+- Macedonian geography basics.
+- Culture and traditions.
+- Food and music.
+
+Each lesson belongs to a category and can be connected to one or more quizzes through `quizzes.lesson_id`. Quiz start and result pages can show a related lesson CTA when a quiz is connected.
 
 ## Security Notes
 
@@ -227,13 +265,17 @@ Public:
 
 ```text
 1. Home loads.
-2. Quizzes load.
-3. Category page loads.
-4. Quiz start loads.
-5. Active quiz loads.
-6. Public questions endpoint hides is_correct.
-7. About and contact load.
-8. Invalid paths show the friendly 404 page.
+2. Learn loads.
+3. Learn category page loads.
+4. Lesson detail page loads.
+5. EN/MK lesson toggle works.
+6. Quizzes load.
+7. Category page loads.
+8. Quiz start loads and shows related lesson when available.
+9. Active quiz loads.
+10. Public questions endpoint hides is_correct.
+11. About and contact load.
+12. Invalid paths show the friendly 404 page.
 ```
 
 Auth/user:
@@ -292,6 +334,7 @@ Also confirm:
 
 - Payments and subscriptions.
 - Full site i18n.
+- Admin lesson CRUD.
 - Mobile app.
 - Audio pronunciation.
 - School accounts.

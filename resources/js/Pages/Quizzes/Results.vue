@@ -34,6 +34,9 @@ const reviewAnswers = computed(() => attemptResult.value?.answers || []);
 const reviewUrl = computed(() => quizActiveUrl(resultCategory.value?.slug || categorySlug, resultQuiz.value?.slug || quizSlug));
 const tryAgainUrl = computed(() => quizStartUrl(resultCategory.value?.slug || categorySlug, resultQuiz.value?.slug || quizSlug));
 const continueUrl = computed(() => categoryUrl(resultCategory.value?.slug || categorySlug));
+const relatedLesson = computed(() => resultQuiz.value?.related_lesson || null);
+const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
+const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 const scoreMessage = computed(() => {
     if (!resultAttempt.value) {
         return 'Complete a quiz to see your saved result.';
@@ -144,11 +147,19 @@ onMounted(async () => {
                     <h2 class="text-2xl font-black text-heritage-ink">Achievement message</h2>
                     <p class="mt-3 leading-7 text-heritage-muted">{{ scoreMessage }}</p>
                     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <PrimaryButton v-if="relatedLesson" :href="relatedLesson.url" variant="soft">Review lesson</PrimaryButton>
                         <PrimaryButton v-if="hasAttempt" :href="reviewUrl" variant="soft">Take again</PrimaryButton>
                         <PrimaryButton :href="tryAgainUrl" variant="ghost">Try again</PrimaryButton>
                         <PrimaryButton :href="continueUrl">Continue learning</PrimaryButton>
                     </div>
                 </article>
+            </section>
+
+            <section v-if="relatedLesson" class="mx-auto mt-8 max-w-5xl rounded-[2rem] border border-heritage-gold/40 bg-heritage-gold-faint p-6 md:p-8">
+                <AppBadge variant="gold">Review lesson</AppBadge>
+                <h2 class="mt-4 text-2xl font-black text-heritage-ink">{{ relatedLessonTitle }}</h2>
+                <p class="mt-3 max-w-3xl leading-7 text-heritage-gold-deep">{{ relatedLessonSummary }}</p>
+                <PrimaryButton :href="relatedLesson.url" class="mt-5" variant="soft">Open lesson</PrimaryButton>
             </section>
 
             <section v-if="hasAttempt" class="mx-auto mt-8 max-w-5xl">

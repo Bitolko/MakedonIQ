@@ -16,7 +16,7 @@ const variants = {
 </script>
 
 <template>
-    <span :class="['inline-flex items-center rounded-full border px-3 py-1 text-xs font-black uppercase', variants[variant] || variants.neutral]">
+    <span :class="['inline-flex max-w-full items-center rounded-full border px-3 py-1 text-xs font-black uppercase leading-snug', variants[variant] || variants.neutral]">
         <slot />
     </span>
 </template>

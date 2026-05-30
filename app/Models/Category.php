@@ -37,6 +37,11 @@ class Category extends Model
         return $this->hasMany(Quiz::class);
     }
 
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);

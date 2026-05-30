@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(MakedonIQSeeder::class);
+        $this->call(LessonSeeder::class);
     }
 }

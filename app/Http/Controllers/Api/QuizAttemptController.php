@@ -130,6 +130,7 @@ class QuizAttemptController extends Controller
 
         $attempt->load([
             'quiz.category',
+            'quiz.lesson.category',
             'answers' => fn ($query) => $query->orderBy('id'),
             'answers.question.correctAnswer',
             'answers.selectedAnswer',
@@ -155,6 +156,7 @@ class QuizAttemptController extends Controller
                     'difficulty' => $attempt->quiz->difficulty,
                     'estimated_minutes' => $attempt->quiz->estimated_minutes,
                     'points_per_question' => $attempt->quiz->points_per_question,
+                    'related_lesson' => $this->lessonPayload($attempt->quiz),
                 ],
                 'category' => [
                     'id' => $attempt->quiz->category->id,
@@ -174,6 +176,26 @@ class QuizAttemptController extends Controller
             $quiz->is_published && $quiz->category()->published()->exists(),
             404,
         );
+    }
+
+    private function lessonPayload(Quiz $quiz): ?array
+    {
+        $lesson = $quiz->lesson;
+
+        if (! $lesson || ! $lesson->is_published || ! $lesson->category?->is_published) {
+            return null;
+        }
+
+        return [
+            'id' => $lesson->id,
+            'title_en' => $lesson->title_en,
+            'title_mk' => $lesson->title_mk,
+            'slug' => $lesson->slug,
+            'summary_en' => $lesson->summary_en,
+            'summary_mk' => $lesson->summary_mk,
+            'category_slug' => $lesson->category->slug,
+            'url' => "/learn/{$lesson->category->slug}/{$lesson->slug}",
+        ];
     }
 
     private function answerPayload($attemptAnswer): array

@@ -67,7 +67,7 @@ class QuizController extends Controller
             ->published()
             ->where('slug', $slug)
             ->whereHas('category', fn ($query) => $query->published())
-            ->with('category');
+            ->with(['category', 'lesson.category']);
     }
 
     private function quizPayload(Quiz $quiz): array
@@ -90,6 +90,29 @@ class QuizController extends Controller
             'points_per_question' => $quiz->points_per_question,
             'sort_order' => $quiz->sort_order,
             'questions_count' => $quiz->questions_count ?? $quiz->questions->count(),
+            'related_lesson' => $this->lessonPayload($quiz),
+        ];
+    }
+
+    private function lessonPayload(Quiz $quiz): ?array
+    {
+        $lesson = $quiz->lesson;
+
+        if (! $lesson || ! $lesson->is_published || ! $lesson->category?->is_published) {
+            return null;
+        }
+
+        return [
+            'id' => $lesson->id,
+            'title_en' => $lesson->title_en,
+            'title_mk' => $lesson->title_mk,
+            'slug' => $lesson->slug,
+            'summary_en' => $lesson->summary_en,
+            'summary_mk' => $lesson->summary_mk,
+            'difficulty' => $lesson->difficulty,
+            'estimated_minutes' => $lesson->estimated_minutes,
+            'category_slug' => $lesson->category->slug,
+            'url' => "/learn/{$lesson->category->slug}/{$lesson->slug}",
         ];
     }
 }

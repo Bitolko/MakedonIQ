@@ -94,6 +94,18 @@ export async function getProgress() {
     return fetchJson('/api/me/progress');
 }
 
+export async function getLessons() {
+    return fetchJson('/api/lessons');
+}
+
+export async function getCategoryLessons(categorySlug) {
+    return fetchJson(`/api/categories/${categorySlug}/lessons`);
+}
+
+export async function getLesson(lessonSlug) {
+    return fetchJson(`/api/lessons/${lessonSlug}`);
+}
+
 export async function getMe() {
     return fetchJson('/api/me');
 }
@@ -201,6 +213,12 @@ export function currentQuizSlug() {
     return quizPart || legacyQuizAliases[categoryPart] || 'macedonia-history-basics';
 }
 
+export function currentLessonSlug() {
+    const parts = quizPathParts();
+
+    return parts[2] || '';
+}
+
 export function currentAttemptId() {
     const parts = quizPathParts();
 
@@ -209,6 +227,18 @@ export function currentAttemptId() {
 
 export function categoryUrl(categorySlug) {
     return `/quizzes/${categorySlug}`;
+}
+
+export function learnUrl() {
+    return '/learn';
+}
+
+export function learnCategoryUrl(categorySlug) {
+    return `/learn/${categorySlug}`;
+}
+
+export function lessonUrl(categorySlug, lessonSlug) {
+    return `/learn/${categorySlug}/${lessonSlug}`;
 }
 
 export function quizStartUrl(categorySlug, quizSlug) {

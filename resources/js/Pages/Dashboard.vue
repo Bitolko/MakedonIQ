@@ -104,7 +104,7 @@ function formatDate(value) {
             <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div>
                     <AppBadge variant="gold">Learner dashboard</AppBadge>
-                    <h1 class="mt-4 text-4xl font-black md:text-5xl">Welcome back, {{ displayName }}!</h1>
+                    <h1 class="mt-4 break-words text-4xl font-black md:text-5xl">Welcome back, {{ displayName }}!</h1>
                     <p class="mt-3 max-w-2xl text-lg leading-8 text-white/80">Continue a quiz, review recent results, and keep exploring your Macedonian heritage.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -153,11 +153,11 @@ function formatDate(value) {
                                 class="rounded-2xl border border-heritage-line/50 bg-heritage-panel p-4 transition hover:bg-white hover:shadow-card"
                             >
                                 <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                                    <div>
+                                    <div class="min-w-0">
                                         <p class="font-black text-heritage-ink">{{ attempt.quiz_title_en }}</p>
                                         <p class="mt-1 text-sm text-heritage-muted">{{ attempt.category_name_en }} / {{ formatDate(attempt.completed_at) }}</p>
                                     </div>
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex shrink-0 items-center gap-3">
                                         <span :class="['rounded-full px-3 py-1 text-xs font-black uppercase', attempt.passed ? 'bg-emerald-50 text-emerald-800' : 'bg-heritage-red-faint text-heritage-red']">
                                             {{ attempt.passed ? 'Passed' : 'Review' }}
                                         </span>
