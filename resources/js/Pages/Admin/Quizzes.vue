@@ -7,6 +7,7 @@ import {
     createAdminQuiz,
     deleteAdminQuiz,
     getAdminCategories,
+    getAdminLessons,
     getAdminQuizzes,
     updateAdminQuiz,
 } from '../../api/makedoniq';
@@ -17,6 +18,7 @@ const error = ref('');
 const success = ref('');
 const quizzes = ref([]);
 const categories = ref([]);
+const lessons = ref([]);
 const search = ref('');
 const statusFilter = ref('all');
 const difficultyFilter = ref('all');
@@ -27,6 +29,7 @@ const formErrors = ref({});
 
 const blankForm = (categoryId = '') => ({
     category_id: categoryId,
+    lesson_id: '',
     title_en: '',
     title_mk: '',
     slug: '',
@@ -72,12 +75,14 @@ async function loadData(showLoading = true) {
     }
 
     try {
-        const [quizResponse, categoryResponse] = await Promise.all([
+        const [quizResponse, categoryResponse, lessonResponse] = await Promise.all([
             getAdminQuizzes(),
             getAdminCategories(),
+            getAdminLessons(),
         ]);
         quizzes.value = quizResponse.data || [];
         categories.value = categoryResponse.data || [];
+        lessons.value = lessonResponse.data || [];
         error.value = '';
     } catch (caughtError) {
         error.value = caughtError.status === 403
@@ -103,6 +108,7 @@ function openEditForm(quiz) {
     editingQuiz.value = quiz;
     form.value = {
         category_id: quiz.category_id,
+        lesson_id: quiz.lesson_id ?? '',
         title_en: quiz.title_en || '',
         title_mk: quiz.title_mk || '',
         slug: quiz.slug || '',
@@ -196,6 +202,7 @@ async function removeQuiz(quiz) {
 function quizPayload(source) {
     return {
         category_id: source.category_id === '' ? null : Number(source.category_id),
+        lesson_id: source.lesson_id === '' || source.lesson_id === null || source.lesson_id === undefined ? null : Number(source.lesson_id),
         title_en: source.title_en,
         title_mk: nullableString(source.title_mk),
         slug: nullableString(source.slug),
@@ -297,16 +304,28 @@ function formatDate(value) {
                     <button class="button-ghost rounded-2xl px-5 py-3 text-sm font-black" type="button" @click="closeForm">Cancel</button>
                 </div>
 
-                <label class="block">
-                    <span class="label">Category</span>
-                    <select v-model.number="form.category_id" class="field mt-2">
-                        <option value="">Select category</option>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">
-                            {{ category.name_en }} ({{ category.is_published ? 'published' : 'unpublished' }})
-                        </option>
-                    </select>
-                    <span v-if="fieldError('category_id')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('category_id') }}</span>
-                </label>
+                <div class="grid gap-5 md:grid-cols-2">
+                    <label class="block">
+                        <span class="label">Category</span>
+                        <select v-model.number="form.category_id" class="field mt-2">
+                            <option value="">Select category</option>
+                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                                {{ category.name_en }} ({{ category.is_published ? 'published' : 'unpublished' }})
+                            </option>
+                        </select>
+                        <span v-if="fieldError('category_id')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('category_id') }}</span>
+                    </label>
+                    <label class="block">
+                        <span class="label">Related Lesson</span>
+                        <select v-model="form.lesson_id" class="field mt-2">
+                            <option value="">No lesson</option>
+                            <option v-for="lesson in lessons" :key="lesson.id" :value="lesson.id">
+                                {{ lesson.title_en }} / {{ lesson.category_name_en }} ({{ lesson.is_published ? 'published' : 'unpublished' }})
+                            </option>
+                        </select>
+                        <span v-if="fieldError('lesson_id')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('lesson_id') }}</span>
+                    </label>
+                </div>
 
                 <div class="grid gap-5 md:grid-cols-2">
                     <label class="block">
@@ -395,11 +414,12 @@ function formatDate(value) {
 
             <section class="table-shell">
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[1180px] text-left">
+                    <table class="w-full min-w-[1320px] text-left">
                         <thead class="table-heading">
                             <tr>
                                 <th class="px-6 py-4 font-black">Quiz title</th>
                                 <th class="px-6 py-4 font-black">Category</th>
+                                <th class="px-6 py-4 font-black">Related lesson</th>
                                 <th class="px-6 py-4 font-black">Difficulty</th>
                                 <th class="px-6 py-4 font-black">Details</th>
                                 <th class="px-6 py-4 font-black">Questions</th>
@@ -418,6 +438,10 @@ function formatDate(value) {
                                     <p class="mt-1 text-xs font-semibold text-heritage-muted">{{ quiz.slug }} / sort {{ quiz.sort_order }}</p>
                                 </td>
                                 <td class="px-6 py-4 text-heritage-muted">{{ quiz.category_name_en }}</td>
+                                <td class="px-6 py-4 text-heritage-muted">
+                                    <span v-if="quiz.lesson_title_en">{{ quiz.lesson_title_en }}</span>
+                                    <span v-else>None</span>
+                                </td>
                                 <td class="px-6 py-4 text-heritage-muted">{{ quiz.difficulty }}</td>
                                 <td class="px-6 py-4 text-heritage-muted">
                                     <p>{{ quiz.estimated_minutes || 'Self-paced' }} min</p>

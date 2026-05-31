@@ -20,6 +20,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Admin role protection using `users.is_admin`.
 - Admin read-only reporting.
 - Admin category management.
+- Admin lesson management.
 - Admin quiz management.
 - Admin question builder with exactly four answers and exactly one correct answer.
 - Friendly 403 and 404 pages.
@@ -135,6 +136,7 @@ Admin:
 ```text
 /admin
 /admin/categories
+/admin/lessons
 /admin/quizzes
 /admin/questions
 ```
@@ -217,6 +219,11 @@ POST /api/admin/categories
 GET /api/admin/categories/{category}
 PATCH /api/admin/categories/{category}
 DELETE /api/admin/categories/{category}
+GET /api/admin/lessons
+POST /api/admin/lessons
+GET /api/admin/lessons/{lesson}
+PATCH /api/admin/lessons/{lesson}
+DELETE /api/admin/lessons/{lesson}
 GET /api/admin/quizzes
 POST /api/admin/quizzes
 GET /api/admin/quizzes/{quiz}
@@ -236,12 +243,15 @@ GET /api/admin/attempts
 - Category and quiz slugs can be auto-generated from English names/titles.
 - Duplicate generated slugs receive numeric suffixes.
 - Categories with quizzes cannot be deleted; unpublish instead.
+- Lesson slugs can be auto-generated from English titles.
+- Lessons linked to quizzes cannot be deleted; unpublish or unlink the quiz first.
+- Lessons can be connected to quizzes from the admin quiz form.
 - Quizzes with questions or attempts cannot be deleted; unpublish instead.
 - Questions must have exactly four answers.
 - Exactly one answer must be correct.
 - Map guess questions can store marker metadata for the local illustrated map.
 - Questions used in attempts are protected from destructive delete/answer replacement.
-- Admin lesson CRUD is not built yet; lessons are currently seeded and read publicly when published.
+- Unpublished lessons do not appear on public Learn pages.
 
 ## Learn Section
 
@@ -312,9 +322,10 @@ Admin:
 1. Normal users cannot access admin pages or APIs.
 2. Admin users can access admin pages and APIs.
 3. Admin category CRUD works.
-4. Admin quiz CRUD works.
-5. Admin question builder validates exactly four answers and exactly one correct answer.
-6. Admin question endpoint may show correctness because it is admin-only.
+4. Admin lesson CRUD works.
+5. Admin quiz CRUD works, including related lesson assignment.
+6. Admin question builder validates exactly four answers and exactly one correct answer.
+7. Admin question endpoint may show correctness because it is admin-only.
 ```
 
 ## Deployment Notes
@@ -351,7 +362,6 @@ Also confirm:
 
 - Payments and subscriptions.
 - Full site i18n.
-- Admin lesson CRUD.
 - Complex clickable map coordinates or external map integrations.
 - Mobile app.
 - Audio pronunciation.

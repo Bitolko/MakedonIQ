@@ -35,6 +35,7 @@ const navItems = computed(() => {
         return [
             { label: 'Admin Dashboard', href: '/admin' },
             { label: 'Categories', href: '/admin/categories' },
+            { label: 'Lessons', href: '/admin/lessons' },
             { label: 'Quizzes', href: '/admin/quizzes' },
             { label: 'Questions', href: '/admin/questions' },
         ];

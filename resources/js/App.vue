@@ -19,6 +19,7 @@ import ActiveQuiz from './Pages/Quizzes/Active.vue';
 import QuizResults from './Pages/Quizzes/Results.vue';
 import AdminDashboard from './Pages/Admin/Dashboard.vue';
 import AdminCategories from './Pages/Admin/Categories.vue';
+import AdminLessons from './Pages/Admin/Lessons.vue';
 import AdminQuizzes from './Pages/Admin/Quizzes.vue';
 import AdminQuestions from './Pages/Admin/Questions.vue';
 
@@ -49,6 +50,7 @@ const pages = {
     'Quizzes.Results': { component: QuizResults, title: 'Quiz Results | MakedonIQ' },
     'Admin.Dashboard': { component: AdminDashboard, title: 'Admin Dashboard | MakedonIQ' },
     'Admin.Categories': { component: AdminCategories, title: 'Admin Categories | MakedonIQ' },
+    'Admin.Lessons': { component: AdminLessons, title: 'Admin Lessons | MakedonIQ' },
     'Admin.Quizzes': { component: AdminQuizzes, title: 'Admin Quizzes | MakedonIQ' },
     'Admin.Questions': { component: AdminQuestions, title: 'Admin Questions | MakedonIQ' },
 };
