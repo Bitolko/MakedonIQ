@@ -55,16 +55,32 @@ const progressPercent = computed(() => {
 });
 
 const displayQuestion = computed(() => {
-    if (!currentQuestion.value) {
+    return questionText(currentQuestion.value);
+});
+
+function questionText(question) {
+    if (!question) {
         return '';
     }
 
-    return language.value === 'MK' && currentQuestion.value.question_mk
-        ? currentQuestion.value.question_mk
-        : currentQuestion.value.question_en;
-});
+    return language.value === 'MK' && question.question_mk
+        ? question.question_mk
+        : question.question_en;
+}
 
-function answerText(answer) {
+function answerText(answer, question = currentQuestion.value) {
+    if (!answer) {
+        return '';
+    }
+
+    if (question?.translation_direction === 'mk_to_en') {
+        return answer.answer_en || answer.answer_mk || '';
+    }
+
+    if (question?.translation_direction === 'en_to_mk') {
+        return answer.answer_mk || answer.answer_en || '';
+    }
+
     return language.value === 'MK' && answer.answer_mk ? answer.answer_mk : answer.answer_en;
 }
 
@@ -196,7 +212,7 @@ onMounted(async () => {
                 <section class="mx-auto w-full max-w-3xl">
                     <div class="soft-card p-6 text-center md:p-8">
                         <span class="eyebrow">{{ quiz.title_en }}</span>
-                        <h1 class="mt-6 text-3xl font-black leading-tight text-heritage-ink md:text-5xl">
+                        <h1 class="mt-6 text-2xl font-black leading-tight text-heritage-ink sm:text-3xl md:text-5xl">
                             {{ displayQuestion }}
                         </h1>
                         <div v-if="isMapQuestion" class="mt-8">

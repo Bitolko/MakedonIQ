@@ -33,6 +33,7 @@ const blankAnswers = () => [1, 2, 3, 4].map((sortOrder, index) => ({
 
 const blankForm = () => ({
     question_type: 'multiple_choice',
+    translation_direction: '',
     question_en: '',
     question_mk: '',
     explanation_en: '',
@@ -133,6 +134,7 @@ function openEditForm(question) {
     correctIndex.value = existingCorrectIndex >= 0 ? existingCorrectIndex : 0;
     form.value = {
         question_type: question.question_type || 'multiple_choice',
+        translation_direction: question.translation_direction || '',
         question_en: question.question_en || '',
         question_mk: question.question_mk || '',
         explanation_en: question.explanation_en || '',
@@ -239,6 +241,7 @@ function questionPayload(source, selectedCorrectIndex = correctIndex.value) {
     return {
         question_en: source.question_en,
         question_type: source.question_type || 'multiple_choice',
+        translation_direction: normalizeTranslationDirection(source.translation_direction),
         metadata: source.question_type === 'map_guess' ? normalizedMetadata(source.metadata) : null,
         question_mk: nullableString(source.question_mk),
         explanation_en: nullableString(source.explanation_en),
@@ -264,6 +267,17 @@ function normalizedMetadata(metadata = {}) {
         map_target_label_en: metadata?.map_target_label_en || '',
         map_target_label_mk: metadata?.map_target_label_mk || '',
     };
+}
+
+function normalizeTranslationDirection(value) {
+    return value && value !== 'general' ? value : null;
+}
+
+function formatTranslationDirection(value) {
+    return {
+        mk_to_en: 'MK -> EN',
+        en_to_mk: 'EN -> MK',
+    }[value] || 'General';
 }
 
 function normalizedAnswers(answers = []) {
@@ -434,7 +448,7 @@ function formatDate(value) {
                     </label>
                 </div>
 
-                <div class="grid gap-5 md:grid-cols-[14rem_10rem_10rem_1fr] md:items-end">
+                <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-[14rem_14rem_10rem_10rem_1fr] xl:items-end">
                     <label class="block">
                         <span class="label">Question type</span>
                         <select v-model="form.question_type" class="field mt-2">
@@ -442,6 +456,15 @@ function formatDate(value) {
                             <option value="map_guess">Map guess</option>
                         </select>
                         <span v-if="fieldError('question_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('question_type') }}</span>
+                    </label>
+                    <label class="block">
+                        <span class="label">Translation direction</span>
+                        <select v-model="form.translation_direction" class="field mt-2">
+                            <option value="">General / none</option>
+                            <option value="mk_to_en">Macedonian to English</option>
+                            <option value="en_to_mk">English to Macedonian</option>
+                        </select>
+                        <span v-if="fieldError('translation_direction')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('translation_direction') }}</span>
                     </label>
                     <label class="block">
                         <span class="label">Points optional</span>
@@ -561,6 +584,9 @@ function formatDate(value) {
                         </div>
                         <AppBadge variant="gold">Question builder</AppBadge>
                     </div>
+                    <p v-if="questions.length" class="mt-3 text-xs font-bold text-heritage-muted sm:hidden">
+                        Scroll sideways to review every question column.
+                    </p>
                 </div>
 
                 <div v-if="questions.length" class="overflow-x-auto">
@@ -583,8 +609,11 @@ function formatDate(value) {
                                 <td class="max-w-[390px] px-6 py-4">
                                     <p class="font-bold leading-snug text-heritage-ink">{{ question.question_en }}</p>
                                     <p v-if="question.question_mk" class="mt-2 text-xs font-semibold leading-snug text-heritage-muted">{{ question.question_mk }}</p>
-                                    <AppBadge v-if="question.question_type === 'map_guess'" class="mt-3" variant="gold">Map guess</AppBadge>
-                                    <AppBadge v-if="question.used_in_attempts" class="mt-3" variant="red">Has attempts</AppBadge>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <AppBadge v-if="question.question_type === 'map_guess'" variant="gold">Map guess</AppBadge>
+                                        <AppBadge v-if="question.translation_direction" variant="navy">{{ formatTranslationDirection(question.translation_direction) }}</AppBadge>
+                                        <AppBadge v-if="question.used_in_attempts" variant="red">Has attempts</AppBadge>
+                                    </div>
                                 </td>
                                 <td class="max-w-[260px] px-6 py-4">
                                     <p class="font-bold text-heritage-ink">{{ question.correct_answer_en || 'No answer marked' }}</p>

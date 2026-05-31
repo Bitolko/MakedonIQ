@@ -213,6 +213,7 @@ class QuizAttemptController extends Controller
             'points_awarded' => $attemptAnswer->points_awarded,
             'question' => [
                 'id' => $question->id,
+                'translation_direction' => $question->translation_direction,
                 'question_en' => $question->question_en,
                 'question_mk' => $question->question_mk,
                 'explanation_en' => $question->explanation_en,

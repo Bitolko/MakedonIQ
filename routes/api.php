@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AdminCategoryController;
+use App\Http\Controllers\Api\Admin\AdminLessonController;
 use App\Http\Controllers\Api\Admin\AdminQuestionController;
 use App\Http\Controllers\Api\Admin\AdminQuizController;
 use App\Http\Controllers\Api\Admin\AdminReadController;
@@ -41,6 +42,11 @@ Route::middleware(['web', 'auth', 'admin'])
         Route::get('/categories/{category}', [AdminCategoryController::class, 'show'])->name('categories.show');
         Route::match(['put', 'patch'], '/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
         Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/lessons', [AdminLessonController::class, 'index'])->name('lessons.index');
+        Route::post('/lessons', [AdminLessonController::class, 'store'])->name('lessons.store');
+        Route::get('/lessons/{lesson}', [AdminLessonController::class, 'show'])->name('lessons.show');
+        Route::match(['put', 'patch'], '/lessons/{lesson}', [AdminLessonController::class, 'update'])->name('lessons.update');
+        Route::delete('/lessons/{lesson}', [AdminLessonController::class, 'destroy'])->name('lessons.destroy');
         Route::get('/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
         Route::post('/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
         Route::get('/quizzes/{quiz}/questions', [AdminQuestionController::class, 'index'])->name('quizzes.questions.index');

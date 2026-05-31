@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;family=Quicksand:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-card-shadow {
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+        }
+        .soft-card-hover:hover {
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+            transform: translateY(-2px);
+        }
+        .btn-pressable {
+            border-bottom: 4px solid rgba(0, 0, 0, 0.2);
+            transition: all 0.1s ease;
+        }
+        .btn-pressable:active {
+            border-bottom-width: 0px;
+            transform: translateY(4px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#c00000",
+                        "on-primary-container": "#ffe1dc",
+                        "surface-container-high": "#e9e8e3",
+                        "on-tertiary-container": "#e7e4ff",
+                        "surface-container-low": "#f5f4ef",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5e3f3a",
+                        "tertiary-container": "#66657d",
+                        "surface-variant": "#e3e3de",
+                        "on-background": "#1b1c19",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "primary": "#a40000",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "inverse-on-surface": "#f2f1ec",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#6e5c00",
+                        "surface-container-highest": "#e3e3de",
+                        "on-primary-fixed-variant": "#930000",
+                        "surface-bright": "#faf9f4",
+                        "on-secondary-fixed-variant": "#544600",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-dim": "#dbdad5",
+                        "secondary": "#705d00",
+                        "inverse-surface": "#30312e",
+                        "surface": "#faf9f4",
+                        "on-secondary-fixed": "#221b00",
+                        "secondary-fixed": "#ffe16d",
+                        "primary-container": "#d20000",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "background": "#faf9f4",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "surface-container": "#efeee9",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#e8bcb5",
+                        "secondary-container": "#fcd400",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e2e0fc",
+                        "tertiary": "#4e4d64",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1b1c19",
+                        "outline": "#936e69",
+                        "primary-fixed": "#ffdad4",
+                        "on-primary-fixed": "#410000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Montserrat"],
+                        "body-lg": ["Quicksand"],
+                        "display-lg-mobile": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface border-b border-surface-variant shadow-sm h-16">
+<nav class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-full">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">MakedonIQ</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-sm text-label-sm transition-colors duration-200" href="#">Learn</a>
+<a class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors duration-200" href="#">Practice</a>
+<a class="text-on-surface-variant hover:text-primary font-label-sm text-label-sm transition-colors duration-200" href="#">Leaderboard</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-on-surface font-label-sm text-label-sm font-bold bg-surface-variant px-3 py-1 rounded-full">EN / MK</span>
+<button class="material-symbols-outlined text-primary text-2xl hover:scale-110 transition-transform" data-icon="account_circle">account_circle</button>
+</div>
+</nav>
+</header>
+<main class="pt-24 pb-16">
+<!-- Hero Section -->
+<section class="max-w-container-max mx-auto px-margin-desktop mb-16">
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-12 md:p-20 flex flex-col items-center text-center">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, #a40000 1px, transparent 0); background-size: 32px 32px;"></div>
+<h1 class="font-display-lg text-display-lg text-primary mb-6 max-w-2xl">Learn Macedonian step by step</h1>
+<p class="font-body-lg text-body-lg text-tertiary max-w-xl mb-10">Short bilingual lessons about language, alphabet, history, geography, culture, food, and music.</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="btn-pressable bg-primary text-on-primary px-8 py-4 rounded-lg font-bold flex items-center gap-2">
+<span>Start Learning</span>
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+</button>
+<button class="btn-pressable bg-secondary-container text-on-secondary-container px-8 py-4 rounded-lg font-bold flex items-center gap-2">
+<span>Take a Quiz</span>
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Category Bento Grid -->
+<section class="max-w-container-max mx-auto px-margin-desktop mb-24">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Explore Categories</h2>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Select your path</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Macedonian Language -->
+<div class="group soft-card-shadow soft-card-hover bg-surface-container-lowest p-8 rounded-lg flex flex-col justify-between h-64 border border-surface-variant transition-all duration-300">
+<div>
+<span class="material-symbols-outlined text-4xl text-primary mb-4 block" data-icon="translate">translate</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Macedonian Language</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Master grammar and vocabulary.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Start Learning <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Macedonian Alphabet -->
+<div class="group soft-card-shadow soft-card-hover bg-surface-container-lowest p-8 rounded-lg flex flex-col justify-between h-64 border border-surface-variant transition-all duration-300">
+<div>
+<span class="material-symbols-outlined text-4xl text-secondary mb-4 block" data-icon="spellcheck">spellcheck</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Macedonian Alphabet</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Cyrillic writing and phonetics.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Start Learning <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Geography -->
+<div class="group soft-card-shadow soft-card-hover bg-surface-container-lowest p-8 rounded-lg flex flex-col justify-between h-64 border border-surface-variant transition-all duration-300">
+<div>
+<span class="material-symbols-outlined text-4xl text-tertiary mb-4 block" data-icon="map">map</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Geography</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Lakes, mountains, and cities.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Start Learning <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- History -->
+<div class="group soft-card-shadow soft-card-hover bg-surface-container-lowest p-8 rounded-lg flex flex-col justify-between h-64 border border-surface-variant transition-all duration-300">
+<div>
+<span class="material-symbols-outlined text-4xl text-primary mb-4 block" data-icon="history_edu">history_edu</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">History</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">From ancient times to today.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Start Learning <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Culture -->
+<div class="group soft-card-shadow soft-card-hover bg-surface-container-lowest p-8 rounded-lg flex flex-col justify-between h-64 border border-surface-variant transition-all duration-300">
+<div>
+<span class="material-symbols-outlined text-4xl text-secondary mb-4 block" data-icon="celebration">celebration</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Culture &amp; Traditions</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Folk dances, dress, and rituals.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Start Learning <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Food & Music -->
+<div class="group soft-card-shadow soft-card-hover bg-surface-container-lowest p-8 rounded-lg flex flex-col justify-between h-64 border border-surface-variant transition-all duration-300">
+<div>
+<span class="material-symbols-outlined text-4xl text-tertiary mb-4 block" data-icon="restaurant">restaurant</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Food and Music</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Tastes and rhythms of the land.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Start Learning <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Featured Lessons -->
+<section class="max-w-container-max mx-auto px-margin-desktop mb-16">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-secondary" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Featured Lessons</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Lesson 1 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden soft-card-shadow group">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A warm and inviting scene of two people shaking hands in a bright, modern cafe setting. The lighting is soft and natural, with a warm color palette of cream and heritage red accents. The atmosphere is friendly and educational, perfectly representing a social language exchange in Macedonia." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCguDpEvykgIpnZhn4LSXKlmJpFF5guBQLQEPbVYPEqodDVWH1evB3rj2dBXazHbBBDhuMjTVy4aDVbDrYjSzk0yKtZ_kLjRguVhtIPyZg1AQSRTfibCNRxDxr3sJZCZhf-4daxeWGWLNoL32ogI51jdzkHjIYcI0RtNymPw-yX2CxaKbq7BW2tzIjC7ae6EJasdB4FCHv-U3783DBzyq5vBr3AlaL6O9ezMXxiH74SApaYOgD3OyaULmjRheVTHQWDyD9R6iB8joI"/>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-sm font-label-sm">Beginner</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">5 min</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-4">Macedonian Greetings</h4>
+<button class="w-full btn-pressable bg-surface-variant text-on-surface py-3 rounded-lg font-bold">Start Lesson</button>
+</div>
+</div>
+<!-- Lesson 2 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden soft-card-shadow group">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A cinematic, high-key wide shot of the Stone Bridge in Skopje, Macedonia at sunrise. The Vardar river reflects the soft morning golden light. The style is premium travel photography with a clean, airy aesthetic, emphasizing the historical architectural grandeur of the landmark in a modern educational context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDquMyWATdTKmqVcs_1NSxJvhKlZztBJIHInKHGuGThfrkFqIAlhhyD6EjvB6Ta3tssp4rhVWp9pZCrSxW77gQcHh5qTAoMrjeGMJyy6_74cFY53XLTXVE_qmR401bpbMuxE4OkWokLg_Jseo7aS5nh6-gsl6mhcQ28QEcXWHuuAts8Wj5xSSxgk0IUPyMoOD0zw3OJh20_4HbwRq2QqmoGqBvUZZ8T8P40E_Biqk8FGJ0qwZlZEIQm-2MUX9NdazXfqLIlfvsexIQ"/>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-label-sm font-label-sm">History</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">8 min</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-4">The Stone Bridge</h4>
+<button class="w-full btn-pressable bg-surface-variant text-on-surface py-3 rounded-lg font-bold">Start Lesson</button>
+</div>
+</div>
+<!-- Lesson 3 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden soft-card-shadow group">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A vibrant digital illustration of people performing the traditional Macedonian Oro dance. The dancers are wearing detailed traditional costumes with intricate patterns. The style is modern and gamified, using a palette of heritage red and gold with high-contrast, clean lines against a soft white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcrvRkr0bNfxTohEJp9zh-gMyCeXk5JodA8fzMSsTZF4I71EtWK7cxGutRS5gvcVOTMPx3pZDDq8vVWwexu2pHEOqh9cveVYEdkGDcIME_XnCzNN40bUatlMjpV90FEhieyPp7tUBu-kg5O7MEpKPPvTjvytYTD8CFdHKDZoraCe9LFQkOPGaD8KH1IWenTdCSzTiYy4U2xpaqkXNHCIKGUZBWZ5t1JWIlatTdBC4ESVS2Z8vfvmHrRih31Txc2Sn5w8rvtD0EQgY"/>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-label-sm font-label-sm">Culture</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">12 min</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-4">Traditional Oro</h4>
+<button class="w-full btn-pressable bg-surface-variant text-on-surface py-3 rounded-lg font-bold">Start Lesson</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- SideNavBar (Hidden on Mobile) -->
+<aside class="hidden xl:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 p-4 flex-col gap-2 bg-surface-container-low border-r border-surface-variant">
+<div class="p-4 mb-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Welcome back!</p>
+<p class="font-bold text-on-surface">Level 12 Scholar</p>
+</div>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full mt-4">
+<div class="bg-primary h-2 rounded-full w-[65%]"></div>
+</div>
+</div>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 font-bold transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span>Grammar</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="translate">translate</span>
+<span>Vocabulary</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span>Culture</span>
+</a>
+<div class="mt-auto pt-4 border-t border-surface-variant flex flex-col gap-2">
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Footer -->
+<footer class="w-full py-8 px-margin-desktop mt-16 max-w-container-max mx-auto border-t border-surface-variant bg-surface-container-highest">
+<div class="flex flex-col items-center gap-6">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">MakedonIQ</span>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-on-surface-variant hover:underline decoration-secondary decoration-2 font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:underline decoration-secondary decoration-2 font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:underline decoration-secondary decoration-2 font-label-sm text-label-sm" href="#">Macedonian Ministry of Culture</a>
+</div>
+<p class="text-on-surface-variant font-label-sm text-label-sm">© 2024 MakedonIQ Learning. Heritage through Play.</p>
+</div>
+</footer>
+<!-- Mobile Nav Bar -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface border-t border-surface-variant flex justify-around items-center px-4 z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="text-[10px] font-bold">Learn</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="text-[10px]">Practice</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="text-[10px]">Rank</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px]">Profile</span>
+</button>
+</div>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('.btn-pressable').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.style.transform = 'translateY(4px)';
+                button.style.borderBottomWidth = '0px';
+            });
+            button.addEventListener('mouseup', () => {
+                button.style.transform = 'translateY(0px)';
+                button.style.borderBottomWidth = '4px';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translateY(0px)';
+                button.style.borderBottomWidth = '4px';
+            });
+        });
+    </script>
+</body></html>

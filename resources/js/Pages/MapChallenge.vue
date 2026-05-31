@@ -83,7 +83,7 @@ onMounted(async () => {
                 <section class="grid gap-8 lg:grid-cols-[1fr_0.95fr] lg:items-center">
                     <div>
                         <AppBadge variant="gold">Interactive geography</AppBadge>
-                        <h1 class="mt-5 max-w-3xl text-4xl font-black leading-tight text-heritage-red sm:text-5xl lg:text-6xl">
+                        <h1 class="mt-5 max-w-3xl text-3xl font-black leading-tight text-heritage-red sm:text-5xl lg:text-6xl">
                             Macedonia Map Challenge
                         </h1>
                         <p class="mt-5 max-w-2xl text-lg leading-8 text-heritage-muted">
@@ -138,13 +138,19 @@ onMounted(async () => {
                         <PrimaryButton href="/learn/geography" variant="soft">Read Geography lessons</PrimaryButton>
                     </div>
 
-                    <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    <div v-if="mapQuestions.length" class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                         <article v-for="(question, index) in mapQuestions.slice(0, 8)" :key="question.id" class="rounded-2xl border border-heritage-line bg-heritage-panel p-4">
                             <p class="text-sm font-black uppercase text-heritage-red">Map clue {{ index + 1 }}</p>
                             <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">
                                 {{ localizedText(question, 'question', language) }}
                             </p>
                         </article>
+                    </div>
+                    <div v-else class="mt-6 rounded-2xl border border-heritage-line bg-heritage-panel p-5 text-center">
+                        <h3 class="text-xl font-black text-heritage-ink">No map clues yet</h3>
+                        <p class="mt-2 text-sm font-semibold leading-6 text-heritage-muted">
+                            The challenge quiz exists, but it does not have map questions published yet.
+                        </p>
                     </div>
                 </section>
             </template>

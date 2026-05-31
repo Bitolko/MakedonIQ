@@ -43,6 +43,7 @@ class MakedonIQSeeder extends Seeder
 
                 foreach ($quizData['questions'] as $questionIndex => $questionData) {
                     $question = $quiz->questions()->create([
+                        'translation_direction' => $questionData['translation_direction'] ?? null,
                         'question_en' => $questionData['question_en'],
                         'question_mk' => $questionData['question_mk'],
                         'explanation_en' => $questionData['explanation_en'],
@@ -85,36 +86,36 @@ class MakedonIQSeeder extends Seeder
                         'difficulty' => 'beginner',
                         'estimated_minutes' => 8,
                         'questions' => [
-                            $this->question('What does “добро утро” mean?', 'Што значи „добро утро“?', '“Добро утро” means “Good morning”.', '„Добро утро“ значи „Good morning“.', [
+                            $this->question('What does “добро утро” mean?', 'Што значи „добро утро“ на англиски?', '“Добро утро” means “Good morning”.', '„Добро утро“ значи „Good morning“.', [
                                 ['Good night', 'Добра ноќ', false],
                                 ['Good morning', 'Добро утро', true],
                                 ['Thank you', 'Благодарам', false],
                                 ['Goodbye', 'Довидување', false],
-                            ]),
-                            $this->question('What does “благодарам” mean?', 'Што значи „благодарам“?', '“Благодарам” is used to say “Thank you”.', '„Благодарам“ се користи за „Thank you“.', [
+                            ], 'mk_to_en'),
+                            $this->question('What does “благодарам” mean?', 'Што значи „благодарам“ на англиски?', '“Благодарам” is used to say “Thank you”.', '„Благодарам“ се користи за „Thank you“.', [
                                 ['Please', 'Ве молам', false],
                                 ['Thank you', 'Благодарам', true],
                                 ['Hello', 'Здраво', false],
                                 ['Good evening', 'Добра вечер', false],
-                            ]),
-                            $this->question('What does “пријатно” mean?', 'Што значи „пријатно“?', '“Пријатно” can be used for “Enjoy” or “Bon appetit”.', '„Пријатно“ може да значи „Enjoy“ или „Bon appetit“.', [
+                            ], 'mk_to_en'),
+                            $this->question('What does “пријатно” mean?', 'Што значи „пријатно“ на англиски?', '“Пријатно” can be used for “Enjoy” or “Bon appetit”.', '„Пријатно“ може да значи „Enjoy“ или „Bon appetit“.', [
                                 ['Enjoy / Bon appetit', 'Пријатно', true],
                                 ['Good night', 'Добра ноќ', false],
                                 ['My name is', 'Јас се викам', false],
                                 ['Where are you?', 'Каде си?', false],
-                            ]),
-                            $this->question('What does “како си?” mean?', 'Што значи „како си?“?', '“Како си?” means “How are you?”.', '„Како си?“ значи „How are you?“.', [
+                            ], 'mk_to_en'),
+                            $this->question('What does “како си?” mean?', 'Што значи „како си?“ на англиски?', '“Како си?” means “How are you?”.', '„Како си?“ значи „How are you?“.', [
                                 ['How old are you?', 'Колку години имаш?', false],
                                 ['How are you?', 'Како си?', true],
                                 ['Where are you from?', 'Од каде си?', false],
                                 ['What time is it?', 'Колку е часот?', false],
-                            ]),
-                            $this->question('What does “добра ноќ” mean?', 'Што значи „добра ноќ“?', '“Добра ноќ” means “Good night”.', '„Добра ноќ“ значи „Good night“.', [
+                            ], 'mk_to_en'),
+                            $this->question('What does “добра ноќ” mean?', 'Што значи „добра ноќ“ на англиски?', '“Добра ноќ” means “Good night”.', '„Добра ноќ“ значи „Good night“.', [
                                 ['Good morning', 'Добро утро', false],
                                 ['Good afternoon', 'Добар ден', false],
                                 ['Good night', 'Добра ноќ', true],
                                 ['Good luck', 'Со среќа', false],
-                            ]),
+                            ], 'mk_to_en'),
                         ],
                     ],
                 ],
@@ -377,9 +378,10 @@ class MakedonIQSeeder extends Seeder
         ];
     }
 
-    private function question(string $questionEn, string $questionMk, string $explanationEn, string $explanationMk, array $answers): array
+    private function question(string $questionEn, string $questionMk, string $explanationEn, string $explanationMk, array $answers, ?string $translationDirection = null): array
     {
         return [
+            'translation_direction' => $translationDirection,
             'question_en' => $questionEn,
             'question_mk' => $questionMk,
             'explanation_en' => $explanationEn,

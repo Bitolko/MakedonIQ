@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&amp;family=Quicksand:wght@400;500&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#c00000",
+                        "on-primary-container": "#ffe1dc",
+                        "surface-container-high": "#e9e8e3",
+                        "on-tertiary-container": "#e7e4ff",
+                        "surface-container-low": "#f5f4ef",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5e3f3a",
+                        "tertiary-container": "#66657d",
+                        "surface-variant": "#e3e3de",
+                        "on-background": "#1b1c19",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "primary": "#a40000",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "inverse-on-surface": "#f2f1ec",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#6e5c00",
+                        "surface-container-highest": "#e3e3de",
+                        "on-primary-fixed-variant": "#930000",
+                        "surface-bright": "#faf9f4",
+                        "on-secondary-fixed-variant": "#544600",
+                        "inverse-primary": "#ffb4a8",
+                        "surface-dim": "#dbdad5",
+                        "secondary": "#705d00",
+                        "inverse-surface": "#30312e",
+                        "surface": "#faf9f4",
+                        "on-secondary-fixed": "#221b00",
+                        "secondary-fixed": "#ffe16d",
+                        "primary-container": "#d20000",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "background": "#faf9f4",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "surface-container": "#efeee9",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#e8bcb5",
+                        "secondary-container": "#fcd400",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e2e0fc",
+                        "tertiary": "#4e4d64",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1b1c19",
+                        "outline": "#936e69",
+                        "primary-fixed": "#ffdad4",
+                        "on-primary-fixed": "#410000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Montserrat"],
+                        "body-lg": ["Quicksand"],
+                        "display-lg-mobile": ["Montserrat"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "body-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .btn-pressable {
+            box-shadow: 0 4px 0 0 rgba(0,0,0,0.1);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .btn-pressable:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(0,0,0,0.1);
+        }
+        .btn-primary-press {
+            background-color: #a40000;
+            border-bottom: 4px solid #7a0000;
+        }
+        .btn-primary-press:active {
+            border-bottom-width: 0;
+            transform: translateY(4px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="bg-surface border-b border-surface-variant shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="font-headline-md text-headline-md font-bold text-primary">MakedonIQ</div>
+<nav class="hidden md:flex gap-8 items-center h-full">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold h-full flex items-center" href="#">Learn</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Practice</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Leaderboard</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-label-sm bg-surface-container px-3 py-1 rounded-full text-on-surface-variant">EN / MK</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<div class="flex flex-col md:flex-row max-w-container-max mx-auto min-h-[calc(100vh-64px)]">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col w-64 p-4 gap-2 bg-surface-container-low border-r border-surface-variant">
+<div class="mb-6 px-4">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Level 12 Scholar</p>
+<h3 class="font-headline-md text-headline-md text-primary">Welcome back!</h3>
+</div>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 font-bold translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span>Grammar</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="translate">translate</span>
+<span>Vocabulary</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span>Culture</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span>History</span>
+</a>
+<div class="mt-auto pt-8 border-t border-surface-variant flex flex-col gap-2">
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-lg px-4 py-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin-mobile md:p-margin-desktop overflow-y-auto">
+<!-- Hero Section -->
+<section class="mb-12 relative overflow-hidden rounded-lg bg-surface border border-surface-variant p-8 md:p-12 shadow-sm flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1 space-y-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="explore">explore</span>
+                        GEOGRAPHY MODULE
+                    </div>
+<h1 class="font-display-lg text-display-lg text-on-surface leading-tight">Macedonian Geography</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Explore the majestic lakes, mountains, and ancient cities of the homeland through an interactive journey across the Balkan peninsula.</p>
+</div>
+<div class="w-48 h-48 md:w-64 md:h-64 relative">
+<div class="absolute inset-0 bg-secondary/10 rounded-full animate-pulse"></div>
+<img alt="Stylized map illustration" class="w-full h-full object-cover rounded-xl relative z-10 shadow-lg" data-alt="A highly detailed, stylized 3D map illustration of Macedonia featuring prominent topography like rolling green mountains and deep blue lakes. The art style is modern corporate with a gamified twist, utilizing a color palette of Heritage Red and Golden accents. Soft, warm ambient lighting creates a welcoming, premium educational feel. The map glows slightly, suggesting interactivity and intellectual curiosity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBegFDnIwJyNDaMxu7nodr75TmMuF740yWfcUHFfSqgdWTrOvgkJU5q-6_1e63YFq_Q-HhXjfx4K44xiSFE7r91MVyvn5qVXefWhtJWMEbibOhuXlXSk6RJ6R3vRYeY7RxQ6QNwc3VOXV8OLa9SvCf5mQTYtWl0OthiqkbS6NoPEL2ug8Sk8CfNkb1h2sCb2q1zNCAfkS4l-a3iOtFdxZYisHtI_7tBhCkjcJxj7A_cqFqkwCcxjZVZ7mqCZ3801jgkJte49hspPik"/>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Lesson List -->
+<div class="lg:col-span-2 space-y-6">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+                        Curriculum
+                    </h2>
+<!-- Lesson 1 -->
+<div class="group bg-surface hover:bg-surface-bright p-6 rounded-lg border border-surface-variant transition-all duration-300 hover:shadow-md cursor-pointer">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-md font-label-sm text-label-sm">Beginner</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span> 8 min
+                                    </span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Cities, Lakes, and Mountains</h3>
+<p class="text-on-surface-variant">Discover the natural wonders of Macedonia.</p>
+</div>
+<div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="block">block</span> Not Started
+                                </span>
+<button class="w-full sm:w-auto px-6 py-2 bg-primary text-on-primary rounded-md btn-primary-press font-label-sm text-label-sm uppercase tracking-widest">Start</button>
+</div>
+</div>
+</div>
+<!-- Lesson 2 -->
+<div class="group bg-surface p-6 rounded-lg border border-surface-variant shadow-sm opacity-90">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-md font-label-sm text-label-sm">Intermediate</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span> 12 min
+                                    </span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">The Vardar River Basin</h3>
+<p class="text-on-surface-variant">Learning about the longest river and its impact.</p>
+</div>
+<div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span> Completed
+                                </span>
+<button class="w-full sm:w-auto px-6 py-2 bg-surface-variant text-on-surface-variant rounded-md font-label-sm text-label-sm uppercase tracking-widest border border-outline-variant">Review</button>
+</div>
+</div>
+</div>
+<!-- Lesson 3 -->
+<div class="group bg-surface hover:bg-surface-bright p-6 rounded-lg border-2 border-primary/20 transition-all duration-300 hover:shadow-md cursor-pointer">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-md font-label-sm text-label-sm">Beginner</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span> 10 min
+                                    </span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">National Parks &amp; Wildlife</h3>
+<p class="text-on-surface-variant">A guide to Mavrovo, Pelister, and Galičica.</p>
+</div>
+<div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[16px] animate-spin" data-icon="sync">sync</span> 40% Complete
+                                </span>
+<button class="w-full sm:w-auto px-6 py-2 bg-primary text-on-primary rounded-md btn-primary-press font-label-sm text-label-sm uppercase tracking-widest">Resume</button>
+</div>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden relative">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-1000" style="width: 40%;">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 -mr-1">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Panel -->
+<aside class="space-y-8">
+<!-- What you'll learn card -->
+<div class="bg-surface p-6 rounded-lg border border-surface-variant shadow-sm">
+<h4 class="font-headline-md text-headline-md text-on-surface mb-4">What you’ll learn</h4>
+<ul class="space-y-4">
+<li class="flex items-start gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<span>Identify major mountain ranges including the Šar Mountains and Baba Mountain.</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<span>Learn about the three major tectonic lakes: Ohrid, Prespa, and Dojran.</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary mt-1" data-icon="check_circle">check_circle</span>
+<span>Understand the environmental significance of National Parks.</span>
+</li>
+</ul>
+</div>
+<!-- Map Challenge Card -->
+<div class="relative group overflow-hidden bg-on-background p-8 rounded-lg text-on-primary flex flex-col items-center text-center gap-4 cursor-pointer">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="A dark, atmospheric topographic map overlay with glowing golden lines representing coordinates and heights. The style is high-performance tech-forward, using a deep navy and black canvas with vibrant Heritage Red pulse points. The mood is intellectually stimulating and mysterious, perfect for an interactive geography challenge." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuVnumbSxrXXPQT6RtkvlaXQyjM_LZqHM-1NzlTGuVEYB6PgryYZj4nIVmMm6YqIQ9Nuhi3nLfrhEVBT39PAVZ0nb8MNiMcb6XyJEOJVoeKh2jcoGdfXbWAO-HRbs-hZbzVCCLNy7oyFl2DcAFWBTWO0VCOr6fCpQDCCAdOZ9bKFuRK_wAstQYr4BUillqfeB47JrrSwwJVlp6rDHxSvSyjGABH208m2AcpAZk-t_XOaS40IBf_h3fCsNiCw3RC_T1Bl3ICGxlH1E"/>
+</div>
+<span class="material-symbols-outlined text-secondary-container text-[48px]" data-icon="location_on" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<h4 class="font-headline-md text-headline-md relative z-10">Map Challenge</h4>
+<p class="font-body-md text-body-md relative z-10 text-on-primary-container">Test your knowledge! Can you locate all 10 major landmarks in under 60 seconds?</p>
+<button class="relative z-10 w-full py-3 bg-secondary-container text-on-secondary-container font-bold rounded-lg btn-pressable">Try the Map Challenge</button>
+</div>
+<!-- Daily Challenge Mini-FAB -->
+<div class="bg-surface-container-high p-4 rounded-lg flex items-center justify-between border-l-4 border-primary">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">DAILY GOAL</p>
+<p class="font-bold">2/3 Lessons</p>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-primary flex items-center justify-center font-bold text-primary">
+                            66%
+                        </div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-highest border-t border-surface-variant">
+<div class="w-full py-8 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto flex flex-col items-center gap-4">
+<div class="font-headline-md text-headline-md text-on-surface">MakedonIQ</div>
+<div class="flex flex-wrap justify-center gap-6 text-on-surface-variant font-label-sm text-label-sm">
+<a class="hover:underline decoration-secondary decoration-2 transition-all" href="#">Privacy Policy</a>
+<a class="hover:underline decoration-secondary decoration-2 transition-all" href="#">Terms of Service</a>
+<a class="hover:underline decoration-secondary decoration-2 transition-all" href="#">Macedonian Ministry of Culture</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-75">© 2024 MakedonIQ Learning. Heritage through Play.</p>
+</div>
+</footer>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface shadow-lg flex justify-around items-center h-16 px-4 z-50 border-t border-surface-variant">
+<button class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="text-[10px] font-bold">Learn</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px]">Home</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="text-[10px]">Rank</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="text-[10px]">Profile</span>
+</button>
+</nav>
+<script>
+        // Micro-interactions for lesson cards
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Simple active state simulation
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                navLinks.forEach(l => l.classList.remove('text-primary', 'border-b-2', 'border-primary', 'font-bold'));
+                link.classList.add('text-primary', 'border-b-2', 'border-primary', 'font-bold');
+            });
+        });
+    </script>
+</body></html>

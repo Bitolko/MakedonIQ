@@ -42,6 +42,7 @@ class QuizController extends Controller
             'id' => $question->id,
             'quiz_id' => $question->quiz_id,
             'question_type' => $question->question_type,
+            'translation_direction' => $question->translation_direction,
             'metadata' => $question->question_type === 'map_guess'
                 ? $this->publicQuestionMetadata($question->metadata ?? [])
                 : null,

@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () use ($page): void {
 Route::middleware(['auth', 'admin'])->group(function () use ($page): void {
     Route::get('/admin', $page('Admin.Dashboard'))->name('admin.dashboard');
     Route::get('/admin/categories', $page('Admin.Categories'))->name('admin.categories');
+    Route::get('/admin/lessons', $page('Admin.Lessons'))->name('admin.lessons');
     Route::get('/admin/quizzes', $page('Admin.Quizzes'))->name('admin.quizzes');
     Route::get('/admin/questions', $page('Admin.Questions'))->name('admin.questions');
 });

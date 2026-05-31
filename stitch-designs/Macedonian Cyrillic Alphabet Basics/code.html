@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MakedonIQ - Macedonian Cyrillic Basics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Quicksand:wght@400;500;700&amp;family=Inter:wght@400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;family=Quicksand:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#c00000",
+                    "on-primary-container": "#ffe1dc",
+                    "surface-container-high": "#e9e8e3",
+                    "on-tertiary-container": "#e7e4ff",
+                    "surface-container-low": "#f5f4ef",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#5e3f3a",
+                    "tertiary-container": "#66657d",
+                    "surface-variant": "#e3e3de",
+                    "on-background": "#1b1c19",
+                    "on-tertiary-fixed-variant": "#45455b",
+                    "primary": "#a40000",
+                    "on-tertiary-fixed": "#1a1a2e",
+                    "inverse-on-surface": "#f2f1ec",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#6e5c00",
+                    "surface-container-highest": "#e3e3de",
+                    "on-primary-fixed-variant": "#930000",
+                    "surface-bright": "#faf9f4",
+                    "on-secondary-fixed-variant": "#544600",
+                    "inverse-primary": "#ffb4a8",
+                    "surface-dim": "#dbdad5",
+                    "secondary": "#705d00",
+                    "inverse-surface": "#30312e",
+                    "surface": "#faf9f4",
+                    "on-secondary-fixed": "#221b00",
+                    "secondary-fixed": "#ffe16d",
+                    "primary-container": "#d20000",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb4a8",
+                    "background": "#faf9f4",
+                    "tertiary-fixed-dim": "#c6c4df",
+                    "surface-container": "#efeee9",
+                    "secondary-fixed-dim": "#e9c400",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#e8bcb5",
+                    "secondary-container": "#fcd400",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#e2e0fc",
+                    "tertiary": "#4e4d64",
+                    "on-secondary": "#ffffff",
+                    "on-surface": "#1b1c19",
+                    "outline": "#936e69",
+                    "primary-fixed": "#ffdad4",
+                    "on-primary-fixed": "#410000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1200px",
+                    "unit": "8px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Montserrat"],
+                    "body-lg": ["Quicksand"],
+                    "display-lg-mobile": ["Montserrat"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Montserrat"],
+                    "body-md": ["Quicksand"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-card {
+            background-color: #FFFFFF;
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .soft-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+        }
+        .btn-primary {
+            border-bottom: 4px solid #800000;
+        }
+        .btn-primary:active {
+            border-bottom-width: 0;
+            transform: translateY(4px);
+        }
+        .btn-secondary {
+            border-bottom: 4px solid #c9a900;
+        }
+        .btn-secondary:active {
+            border-bottom-width: 0;
+            transform: translateY(4px);
+        }
+        .letter-grid-item {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .letter-grid-item:active {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface dark:bg-inverse-surface border-b border-surface-variant dark:border-outline-variant shadow-sm h-16 flex items-center">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-center gap-6">
+<a class="flex items-center gap-2 group transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-primary text-2xl">arrow_back</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary transition-colors">Back</span>
+</a>
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">MakedonIQ</div>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-sm text-label-sm text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold hover:text-primary transition-colors duration-200" href="#">Learn</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-200" href="#">Practice</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-200" href="#">Leaderboard</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-label-sm text-label-sm px-3 py-1 rounded-full border border-outline text-on-surface-variant hover:bg-surface-variant transition-colors">EN / MK</button>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Hero Section -->
+<section class="mb-12 relative overflow-hidden rounded-lg bg-surface-container-low p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1 z-10 text-center md:text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full mb-4">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Foundation Series</span>
+</div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">Macedonian Cyrillic Alphabet Basics</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Master the fundamental letters that form the heart of Macedonian heritage. Discover the unique phonetics and elegant script of Cyrillic.</p>
+<div class="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
+<button class="btn-primary bg-primary text-on-primary px-8 py-3 rounded-DEFAULT font-bold text-lg flex items-center gap-2 shadow-lg">
+                        Start Lesson
+                        <span class="material-symbols-outlined">play_circle</span>
+</button>
+<div class="flex items-center gap-2 text-secondary font-bold">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span>Earn 20 XP</span>
+</div>
+</div>
+</div>
+<div class="flex-1 w-full max-w-md">
+<div class="relative aspect-video rounded-lg overflow-hidden shadow-xl border-4 border-white transform rotate-2">
+<img alt="Cyrillic Script Art" class="w-full h-full object-cover" data-alt="A beautiful, close-up photograph of hand-lettered Macedonian Cyrillic characters on high-quality parchment paper. The lighting is warm and golden, coming from the side to emphasize the texture of the ink and paper. The scene feels scholarly and respectful of tradition, using a color palette of deep reds and cream. The background is softly blurred to keep focus on the elegant red calligraphy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI9rwqvu2Ss14y7qdHOF-UNj_xnCFDene8jXpl37mqxy1TnnpjsVrrLsvShPKDtT6ZsWFUbbg0rkQFHlnjVHqODL-tGNdvZqkSJ4m1zWmK0pMHWUjVrfZXQCWdaG-EPGdisjuABZdRIcxKCze0lflwJ0wxr6gLwtm6Y-7zrnDb6-xSxKy1Ib_ba4pTUmTXGUwCNxPrEbRTrQ5yOz9SPIK-XGOeoNf-Ko_b_zIK7qHcjCYkEjRnEDKxbAOCic61wIwKObnand06lt4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Alphabet & Interactive -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-12">
+<!-- Visual Alphabet Grid (Large Card) -->
+<div class="md:col-span-8 soft-card p-8 rounded-lg">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">The First Steps</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tap to hear pronunciation</span>
+</div>
+<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-4">
+<!-- Letter Cards -->
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">А</span>
+<span class="font-label-sm text-label-sm opacity-60">ah</span>
+</button>
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">Б</span>
+<span class="font-label-sm text-label-sm opacity-60">beh</span>
+</button>
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">В</span>
+<span class="font-label-sm text-label-sm opacity-60">veh</span>
+</button>
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">Г</span>
+<span class="font-label-sm text-label-sm opacity-60">geh</span>
+</button>
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">Д</span>
+<span class="font-label-sm text-label-sm opacity-60">deh</span>
+</button>
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">М</span>
+<span class="font-label-sm text-label-sm opacity-60">em</span>
+</button>
+<button class="letter-grid-item aspect-square flex flex-col items-center justify-center rounded-lg bg-surface-container border-2 border-transparent hover:border-primary hover:bg-white text-on-surface transition-all">
+<span class="text-4xl font-bold font-headline-md">К</span>
+<span class="font-label-sm text-label-sm opacity-60">kah</span>
+</button>
+</div>
+</div>
+<!-- Interactive Practice Card -->
+<div class="md:col-span-4 bg-tertiary-container rounded-lg p-8 flex flex-col justify-between text-on-tertiary-container shadow-xl">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-sm text-label-sm uppercase font-bold tracking-tighter">Recognition Drill</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-6 leading-tight">Can you recognize the first letter in <span class="text-secondary-fixed font-bold">Македонија</span>?</h3>
+<div class="flex flex-col gap-3">
+<button class="w-full py-4 px-6 bg-surface-container-lowest text-on-surface rounded-lg font-bold flex justify-between items-center hover:bg-primary-fixed transition-colors" onclick="checkAnswer(this, 'correct')">
+<span>М (em)</span>
+<span class="material-symbols-outlined opacity-0">check_circle</span>
+</button>
+<button class="w-full py-4 px-6 bg-surface-container-lowest text-on-surface rounded-lg font-bold flex justify-between items-center hover:bg-primary-fixed transition-colors" onclick="checkAnswer(this, 'wrong')">
+<span>Н (en)</span>
+<span class="material-symbols-outlined opacity-0">cancel</span>
+</button>
+<button class="w-full py-4 px-6 bg-surface-container-lowest text-on-surface rounded-lg font-bold flex justify-between items-center hover:bg-primary-fixed transition-colors" onclick="checkAnswer(this, 'wrong')">
+<span>П (pe)</span>
+<span class="material-symbols-outlined opacity-0">cancel</span>
+</button>
+</div>
+</div>
+<p class="mt-4 font-label-sm text-label-sm text-center italic hidden" id="feedback-text">Correct! 'M' is the first letter.</p>
+</div>
+</div>
+<!-- Example Words Section -->
+<section class="mb-12">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8 border-l-4 border-primary pl-4">Example Words</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Word Card 1 -->
+<div class="soft-card rounded-lg overflow-hidden group">
+<div class="h-32 bg-surface-variant flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-6xl text-primary opacity-20 transform scale-150 group-hover:scale-110 transition-transform">public</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-3xl font-bold text-on-surface-variant">Македонија</span>
+</div>
+</div>
+<div class="p-6">
+<div class="font-label-sm text-label-sm text-primary mb-1">Macedonia</div>
+<div class="font-body-md text-body-md text-on-surface-variant">The Motherland</div>
+</div>
+</div>
+<!-- Word Card 2 -->
+<div class="soft-card rounded-lg overflow-hidden group">
+<div class="h-32 bg-surface-variant flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-6xl text-primary opacity-20 transform scale-150 group-hover:scale-110 transition-transform">family_restroom</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-3xl font-bold text-on-surface-variant">мајка</span>
+</div>
+</div>
+<div class="p-6">
+<div class="font-label-sm text-label-sm text-primary mb-1">majka</div>
+<div class="font-body-md text-body-md text-on-surface-variant">mother</div>
+</div>
+</div>
+<!-- Word Card 3 -->
+<div class="soft-card rounded-lg overflow-hidden group">
+<div class="h-32 bg-surface-variant flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-6xl text-primary opacity-20 transform scale-150 group-hover:scale-110 transition-transform">person</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-3xl font-bold text-on-surface-variant">татко</span>
+</div>
+</div>
+<div class="p-6">
+<div class="font-label-sm text-label-sm text-primary mb-1">tatko</div>
+<div class="font-body-md text-body-md text-on-surface-variant">father</div>
+</div>
+</div>
+<!-- Word Card 4 -->
+<div class="soft-card rounded-lg overflow-hidden group">
+<div class="h-32 bg-surface-variant flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-6xl text-primary opacity-20 transform scale-150 group-hover:scale-110 transition-transform">thumb_up</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-3xl font-bold text-on-surface-variant">добро</span>
+</div>
+</div>
+<div class="p-6">
+<div class="font-label-sm text-label-sm text-primary mb-1">dobro</div>
+<div class="font-body-md text-body-md text-on-surface-variant">good</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quiz CTA -->
+<section class="bg-secondary-container rounded-lg p-8 md:p-12 text-center md:flex md:items-center md:justify-between shadow-lg relative overflow-hidden">
+<!-- Decorative circle -->
+<div class="absolute -right-16 -top-16 w-64 h-64 bg-secondary opacity-10 rounded-full"></div>
+<div class="relative z-10 text-left mb-8 md:mb-0">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-secondary-container mb-2">Feeling confident?</h2>
+<p class="font-body-lg text-body-lg text-on-secondary-container opacity-80">Take a quick 2-minute quiz to lock in your knowledge.</p>
+</div>
+<button class="relative z-10 btn-secondary bg-secondary text-on-secondary px-10 py-4 rounded-full font-bold text-xl flex items-center gap-4 mx-auto md:mx-0 shadow-lg">
+                Test your Alphabet skills
+                <span class="material-symbols-outlined">quiz</span>
+</button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-margin-mobile md:px-margin-desktop mt-16 bg-surface-container-highest dark:bg-inverse-surface border-t border-surface-variant dark:border-outline-variant">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="font-headline-md text-headline-md text-on-surface dark:text-on-surface-variant font-bold">MakedonIQ</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-center md:text-left">© 2024 MakedonIQ Learning. Heritage through Play.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:underline decoration-secondary decoration-2" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:underline decoration-secondary decoration-2" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:underline decoration-secondary decoration-2" href="#">Ministry of Culture</a>
+</div>
+</div>
+</footer>
+<!-- Success Feedback Overlay -->
+<div class="fixed bottom-0 left-0 w-full bg-green-100 border-t-4 border-green-600 p-6 transform translate-y-full transition-transform duration-300 z-[100] flex items-center justify-between" id="success-overlay">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl">check</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-green-800">Točno! (Correct)</h4>
+<p class="text-green-700">You're making great progress.</p>
+</div>
+</div>
+<button class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold" onclick="hideFeedback()">Continue</button>
+</div>
+<!-- Error Feedback Overlay -->
+<div class="fixed bottom-0 left-0 w-full bg-error-container border-t-4 border-error p-6 transform translate-y-full transition-transform duration-300 z-[100] flex items-center justify-between" id="error-overlay">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-error rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl">close</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-error">Ne e točno. (Try again)</h4>
+<p class="text-on-error-container">The letter 'M' is the correct answer.</p>
+</div>
+</div>
+<button class="bg-error text-white px-6 py-2 rounded-lg font-bold" onclick="hideFeedback()">Try Again</button>
+</div>
+<script>
+        function checkAnswer(btn, type) {
+            // Remove existing states
+            document.querySelectorAll('button').forEach(b => {
+                b.classList.remove('bg-green-200', 'bg-red-200');
+                const icon = b.querySelector('.material-symbols-outlined');
+                if(icon) icon.classList.add('opacity-0');
+            });
+
+            const icon = btn.querySelector('.material-symbols-outlined');
+            
+            if(type === 'correct') {
+                btn.classList.add('bg-green-200');
+                icon.classList.remove('opacity-0');
+                icon.innerText = 'check_circle';
+                icon.classList.add('text-green-600');
+                document.getElementById('success-overlay').classList.remove('translate-y-full');
+            } else {
+                btn.classList.add('bg-red-200');
+                icon.classList.remove('opacity-0');
+                icon.innerText = 'cancel';
+                icon.classList.add('text-red-600');
+                document.getElementById('error-overlay').classList.remove('translate-y-full');
+            }
+        }
+
+        function hideFeedback() {
+            document.getElementById('success-overlay').classList.add('translate-y-full');
+            document.getElementById('error-overlay').classList.add('translate-y-full');
+        }
+
+        // Letter grid micro-interaction
+        document.querySelectorAll('.letter-grid-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const audio = new Audio(); // Placeholder for sound logic
+                // Visual feedback
+                item.classList.add('border-primary', 'scale-110');
+                setTimeout(() => item.classList.remove('scale-110'), 200);
+            });
+        });
+    </script>
+</body></html>

@@ -116,7 +116,7 @@ onMounted(async () => {
                         </div>
 
                         <div class="grid gap-5">
-                            <p v-for="paragraph in paragraphs" :key="paragraph" class="text-lg leading-9 text-heritage-muted">
+                            <p v-for="paragraph in paragraphs" :key="paragraph" class="text-base leading-8 text-heritage-muted md:text-lg md:leading-9">
                                 {{ paragraph }}
                             </p>
                         </div>

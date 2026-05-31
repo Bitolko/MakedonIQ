@@ -61,6 +61,30 @@ function formatDate(value) {
     }).format(new Date(value));
 }
 
+function questionText(question) {
+    return localizedText(question, 'question', language);
+}
+
+function explanationText(question) {
+    return localizedText(question, 'explanation', language);
+}
+
+function answerText(answer, question) {
+    if (!answer) {
+        return '';
+    }
+
+    if (question?.translation_direction === 'mk_to_en') {
+        return answer.answer_en || answer.answer_mk || '';
+    }
+
+    if (question?.translation_direction === 'en_to_mk') {
+        return answer.answer_mk || answer.answer_en || '';
+    }
+
+    return localizedText(answer, 'answer', language);
+}
+
 onMounted(async () => {
     try {
         if (attemptId) {
@@ -180,7 +204,7 @@ onMounted(async () => {
                                     {{ answer.is_correct ? 'Correct' : 'Review' }}
                                 </AppBadge>
                                 <h3 class="mt-3 text-xl font-black text-heritage-ink">
-                                    {{ index + 1 }}. {{ localizedText(answer.question, 'question', language) }}
+                                    {{ index + 1 }}. {{ questionText(answer.question) }}
                                 </h3>
                                 <p v-if="language !== 'mk' && answer.question.question_mk" class="mt-2 font-semibold text-heritage-muted">{{ answer.question.question_mk }}</p>
                             </div>
@@ -192,16 +216,16 @@ onMounted(async () => {
                         <div class="mt-5 grid gap-3 md:grid-cols-2">
                             <div :class="['rounded-2xl border p-4', answer.is_correct ? 'border-emerald-200 bg-emerald-50' : 'border-heritage-red/20 bg-heritage-red-faint']">
                                 <p class="label">Your answer</p>
-                                <p class="mt-2 font-black text-heritage-ink">{{ localizedText(answer.selected_answer, 'answer', language) }}</p>
+                                <p class="mt-2 font-black text-heritage-ink">{{ answerText(answer.selected_answer, answer.question) }}</p>
                             </div>
                             <div class="rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint p-4">
                                 <p class="label">Correct answer</p>
-                                <p class="mt-2 font-black text-heritage-ink">{{ localizedText(answer.correct_answer, 'answer', language) }}</p>
+                                <p class="mt-2 font-black text-heritage-ink">{{ answerText(answer.correct_answer, answer.question) }}</p>
                             </div>
                         </div>
 
-                        <p v-if="localizedText(answer.question, 'explanation', language)" class="mt-4 rounded-2xl bg-white/70 p-4 leading-7 text-heritage-muted">
-                            {{ localizedText(answer.question, 'explanation', language) }}
+                        <p v-if="explanationText(answer.question)" class="mt-4 rounded-2xl bg-white/70 p-4 leading-7 text-heritage-muted">
+                            {{ explanationText(answer.question) }}
                         </p>
                     </article>
                 </div>

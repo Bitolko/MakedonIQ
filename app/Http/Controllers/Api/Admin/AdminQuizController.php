@@ -68,6 +68,7 @@ class AdminQuizController extends Controller
     {
         return $request->validate([
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'lesson_id' => ['nullable', 'integer', 'exists:lessons,id'],
             'title_en' => ['required', 'string', 'max:255'],
             'title_mk' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255'],
@@ -87,6 +88,7 @@ class AdminQuizController extends Controller
 
         return [
             'category_id' => $validated['category_id'],
+            'lesson_id' => $validated['lesson_id'] ?? null,
             'title_en' => $validated['title_en'],
             'title_mk' => filled($validated['title_mk'] ?? null) ? $validated['title_mk'] : $validated['title_en'],
             'slug' => $this->uniqueSlug($baseSlug, $quiz?->id),
@@ -107,7 +109,7 @@ class AdminQuizController extends Controller
         return Quiz::query()
             ->select('quizzes.*')
             ->join('categories', 'categories.id', '=', 'quizzes.category_id')
-            ->with('category')
+            ->with(['category', 'lesson.category'])
             ->withCount([
                 'questions as questions_count',
                 'questions as published_questions_count' => fn ($query) => $query->published(),
@@ -139,6 +141,18 @@ class AdminQuizController extends Controller
             'category_id' => $quiz->category_id,
             'category_name_en' => $quiz->category->name_en,
             'category_slug' => $quiz->category->slug,
+            'lesson_id' => $quiz->lesson_id,
+            'lesson_title_en' => $quiz->lesson?->title_en,
+            'lesson_slug' => $quiz->lesson?->slug,
+            'lesson_category_slug' => $quiz->lesson?->category?->slug,
+            'related_lesson' => $quiz->lesson ? [
+                'id' => $quiz->lesson->id,
+                'title_en' => $quiz->lesson->title_en,
+                'title_mk' => $quiz->lesson->title_mk,
+                'slug' => $quiz->lesson->slug,
+                'category_slug' => $quiz->lesson->category?->slug,
+                'is_published' => $quiz->lesson->is_published,
+            ] : null,
             'title_en' => $quiz->title_en,
             'title_mk' => $quiz->title_mk,
             'slug' => $quiz->slug,

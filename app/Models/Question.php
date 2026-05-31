@@ -18,6 +18,7 @@ class Question extends Model
     protected $fillable = [
         'quiz_id',
         'question_type',
+        'translation_direction',
         'metadata',
         'question_en',
         'question_mk',

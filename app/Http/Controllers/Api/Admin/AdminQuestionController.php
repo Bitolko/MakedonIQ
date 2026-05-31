@@ -95,6 +95,7 @@ class AdminQuestionController extends Controller
     {
         $validated = $request->validate([
             'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess'],
+            'translation_direction' => ['nullable', 'string', 'in:general,mk_to_en,en_to_mk'],
             'metadata' => ['nullable', 'array'],
             'metadata.map_x' => ['nullable', 'integer', 'min:0', 'max:100'],
             'metadata.map_y' => ['nullable', 'integer', 'min:0', 'max:100'],
@@ -143,6 +144,7 @@ class AdminQuestionController extends Controller
     {
         return [
             'question_type' => $validated['question_type'] ?? 'multiple_choice',
+            'translation_direction' => $this->translationDirection($validated['translation_direction'] ?? null),
             'metadata' => $this->metadataAttributes($validated),
             'question_en' => $validated['question_en'],
             'question_mk' => $this->nullableString($validated['question_mk'] ?? null),
@@ -183,6 +185,13 @@ class AdminQuestionController extends Controller
             'map_target_label_en' => $this->nullableString($metadata['map_target_label_en'] ?? null),
             'map_target_label_mk' => $this->nullableString($metadata['map_target_label_mk'] ?? null),
         ];
+    }
+
+    private function translationDirection(?string $value): ?string
+    {
+        $value = $this->nullableString($value);
+
+        return $value === 'general' ? null : $value;
     }
 
     private function answersMatch(Question $question, array $answers): bool
@@ -243,6 +252,7 @@ class AdminQuestionController extends Controller
             'category_name_en' => $question->quiz->category->name_en,
             'category_slug' => $question->quiz->category->slug,
             'question_type' => $question->question_type,
+            'translation_direction' => $question->translation_direction,
             'metadata' => $question->metadata,
             'question_en' => $question->question_en,
             'question_mk' => $question->question_mk,

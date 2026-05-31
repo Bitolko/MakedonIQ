@@ -142,6 +142,26 @@ export async function deleteAdminCategory(id) {
     return deleteJson(`/api/admin/categories/${id}`);
 }
 
+export async function getAdminLessons() {
+    return fetchJson('/api/admin/lessons');
+}
+
+export async function getAdminLesson(id) {
+    return fetchJson(`/api/admin/lessons/${id}`);
+}
+
+export async function createAdminLesson(payload) {
+    return postJson('/api/admin/lessons', payload);
+}
+
+export async function updateAdminLesson(id, payload) {
+    return patchJson(`/api/admin/lessons/${id}`, payload);
+}
+
+export async function deleteAdminLesson(id) {
+    return deleteJson(`/api/admin/lessons/${id}`);
+}
+
 export async function getAdminQuizzes() {
     return fetchJson('/api/admin/quizzes');
 }

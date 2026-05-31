@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MakedonIQ - Cities, Lakes, and Mountains</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;family=Quicksand:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#c00000",
+                      "on-primary-container": "#ffe1dc",
+                      "surface-container-high": "#e9e8e3",
+                      "on-tertiary-container": "#e7e4ff",
+                      "surface-container-low": "#f5f4ef",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#5e3f3a",
+                      "tertiary-container": "#66657d",
+                      "surface-variant": "#e3e3de",
+                      "on-background": "#1b1c19",
+                      "on-tertiary-fixed-variant": "#45455b",
+                      "primary": "#a40000",
+                      "on-tertiary-fixed": "#1a1a2e",
+                      "inverse-on-surface": "#f2f1ec",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#6e5c00",
+                      "surface-container-highest": "#e3e3de",
+                      "on-primary-fixed-variant": "#930000",
+                      "surface-bright": "#faf9f4",
+                      "on-secondary-fixed-variant": "#544600",
+                      "inverse-primary": "#ffb4a8",
+                      "surface-dim": "#dbdad5",
+                      "secondary": "#705d00",
+                      "inverse-surface": "#30312e",
+                      "surface": "#faf9f4",
+                      "on-secondary-fixed": "#221b00",
+                      "secondary-fixed": "#ffe16d",
+                      "primary-container": "#d20000",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed-dim": "#ffb4a8",
+                      "background": "#faf9f4",
+                      "tertiary-fixed-dim": "#c6c4df",
+                      "surface-container": "#efeee9",
+                      "secondary-fixed-dim": "#e9c400",
+                      "on-error": "#ffffff",
+                      "outline-variant": "#e8bcb5",
+                      "secondary-container": "#fcd400",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#e2e0fc",
+                      "tertiary": "#4e4d64",
+                      "on-secondary": "#ffffff",
+                      "on-surface": "#1b1c19",
+                      "outline": "#936e69",
+                      "primary-fixed": "#ffdad4",
+                      "on-primary-fixed": "#410000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1200px",
+                      "unit": "8px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "margin-desktop": "48px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Montserrat"],
+                      "body-lg": ["Quicksand"],
+                      "display-lg-mobile": ["Montserrat"],
+                      "label-sm": ["Inter"],
+                      "display-lg": ["Montserrat"],
+                      "body-md": ["Quicksand"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                      "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-card {
+            background-color: #ffffff;
+            box-shadow: 0px 4px 20px rgba(78, 77, 100, 0.04);
+            transition: all 0.3s ease;
+        }
+        .soft-card:hover {
+            box-shadow: 0px 8px 30px rgba(78, 77, 100, 0.08);
+            transform: translateY(-2px);
+        }
+        .btn-3d {
+            border-bottom-width: 4px;
+            transition: all 0.1s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(2px);
+            border-bottom-width: 0px;
+            margin-bottom: 4px;
+        }
+        .primary-btn {
+            background-color: #a40000;
+            color: white;
+            border-bottom-color: #7a0000;
+        }
+        .secondary-btn {
+            background-color: #fcd400;
+            color: #4e4d64;
+            border-bottom-color: #d4b200;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-surface-variant sticky top-0 z-50">
+<nav class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">MakedonIQ</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-sm text-label-sm" href="#">Learn</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Practice</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Leaderboard</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-label-sm text-label-sm font-bold bg-surface-variant px-3 py-1.5 rounded-full hover:bg-outline-variant transition-colors">EN / MK</button>
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+</div>
+</nav>
+</header>
+<main class="max-w-container-max mx-auto px-margin-desktop py-8 lg:py-12">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 mb-8 text-on-surface-variant font-label-sm text-label-sm">
+<a class="hover:text-primary flex items-center gap-1" href="#">
+<span class="material-symbols-outlined !text-[16px]" data-icon="arrow_back">arrow_back</span>
+                Back to Geography
+            </a>
+<span>/</span>
+<span class="text-on-surface">Cities, Lakes, and Mountains</span>
+</div>
+<!-- Hero Section -->
+<section class="relative h-[400px] rounded-lg overflow-hidden mb-12 soft-card">
+<img alt="Scenic view of Lake Ohrid" class="w-full h-full object-cover" data-alt="A breathtaking high-angle view of Lake Ohrid in Macedonia at sunset. The deep blue water is calm, reflecting the golden and orange hues of the sky. In the foreground, the historic Church of Saint John at Kaneo sits on a rocky cliff overlooking the lake. The overall mood is peaceful and ancient, with warm lighting and a soft, painterly photographic style that highlights the rich Macedonian heritage." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpUw52cZIw_RY1rJbUMfSD1zKL70Azo125kYEYXjpzlNBTZrqUdIpzVjopcWl-4kMCxpyHewwdgyYVr5QoGe4U9hOiPfg1VpCMrLOf6IuhqymzImHtcE3oBrtydhU0FCFCXzAVkZVgVXTYctv7aNWzosccbynRD-16RyVDjettjO23AT-JpP1uZPor4JWdm6F-bPa9UgxlWDp5yFU_mjZv4sw9NUDUfkdwTdogGoTe3GDY1JGMHrW4zVHYdh3b5ge0diE72r_FAYc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-12">
+<div class="flex gap-3 mb-4">
+<span class="bg-secondary-container/90 text-on-secondary-container px-4 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px]" data-icon="public">public</span> Geography
+                    </span>
+<span class="bg-primary-container/90 text-white px-4 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px]" data-icon="signal_cellular_alt">signal_cellular_alt</span> Beginner
+                    </span>
+<span class="bg-white/90 text-tertiary px-4 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px]" data-icon="schedule">schedule</span> 8 min
+                    </span>
+</div>
+<h1 class="font-display-lg text-display-lg text-white mb-2">Cities, Lakes, and Mountains</h1>
+<p class="text-white/90 font-body-lg text-body-lg max-w-2xl">Discover the majestic landscapes and vibrant urban hearts of Macedonia, from the "Jerusalem of the Balkans" to the peaks of Mavrovo.</p>
+</div>
+</section>
+<!-- Content Grid (Asymmetric) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Main Content Area -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Overview Card -->
+<div class="soft-card p-8 rounded-lg border-l-4 border-primary">
+<h2 class="font-headline-md text-headline-md mb-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="menu_book">menu_book</span>
+                        Overview
+                    </h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                        Macedonia is a landlocked country defined by its dramatic topography. To the west, the Dinaric Alps rise sharply, while the central valleys host the Vardar River. The country's "Blue Eyes"—Lakes Ohrid, Prespa, and Dojran—serve as vital ecological and cultural hubs. Understanding these natural landmarks is the first step to truly knowing the Macedonian spirit.
+                    </p>
+</div>
+<!-- Key Vocabulary Bento -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="soft-card p-6 rounded-lg flex flex-col items-center text-center group">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="water">water</span>
+</div>
+<span class="font-headline-md text-headline-md mb-1">Езеро</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Ezero / Lake</span>
+</div>
+<div class="soft-card p-6 rounded-lg flex flex-col items-center text-center group">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="landscape">landscape</span>
+</div>
+<span class="font-headline-md text-headline-md mb-1">Планина</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Planina / Mountain</span>
+</div>
+<div class="soft-card p-6 rounded-lg flex flex-col items-center text-center group">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="location_city">location_city</span>
+</div>
+<span class="font-headline-md text-headline-md mb-1">Град</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Grad / City</span>
+</div>
+<div class="soft-card p-6 rounded-lg flex flex-col items-center text-center group">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="church">church</span>
+</div>
+<span class="font-headline-md text-headline-md mb-1">Црква</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Crkva / Church</span>
+</div>
+</div>
+<!-- Did You Know Fact -->
+<div class="bg-secondary-container/10 p-8 rounded-lg border-2 border-dashed border-secondary flex gap-6 items-start">
+<span class="material-symbols-outlined text-secondary text-5xl" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-secondary mb-2">Did you know?</h3>
+<p class="font-body-md text-body-md text-on-surface">Lake Ohrid is one of Europe's deepest and oldest lakes, estimated to be between 1 and 4 million years old. It hosts more than 200 endemic species that are found nowhere else in the world!</p>
+</div>
+</div>
+</div>
+<!-- Sidebar -->
+<aside class="lg:col-span-4 space-y-gutter">
+<!-- Important Places Panel -->
+<div class="soft-card p-6 rounded-lg">
+<h3 class="font-headline-md text-headline-md mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="map">map</span>
+                        Key Locations
+                    </h3>
+<div class="space-y-4">
+<!-- Place 1 -->
+<div class="flex gap-4 p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Skopje City" class="w-full h-full object-cover" data-alt="A detailed wide shot of Macedonia Square in Skopje at dusk. The monumental Warrior on a Horse statue is centrally featured, illuminated by warm street lights. The surrounding neoclassical buildings of the city center glow against a deep indigo sky. The atmosphere is majestic and modern, capturing the bustling energy of Macedonia's capital city." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbFEKFfXBj4ggFZKL-O0uh2ZxmcpPe4DSe1y_NasjHho4xyZ66khFoXxzWKyRsmAVYPOOkIYnrVt23GR_LnuplOU1xuGvm3uedhY9DHu49EuPn3gr0IQGHo12COMZ4q1etGf8i8Zsnd7ukkCUXz7gbwUvf2JJuwXH6WAmwIq5YHfFuksAjrReqp5GO-P0DGDLhMIipEimZj3KU7JVX24xVY0huG8c-Z8QMEyvj6ZC9EQkLsoNgrZss0zjmqU5ZckWbDJFKoTH0UIE"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Skopje</h4>
+<p class="text-on-surface-variant text-sm">The capital and cultural center, famous for its Stone Bridge.</p>
+</div>
+</div>
+<!-- Place 2 -->
+<div class="flex gap-4 p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Bitola Shirok Sokak" class="w-full h-full object-cover" data-alt="A vibrant street-level view of Shirok Sokak in Bitola during a sunny afternoon. The pedestrian street is lined with beautifully preserved 19th-century Ottoman and European architecture in pastel colors. People are sitting at outdoor cafes, and the scene is filled with a relaxed, Mediterranean urban vibe. The lighting is bright and cheerful, emphasizing the town's historical charm." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBowT3_tmU2dFDOPNSbrxnfCoFl8sfDUB3DSqw2C4PWKsevLWEowNm50Jy6dUGIsn5IwE1_1AZC-soVSFiP9luJsy1u5rbIXo_69p2U83Pxys8empBBi_Vc9PYSTxdkRHjR-YP9ULEtxAy1Zu08422-RiXXgHj0mlhRdwAeIg8N-1m5E3zVi6Ig88WcsoRcdOjE5ez6nClMxen2Yk8ufXYqI_t8Grt2js-r4gtou4-LxLmEVLgLbGa0q7su2Wqw3N3zfawvCZYuS8E"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Bitola</h4>
+<p class="text-on-surface-variant text-sm">The "City of Consuls," known for its elegant architecture.</p>
+</div>
+</div>
+<!-- Place 3 -->
+<div class="flex gap-4 p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Mavrovo National Park" class="w-full h-full object-cover" data-alt="A stunning landscape of Mavrovo National Park in autumn. The hills are covered in a dense forest of vibrant orange, yellow, and red trees. In the distance, snow-capped mountain peaks rise under a clear blue sky. A small, rustic wooden cabin is visible in a clearing, adding a touch of serene mountain life to the wild, majestic Macedonian nature." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwCZxwkqOeH2cgMch7IpBJq8B1-TzV5fSKW51JSlW_4-61aMxP-nsYLfQ91AAGa3Ia6lyz7fnJqBtklSJwZbycOv8vV-tpFW3Ec8ysxSGw7MkuEzrOSi6KBXlv4OJlW3tk9hbBxAIEqYii7KFeOmd2LXFouGqUx3nU1Ib9_tYNLqeKFTctGJ3fanxruo-JTveYP14YfStsZWmcyVUMEfX9q7Mu7V3hmPW724GRKWgXDlQbuUHMTidQa6LLR80s8Hq4cm9kxp8m1Ss"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Mavrovo</h4>
+<p class="text-on-surface-variant text-sm">Home to the highest peaks and a world-class ski resort.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Practice Card -->
+<div class="bg-primary p-8 rounded-lg text-white soft-card relative overflow-hidden">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-10" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<h3 class="font-headline-md text-headline-md mb-2">Ready to practice?</h3>
+<p class="font-body-md text-body-md mb-6 text-primary-fixed">Put your knowledge to the test and earn 20 XP!</p>
+<button class="w-full py-4 rounded-full font-bold primary-btn btn-3d bg-white !text-primary border-b-primary-fixed-dim">
+                        Take related quiz
+                    </button>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-3">
+<button class="w-full py-3 px-6 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors flex items-center justify-center gap-2">
+                        View all lessons
+                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest border-t border-surface-variant mt-16">
+<div class="w-full py-12 px-margin-desktop max-w-container-max mx-auto flex flex-col items-center gap-6">
+<span class="font-headline-md text-headline-md text-on-surface">MakedonIQ</span>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-on-surface-variant hover:underline decoration-secondary decoration-2 font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:underline decoration-secondary decoration-2 font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:underline decoration-secondary decoration-2 font-label-sm text-label-sm" href="#">Macedonian Ministry of Culture</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant/80">© 2024 MakedonIQ Learning. Heritage through Play.</p>
+</div>
+</footer>
+<!-- Micro-interaction script -->
+<script>
+        document.querySelectorAll('.btn-3d').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.style.transform = 'translateY(2px)';
+                button.style.borderBottomWidth = '0px';
+            });
+            button.addEventListener('mouseup', () => {
+                button.style.transform = 'translateY(0px)';
+                button.style.borderBottomWidth = '4px';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translateY(0px)';
+                button.style.borderBottomWidth = '4px';
+            });
+        });
+    </script>
+</body></html>

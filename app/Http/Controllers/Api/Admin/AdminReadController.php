@@ -157,6 +157,7 @@ class AdminReadController extends Controller
                 'category_name_en' => $question->quiz->category->name_en,
                 'category_slug' => $question->quiz->category->slug,
                 'question_type' => $question->question_type,
+                'translation_direction' => $question->translation_direction,
                 'metadata' => $question->metadata,
                 'question_en' => $question->question_en,
                 'question_mk' => $question->question_mk,
