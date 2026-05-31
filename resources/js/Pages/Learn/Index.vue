@@ -18,11 +18,49 @@ const isLoading = ref(true);
 const error = ref('');
 const language = preferredLanguage();
 
+const categoryVisuals = {
+    'macedonian-language': {
+        icon: 'MK',
+        accent: 'text-heritage-red',
+        note: 'Phrases, greetings, and everyday vocabulary.',
+    },
+    'macedonian-alphabet': {
+        icon: 'А',
+        accent: 'text-heritage-gold-deep',
+        note: 'Cyrillic letters, sounds, and first words.',
+    },
+    geography: {
+        icon: 'MAP',
+        accent: 'text-heritage-navy',
+        note: 'Cities, lakes, mountains, and map practice.',
+    },
+    'history-of-macedonia': {
+        icon: 'H',
+        accent: 'text-heritage-red',
+        note: 'Places, stories, monuments, and memory.',
+    },
+    'culture-and-traditions': {
+        icon: 'ORO',
+        accent: 'text-heritage-gold-deep',
+        note: 'Family, celebrations, dance, and customs.',
+    },
+    'food-and-music': {
+        icon: 'FM',
+        accent: 'text-heritage-navy',
+        note: 'Tastes, rhythms, songs, and celebrations.',
+    },
+};
+
 const categoryCards = computed(() => categories.value.map((category) => ({
     ...category,
     title: localizedText(category, 'name', language),
     description: localizedText(category, 'description', language),
     href: learnCategoryUrl(category.slug),
+    visual: categoryVisuals[category.slug] || {
+        icon: category.icon || category.name_en?.slice(0, 2).toUpperCase() || 'IQ',
+        accent: 'text-heritage-red',
+        note: localizedText(category, 'description', language),
+    },
 })));
 
 const featuredLessons = computed(() => lessons.value.slice(0, 6).map((lesson) => ({
@@ -48,17 +86,19 @@ onMounted(async () => {
 
 <template>
     <PublicLayout>
-        <main class="page-shell py-10 md:py-14">
-            <section class="heritage-pattern overflow-hidden rounded-[2rem] p-8 text-white md:p-10">
-                <div class="max-w-3xl">
-                    <AppBadge variant="gold">Learn</AppBadge>
-                    <h1 class="mt-5 text-4xl font-black leading-tight md:text-5xl">Learn Macedonian before you quiz</h1>
-                    <p class="mt-4 text-lg leading-8 text-white/85">
+        <main class="page-shell py-8 md:py-12">
+            <section class="relative overflow-hidden rounded-[2.5rem] border border-heritage-line/40 bg-heritage-panel p-8 shadow-card md:p-14">
+                <div class="pointer-events-none absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 2px 2px, rgba(164,0,0,0.18) 1px, transparent 0); background-size: 32px 32px;" />
+                <div class="relative mx-auto max-w-3xl text-center">
+                    <AppBadge variant="red">Learn</AppBadge>
+                    <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-6xl">Learn Macedonian step by step</h1>
+                    <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-heritage-navy/80">
                         Short bilingual lessons about language, alphabet, history, geography, culture, food, and music.
                     </p>
-                    <div class="mt-7 flex flex-col gap-3 sm:flex-row">
-                        <PrimaryButton href="/quizzes" variant="white">Explore quizzes</PrimaryButton>
-                        <PrimaryButton href="/register" variant="gold">Start learning</PrimaryButton>
+                    <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                        <PrimaryButton href="#learn-categories" size="lg">Start learning</PrimaryButton>
+                        <PrimaryButton href="/quizzes" variant="gold" size="lg">Take a quiz</PrimaryButton>
+                        <PrimaryButton href="/map-challenge" variant="white" size="lg">Map Challenge</PrimaryButton>
                     </div>
                 </div>
             </section>
@@ -79,13 +119,13 @@ onMounted(async () => {
             </section>
 
             <template v-else>
-                <section class="mt-10">
+                <section id="learn-categories" class="mt-12 scroll-mt-24">
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div>
-                            <h2 class="text-3xl font-black text-heritage-ink">Learn by theme</h2>
+                            <h2 class="text-3xl font-black text-heritage-ink">Explore categories</h2>
                             <p class="mt-2 text-heritage-muted">Choose a topic, read a short lesson, then take the matching quiz.</p>
                         </div>
-                        <AppBadge variant="navy">{{ lessons.length }} lessons</AppBadge>
+                        <AppBadge variant="gold">Select your path</AppBadge>
                     </div>
 
                     <div v-if="categoryCards.length" class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -93,16 +133,19 @@ onMounted(async () => {
                             v-for="category in categoryCards"
                             :key="category.slug"
                             :href="category.href"
-                            class="soft-card group p-6 transition hover:-translate-y-1 hover:shadow-soft"
+                            class="soft-card group flex min-h-64 flex-col justify-between p-7 transition hover:-translate-y-1 hover:border-heritage-red/25 hover:shadow-soft"
                         >
-                            <div class="flex items-start justify-between gap-4">
-                                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-heritage-red text-sm font-black text-white">
-                                    {{ category.icon || category.title.slice(0, 2).toUpperCase() }}
+                            <div>
+                                <span :class="['flex h-14 w-14 items-center justify-center rounded-2xl bg-heritage-panel text-base font-black shadow-inner', category.visual.accent]">
+                                    {{ category.visual.icon }}
                                 </span>
-                                <AppBadge variant="gold">{{ category.lessons_count }} lessons</AppBadge>
+                                <h3 class="mt-6 text-2xl font-black text-heritage-ink group-hover:text-heritage-red">{{ category.title }}</h3>
+                                <p class="mt-3 leading-7 text-heritage-muted">{{ category.description || category.visual.note }}</p>
                             </div>
-                            <h3 class="mt-5 text-2xl font-black text-heritage-ink group-hover:text-heritage-red">{{ category.title }}</h3>
-                            <p class="mt-3 leading-7 text-heritage-muted">{{ category.description }}</p>
+                            <div class="mt-6 flex items-center justify-between gap-3">
+                                <span class="text-sm font-black text-heritage-red">Start learning</span>
+                                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-heritage-red-faint text-lg font-black text-heritage-red transition group-hover:bg-heritage-red group-hover:text-white">›</span>
+                            </div>
                         </a>
                     </div>
 
@@ -113,15 +156,24 @@ onMounted(async () => {
                 </section>
 
                 <section class="mt-12">
-                    <div>
-                        <h2 class="text-3xl font-black text-heritage-ink">Featured lessons</h2>
-                        <p class="mt-2 text-heritage-muted">Short reads designed to prepare you for a related quiz.</p>
+                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                        <div>
+                            <h2 class="text-3xl font-black text-heritage-ink">Featured lessons</h2>
+                            <p class="mt-2 text-heritage-muted">Short reads designed to prepare you for a related quiz.</p>
+                        </div>
+                        <AppBadge variant="navy">{{ lessons.length }} lessons</AppBadge>
                     </div>
 
-                    <div v-if="featuredLessons.length" class="mt-6 grid gap-5 lg:grid-cols-2">
-                        <article v-for="lesson in featuredLessons" :key="lesson.slug" class="soft-card p-6">
+                    <div v-if="featuredLessons.length" class="mt-6 grid gap-5 lg:grid-cols-3">
+                        <article v-for="lesson in featuredLessons" :key="lesson.slug" class="soft-card overflow-hidden">
+                            <div class="flex h-32 items-end bg-heritage-panel p-5">
+                                <div>
+                                    <p class="text-xs font-black uppercase text-heritage-red">{{ lesson.category }}</p>
+                                    <p class="mt-1 text-3xl font-black text-heritage-red/15">{{ lesson.title.slice(0, 2).toUpperCase() }}</p>
+                                </div>
+                            </div>
+                            <div class="p-6">
                             <div class="flex flex-wrap items-center gap-2">
-                                <AppBadge>{{ lesson.category }}</AppBadge>
                                 <AppBadge variant="gold">{{ difficultyLabel(lesson.difficulty) }}</AppBadge>
                                 <span class="rounded-full bg-heritage-panel px-3 py-1 text-xs font-black text-heritage-muted">
                                     {{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes"> min</span>
@@ -130,10 +182,27 @@ onMounted(async () => {
                             <h3 class="mt-4 text-2xl font-black text-heritage-ink">{{ lesson.title }}</h3>
                             <p class="mt-3 leading-7 text-heritage-muted">{{ lesson.summary }}</p>
                             <div class="mt-5 flex flex-col gap-3 sm:flex-row">
-                                <PrimaryButton :href="lesson.href">Start lesson</PrimaryButton>
+                                <PrimaryButton :href="lesson.href" variant="soft">Start lesson</PrimaryButton>
                                 <PrimaryButton v-if="lesson.related_quiz" :href="lesson.related_quiz.start_url" variant="soft">Take quiz</PrimaryButton>
                             </div>
+                            </div>
                         </article>
+                    </div>
+                </section>
+
+                <section class="mt-12 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+                    <div class="rounded-[2rem] bg-heritage-red p-7 text-white shadow-card md:p-8">
+                        <AppBadge variant="gold">Practice loop</AppBadge>
+                        <h2 class="mt-4 text-3xl font-black">Learn, quiz, review</h2>
+                        <p class="mt-3 max-w-2xl leading-7 text-white/85">
+                            Read a lesson first, take the related quiz, then revisit the lesson from your results page when you want a refresher.
+                        </p>
+                    </div>
+                    <div class="rounded-[2rem] border border-heritage-gold/40 bg-heritage-gold-faint p-7 shadow-card md:p-8">
+                        <p class="label text-heritage-gold-deep">Geography feature</p>
+                        <h3 class="mt-3 text-2xl font-black text-heritage-ink">Try the Macedonia Map Challenge</h3>
+                        <p class="mt-3 leading-7 text-heritage-gold-deep">Guess cities, lakes, and landmarks from highlighted map clues.</p>
+                        <PrimaryButton href="/map-challenge" variant="gold" class="mt-5">Open challenge</PrimaryButton>
                     </div>
                 </section>
             </template>

@@ -80,30 +80,30 @@ onMounted(async () => {
             </section>
 
             <template v-else>
-                <section class="grid gap-8 lg:grid-cols-[1fr_0.95fr] lg:items-center">
-                    <div>
-                        <AppBadge variant="gold">Interactive geography</AppBadge>
-                        <h1 class="mt-5 max-w-3xl text-3xl font-black leading-tight text-heritage-red sm:text-5xl lg:text-6xl">
+                <section class="grid gap-8 rounded-[2.5rem] border border-heritage-line/50 bg-white p-6 shadow-card md:p-8 lg:grid-cols-[1fr_0.95fr] lg:items-center">
+                    <div class="space-y-5">
+                        <AppBadge variant="red">Interactive geography</AppBadge>
+                        <h1 class="max-w-3xl text-4xl font-black leading-tight text-heritage-ink sm:text-5xl lg:text-6xl">
                             Macedonia Map Challenge
                         </h1>
-                        <p class="mt-5 max-w-2xl text-lg leading-8 text-heritage-muted">
+                        <p class="max-w-2xl text-lg leading-8 text-heritage-muted">
                             {{ quizDescription || 'Guess the highlighted Macedonian city, lake, or landmark from a simple illustrated map.' }}
                         </p>
 
-                        <div class="mt-7 flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-2">
                             <AppBadge>{{ categoryName || 'Geography' }}</AppBadge>
                             <AppBadge variant="navy">{{ difficultyLabel(quiz?.difficulty) }}</AppBadge>
                             <AppBadge variant="red">{{ mapQuestions.length || quiz?.questions_count || 0 }} map questions</AppBadge>
                         </div>
 
-                        <div class="mt-8 grid gap-4 sm:grid-cols-3">
-                            <article v-for="(item, index) in highlights" :key="item" class="metric-card">
+                        <div class="grid gap-4 sm:grid-cols-3">
+                            <article v-for="(item, index) in highlights" :key="item" class="rounded-[1.25rem] bg-heritage-panel p-5">
                                 <p class="text-lg font-black text-heritage-red">0{{ index + 1 }}</p>
                                 <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item }}</p>
                             </article>
                         </div>
 
-                        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                        <div class="flex flex-col gap-3 sm:flex-row">
                             <PrimaryButton :href="activeUrl" size="lg">Start Map Challenge</PrimaryButton>
                             <PrimaryButton :href="startUrl" variant="soft" size="lg">View quiz intro</PrimaryButton>
                         </div>
@@ -114,16 +114,18 @@ onMounted(async () => {
                     </div>
 
                     <div class="grid gap-4">
-                        <MacedoniaMap
-                            :x="mapMetadata.map_x || 52"
-                            :y="mapMetadata.map_y || 28"
-                            :target-type="mapMetadata.target_type || 'city'"
-                        />
-                        <div class="soft-card p-5">
-                            <p class="label">How it works</p>
-                            <h2 class="mt-2 text-2xl font-black text-heritage-ink">{{ quizTitle || 'Guess the highlighted place' }}</h2>
-                            <p class="mt-3 leading-7 text-heritage-muted">
-                                The marker gives you the geography clue. The answer is still scored securely by MakedonIQ after you submit.
+                        <div class="rounded-[2rem] bg-heritage-navy p-4">
+                            <MacedoniaMap
+                                :x="mapMetadata.map_x || 52"
+                                :y="mapMetadata.map_y || 28"
+                                :target-type="mapMetadata.target_type || 'city'"
+                            />
+                        </div>
+                        <div class="rounded-[2rem] bg-heritage-navy p-6 text-white shadow-card">
+                            <p class="label text-heritage-gold">How it works</p>
+                            <h2 class="mt-2 text-2xl font-black">{{ quizTitle || 'Guess the highlighted place' }}</h2>
+                            <p class="mt-3 leading-7 text-white/80">
+                                The marker gives you the geography clue. Your answer is still scored securely by MakedonIQ after you submit.
                             </p>
                         </div>
                     </div>
@@ -139,7 +141,7 @@ onMounted(async () => {
                     </div>
 
                     <div v-if="mapQuestions.length" class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                        <article v-for="(question, index) in mapQuestions.slice(0, 8)" :key="question.id" class="rounded-2xl border border-heritage-line bg-heritage-panel p-4">
+                        <article v-for="(question, index) in mapQuestions.slice(0, 8)" :key="question.id" class="rounded-2xl border border-heritage-line bg-heritage-panel p-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-card">
                             <p class="text-sm font-black uppercase text-heritage-red">Map clue {{ index + 1 }}</p>
                             <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">
                                 {{ localizedText(question, 'question', language) }}

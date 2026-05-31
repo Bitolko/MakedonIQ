@@ -7,6 +7,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Manual Laravel authentication: register, login, logout.
 - Public Learn section with short bilingual lessons.
 - Lessons connected to quiz themes so learners can read before taking a quiz.
+- Expanded original lesson and quiz content across language, alphabet, geography, history, culture, food, and music.
 - Macedonia Map Challenge, a lightweight geography quiz mode with local SVG-style map markers.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
@@ -84,6 +85,7 @@ DB_PASSWORD=your_local_password
 ```bash
 php artisan migrate:fresh --seed
 php artisan route:list
+php artisan makedoniq:health-check
 npm run build
 php artisan config:clear
 ```
@@ -167,6 +169,17 @@ GET /api/quizzes/{slug}/questions
 
 Learn APIs return published lessons only, and only when the related category is published. Lesson details can include related quizzes with start URLs.
 
+The current starter content includes 30 original bilingual lessons across:
+
+```text
+Macedonian Language
+Macedonian Alphabet
+History of Macedonia
+Geography
+Culture and Traditions
+Food and Music
+```
+
 The public questions endpoint returns answer IDs and text only. It does not expose `is_correct`.
 
 Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
@@ -209,6 +222,8 @@ The Macedonia Map Challenge is seeded as a published Geography quiz at:
 ```
 
 It uses the normal authenticated quiz attempt endpoint for saved scoring, so backend scoring remains the source of truth.
+
+The map challenge includes city, lake, and landmark prompts for places such as Skopje, Ohrid, Bitola, Prilep, Tetovo, Kumanovo, Strumica, Veles, Stip, Gostivar, Struga, Kicevo, Kavadarci, Gevgelija, Kocani, Lake Ohrid, Lake Prespa, Matka Canyon, Vodno, Mavrovo, and Pelister.
 
 Admin APIs require session auth plus `admin` middleware:
 
@@ -261,14 +276,7 @@ The Learn section creates a simple learning loop:
 Read lesson -> Take related quiz -> Review results -> Revisit lesson
 ```
 
-Seeded lessons currently cover:
-
-- Basic Macedonian greetings.
-- Introduction to the Macedonian Cyrillic alphabet.
-- Beginner-friendly Macedonia history basics.
-- Macedonian geography basics.
-- Culture and traditions.
-- Food and music.
+Seeded lessons currently cover beginner-friendly language, alphabet, geography, history, culture, food, and music topics. Content is original MakedonIQ-written material for this project and is not copied from Macedonian Bukvar, school textbooks, scans, maps, or textbook exercises.
 
 Each lesson belongs to a category and can be connected to one or more quizzes through `quizzes.lesson_id`. Quiz start and result pages can show a related lesson CTA when a quiz is connected.
 
@@ -278,6 +286,7 @@ Each lesson belongs to a category and can be connected to one or more quizzes th
 - Database dumps and real user data should not be committed.
 - Quiz scoring is performed on the backend only.
 - Public quiz-taking endpoints do not expose correct answers.
+- Public map metadata exposes marker position/type only, not admin target keys or target labels.
 - Attempt results require authentication and ownership.
 - Profile endpoints cannot update `is_admin`.
 - Password updates require the current password and store only a hash.
@@ -292,17 +301,18 @@ Public:
 1. Home loads.
 2. Learn loads.
 3. Learn category page loads.
-4. Lesson detail page loads.
-5. EN/MK lesson toggle works.
-6. Quizzes load.
-7. Category page loads.
-8. Quiz start loads and shows related lesson when available.
-9. Active quiz loads.
-10. Macedonia Map Challenge loads and shows a marker without revealing the answer.
-11. Public questions endpoint hides is_correct.
-12. Public map metadata does not expose answer-revealing target labels.
-13. About and contact load.
-14. Invalid paths show the friendly 404 page.
+4. Each Learn category shows multiple lessons.
+5. Lesson detail page loads.
+6. EN/MK lesson toggle works.
+7. Quizzes load with expanded quiz content.
+8. Category page loads.
+9. Quiz start loads and shows related lesson when available.
+10. Active quiz loads.
+11. Macedonia Map Challenge loads and shows a marker without revealing the answer.
+12. Public questions endpoint hides is_correct.
+13. Public map metadata does not expose answer-revealing target labels.
+14. About and contact load.
+15. Invalid paths show the friendly 404 page.
 ```
 
 Auth/user:
@@ -330,33 +340,142 @@ Admin:
 
 ## Deployment Notes
 
-Do not deploy with local development settings.
+This repository is ready for a standard Laravel deployment, but deployment itself is intentionally manual for now. Do not deploy with local development settings, and do not commit `.env`, database dumps, backups, or real credentials.
 
-Production checklist:
+Production `.env` checklist:
 
 ```text
 APP_ENV=production
 APP_DEBUG=false
+APP_URL=https://your-domain.com
+APP_KEY=base64:your-generated-production-key
+
+DB_CONNECTION=mysql
+DB_HOST=your-production-host
+DB_PORT=3306
+DB_DATABASE=your-production-database
+DB_USERNAME=your-production-user
+DB_PASSWORD=your-production-password
+
+SESSION_DRIVER=database or file
+SESSION_SECURE_COOKIE=true
+CACHE_STORE=file or database
+QUEUE_CONNECTION=sync
 ```
 
-Then configure production database credentials and run:
+Use `SESSION_SECURE_COOKIE=true` only when the site is served over HTTPS. The MVP does not currently require queues, so `QUEUE_CONNECTION=sync` is acceptable until background jobs are introduced.
+
+Recommended deployment commands:
 
 ```bash
 composer install --no-dev --optimize-autoloader
-npm install
+npm ci
 npm run build
 php artisan migrate --force
 php artisan config:cache
-php artisan route:cache
 php artisan view:cache
+php artisan route:cache
 ```
 
-Also confirm:
+Run `php artisan storage:link` only if the deployed environment needs public storage links for uploaded files. The current MVP does not depend on user-uploaded public assets.
+
+Route and config cache:
+
+- Web routes are controller-backed, so `php artisan route:cache` is intended to be safe.
+- Configuration uses Laravel config files for environment reads, so `php artisan config:cache` is intended to be safe.
+- If deployment changes route or config files, clear and rebuild the caches.
+
+Build output:
+
+- The app shell uses Laravel Vite via `@vite(['resources/css/app.css', 'resources/js/app.js'])`.
+- `public/build` is ignored in Git and should be generated during deployment with `npm run build`.
+- `public/hot` is ignored and should not exist in production.
+
+Database and seeding strategy:
+
+- Local/dev reset: `php artisan migrate:fresh --seed`.
+- Production migration: `php artisan migrate --force`.
+- Do not run `migrate:fresh` in production.
+- The seeders create starter MakedonIQ categories, lessons, quizzes, map questions, and answers. Run production seeders only intentionally and only after backing up the database.
+
+Production safety checklist:
 
 - Web server document root points to `public`.
 - Storage and cache directories are writable by the web server.
 - `public/hot` is not present in production.
 - `.env`, database dumps, and backups are not publicly accessible.
+- `APP_DEBUG=false`.
+- Production database is backed up before migrations.
+- A previous release or rollback path is available.
+
+## Deployment Health Check
+
+Run this before demo or deployment:
+
+```bash
+php artisan makedoniq:health-check
+```
+
+The command checks core content counts, question answer integrity, map question coordinates, public quiz controller response safety, admin-user presence, and `APP_DEBUG` state. Warnings should be reviewed; failed checks should be fixed before production.
+
+## Admin Setup for Deployment
+
+No default weak admin account is seeded. Register a normal user first, then promote that account:
+
+```bash
+php artisan tinker
+```
+
+```php
+App\Models\User::where('email', 'your-email@example.com')->update(['is_admin' => true]);
+```
+
+Log out and log back in, then visit `/admin`. The `is_admin` field is not mass assignable, and admin APIs require session authentication plus the `admin` middleware.
+
+## Demo Checklist
+
+User journey:
+
+```text
+1. Register.
+2. Login.
+3. Browse Learn.
+4. Read a lesson.
+5. Start a related quiz.
+6. Complete the quiz.
+7. View results.
+8. View dashboard.
+9. View progress.
+10. Update profile and preferred language.
+```
+
+Admin journey:
+
+```text
+1. Login as admin.
+2. Open the admin dashboard.
+3. Create or update a category.
+4. Create or update a lesson.
+5. Create or update a quiz.
+6. Create a question with exactly 4 answers and exactly 1 correct answer.
+7. Publish/unpublish content.
+8. Confirm public visibility changes.
+```
+
+Map Challenge:
+
+```text
+1. Open /map-challenge.
+2. Start the Macedonia Map Challenge.
+3. Complete the map quiz.
+4. View results.
+```
+
+Rollback note:
+
+- Back up the database before running production migrations.
+- Keep the previous deployed release available when possible.
+- If a migration or build fails, restore the previous release and database backup rather than running destructive refresh commands.
 
 ## Not Built Yet
 

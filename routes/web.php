@@ -2,52 +2,45 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
-$page = fn (string $name) => fn () => view('app', ['page' => $name]);
+Route::get('/', [PageController::class, 'show'])->defaults('page', 'Home')->name('home');
+Route::get('/learn', [PageController::class, 'show'])->defaults('page', 'Learn.Index')->name('learn.index');
+Route::get('/learn/{categorySlug}', [PageController::class, 'show'])->defaults('page', 'Learn.Category')->name('learn.category');
+Route::get('/learn/{categorySlug}/{lessonSlug}', [PageController::class, 'show'])->defaults('page', 'Learn.Show')->name('learn.show');
+Route::get('/map-challenge', [PageController::class, 'show'])->defaults('page', 'MapChallenge')->name('map-challenge');
+Route::get('/quizzes', [PageController::class, 'show'])->defaults('page', 'Quizzes.Index')->name('quizzes.index');
+Route::get('/quizzes/history', [PageController::class, 'show'])->defaults('page', 'Quizzes.Category')->name('quizzes.history');
+Route::get('/quizzes/history/start', [PageController::class, 'show'])->defaults('page', 'Quizzes.Start')->name('quizzes.history.start');
+Route::get('/quizzes/history/active', [PageController::class, 'show'])->defaults('page', 'Quizzes.Active')->name('quizzes.history.active');
+Route::get('/quizzes/history/results', [PageController::class, 'show'])->defaults('page', 'Quizzes.Results')->name('quizzes.history.results');
+Route::get('/quizzes/{categorySlug}', [PageController::class, 'show'])->defaults('page', 'Quizzes.Category')->name('quizzes.category');
+Route::get('/quizzes/{categorySlug}/{quizSlug}/start', [PageController::class, 'show'])->defaults('page', 'Quizzes.Start')->name('quizzes.start');
+Route::get('/quizzes/{categorySlug}/{quizSlug}/active', [PageController::class, 'show'])->defaults('page', 'Quizzes.Active')->name('quizzes.active');
+Route::get('/quizzes/{categorySlug}/{quizSlug}/results/{attempt}', [PageController::class, 'show'])->defaults('page', 'Quizzes.Results')->name('quizzes.results.show');
+Route::get('/quizzes/{categorySlug}/{quizSlug}/results', [PageController::class, 'show'])->defaults('page', 'Quizzes.Results')->name('quizzes.results');
+Route::get('/about', [PageController::class, 'show'])->defaults('page', 'About')->name('about');
+Route::get('/contact', [PageController::class, 'show'])->defaults('page', 'Contact')->name('contact');
 
-Route::get('/', $page('Home'))->name('home');
-Route::get('/learn', $page('Learn.Index'))->name('learn.index');
-Route::get('/learn/{categorySlug}', $page('Learn.Category'))->name('learn.category');
-Route::get('/learn/{categorySlug}/{lessonSlug}', $page('Learn.Show'))->name('learn.show');
-Route::get('/map-challenge', $page('MapChallenge'))->name('map-challenge');
-Route::get('/quizzes', $page('Quizzes.Index'))->name('quizzes.index');
-Route::get('/quizzes/history', $page('Quizzes.Category'))->name('quizzes.history');
-Route::get('/quizzes/history/start', $page('Quizzes.Start'))->name('quizzes.history.start');
-Route::get('/quizzes/history/active', $page('Quizzes.Active'))->name('quizzes.history.active');
-Route::get('/quizzes/history/results', $page('Quizzes.Results'))->name('quizzes.history.results');
-Route::get('/quizzes/{categorySlug}', $page('Quizzes.Category'))->name('quizzes.category');
-Route::get('/quizzes/{categorySlug}/{quizSlug}/start', $page('Quizzes.Start'))->name('quizzes.start');
-Route::get('/quizzes/{categorySlug}/{quizSlug}/active', $page('Quizzes.Active'))->name('quizzes.active');
-Route::get('/quizzes/{categorySlug}/{quizSlug}/results/{attempt}', $page('Quizzes.Results'))->name('quizzes.results.show');
-Route::get('/quizzes/{categorySlug}/{quizSlug}/results', $page('Quizzes.Results'))->name('quizzes.results');
-Route::get('/about', $page('About'))->name('about');
-Route::get('/contact', $page('Contact'))->name('contact');
-
-Route::get('/login', fn () => auth()->check() ? redirect('/dashboard') : view('app', ['page' => 'Auth.Login']))->name('login');
+Route::get('/login', [PageController::class, 'login'])->name('login');
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
-Route::get('/register', fn () => auth()->check() ? redirect('/dashboard') : view('app', ['page' => 'Auth.Register']))->name('register');
+Route::get('/register', [PageController::class, 'register'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::middleware('auth')->group(function () use ($page): void {
-    Route::get('/dashboard', $page('Dashboard'))->name('dashboard');
-    Route::get('/progress', $page('Progress'))->name('progress');
-    Route::get('/profile', $page('Profile'))->name('profile');
+Route::middleware('auth')->group(function (): void {
+    Route::get('/dashboard', [PageController::class, 'show'])->defaults('page', 'Dashboard')->name('dashboard');
+    Route::get('/progress', [PageController::class, 'show'])->defaults('page', 'Progress')->name('progress');
+    Route::get('/profile', [PageController::class, 'show'])->defaults('page', 'Profile')->name('profile');
 });
 
-Route::middleware(['auth', 'admin'])->group(function () use ($page): void {
-    Route::get('/admin', $page('Admin.Dashboard'))->name('admin.dashboard');
-    Route::get('/admin/categories', $page('Admin.Categories'))->name('admin.categories');
-    Route::get('/admin/lessons', $page('Admin.Lessons'))->name('admin.lessons');
-    Route::get('/admin/quizzes', $page('Admin.Quizzes'))->name('admin.quizzes');
-    Route::get('/admin/questions', $page('Admin.Questions'))->name('admin.questions');
+Route::middleware(['auth', 'admin'])->group(function (): void {
+    Route::get('/admin', [PageController::class, 'show'])->defaults('page', 'Admin.Dashboard')->name('admin.dashboard');
+    Route::get('/admin/categories', [PageController::class, 'show'])->defaults('page', 'Admin.Categories')->name('admin.categories');
+    Route::get('/admin/lessons', [PageController::class, 'show'])->defaults('page', 'Admin.Lessons')->name('admin.lessons');
+    Route::get('/admin/quizzes', [PageController::class, 'show'])->defaults('page', 'Admin.Quizzes')->name('admin.quizzes');
+    Route::get('/admin/questions', [PageController::class, 'show'])->defaults('page', 'Admin.Questions')->name('admin.questions');
 });
 
-Route::fallback(function () {
-    if (request()->is('api/*')) {
-        abort(404);
-    }
-
-    return response()->view('errors.404', [], 404);
-});
+Route::fallback([PageController::class, 'fallback']);

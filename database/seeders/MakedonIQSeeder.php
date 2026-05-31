@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Quiz;
 use Illuminate\Database\Seeder;
 
 class MakedonIQSeeder extends Seeder
@@ -39,31 +40,57 @@ class MakedonIQSeeder extends Seeder
                     ],
                 );
 
-                $quiz->questions()->delete();
-
-                foreach ($quizData['questions'] as $questionIndex => $questionData) {
-                    $question = $quiz->questions()->create([
-                        'translation_direction' => $questionData['translation_direction'] ?? null,
-                        'question_en' => $questionData['question_en'],
-                        'question_mk' => $questionData['question_mk'],
-                        'explanation_en' => $questionData['explanation_en'],
-                        'explanation_mk' => $questionData['explanation_mk'],
-                        'sort_order' => $questionIndex + 1,
-                        'points' => null,
-                        'is_published' => true,
-                    ]);
-
-                    foreach ($questionData['answers'] as $answerIndex => $answerData) {
-                        $question->answers()->create([
-                            'answer_en' => $answerData['answer_en'],
-                            'answer_mk' => $answerData['answer_mk'],
-                            'is_correct' => $answerData['is_correct'],
-                            'sort_order' => $answerIndex + 1,
-                        ]);
-                    }
-                }
+                $this->syncQuizQuestions($quiz, $quizData['questions']);
             }
         }
+    }
+
+    private function syncQuizQuestions(Quiz $quiz, array $questions): void
+    {
+        $hasCompletedAttempts = $quiz->attempts()->whereNotNull('completed_at')->exists();
+
+        if (! $hasCompletedAttempts) {
+            $quiz->questions()->delete();
+        }
+
+        foreach ($questions as $questionIndex => $questionData) {
+            $question = $hasCompletedAttempts
+                ? $quiz->questions()->firstOrCreate(
+                    ['question_en' => $questionData['question_en']],
+                    $this->questionAttributes($questionData, $questionIndex),
+                )
+                : $quiz->questions()->create($this->questionAttributes($questionData, $questionIndex));
+
+            if ($question->attemptAnswers()->exists()) {
+                continue;
+            }
+
+            $question->update($this->questionAttributes($questionData, $questionIndex));
+            $question->answers()->delete();
+
+            foreach ($questionData['answers'] as $answerIndex => $answerData) {
+                $question->answers()->create([
+                    'answer_en' => $answerData['answer_en'],
+                    'answer_mk' => $answerData['answer_mk'],
+                    'is_correct' => $answerData['is_correct'],
+                    'sort_order' => $answerIndex + 1,
+                ]);
+            }
+        }
+    }
+
+    private function questionAttributes(array $questionData, int $questionIndex): array
+    {
+        return [
+            'translation_direction' => $questionData['translation_direction'] ?? null,
+            'question_en' => $questionData['question_en'],
+            'question_mk' => $questionData['question_mk'],
+            'explanation_en' => $questionData['explanation_en'],
+            'explanation_mk' => $questionData['explanation_mk'],
+            'sort_order' => $questionIndex + 1,
+            'points' => null,
+            'is_published' => true,
+        ];
     }
 
     private function content(): array
