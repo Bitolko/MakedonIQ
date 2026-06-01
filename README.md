@@ -104,6 +104,31 @@ App\Models\User::where('email', 'your-email@example.com')->update(['is_admin' =>
 
 Log out and log back in after changing admin status so the frontend receives the latest auth payload.
 
+## Demo Guide
+
+Seed demo content with:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Create an admin by registering a normal user, then promoting that account with Tinker:
+
+```php
+App\Models\User::where('email', 'your-email@example.com')->update(['is_admin' => true]);
+```
+
+Suggested demo flow:
+
+```text
+1. Open Home and browse Learn.
+2. Open a polished lesson, switch EN/MK, and use the related quiz CTA.
+3. Complete a quiz and review the result page.
+4. Open Dashboard and Progress to show saved attempts.
+5. Open Map Challenge and complete the beginner map quiz.
+6. Login as admin and show category, lesson, quiz, and question management.
+```
+
 ## Main Routes
 
 Public:

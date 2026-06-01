@@ -27,10 +27,12 @@
             <div>
                 <p class="font-black text-heritage-ink">Quiz categories</p>
                 <div class="mt-4 grid gap-2 text-sm font-semibold text-heritage-muted">
-                    <a class="hover:text-heritage-red" href="/quizzes">Language</a>
-                    <a class="hover:text-heritage-red" href="/quizzes">Alphabet</a>
-                    <a class="hover:text-heritage-red" href="/quizzes/history">History</a>
-                    <a class="hover:text-heritage-red" href="/quizzes">Culture</a>
+                    <a class="hover:text-heritage-red" href="/quizzes/macedonian-language">Language</a>
+                    <a class="hover:text-heritage-red" href="/quizzes/macedonian-alphabet">Alphabet</a>
+                    <a class="hover:text-heritage-red" href="/quizzes/geography">Geography</a>
+                    <a class="hover:text-heritage-red" href="/quizzes/history-of-macedonia">History</a>
+                    <a class="hover:text-heritage-red" href="/quizzes/culture-and-traditions">Culture</a>
+                    <a class="hover:text-heritage-red" href="/quizzes/food-and-music">Food and Music</a>
                 </div>
             </div>
             <div>

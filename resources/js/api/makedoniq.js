@@ -6,6 +6,11 @@ const legacyQuizAliases = {
     history: 'macedonia-history-basics',
 };
 
+const legacyLessonAliases = {
+    'macedonian-cyrillic-alphabet-basics': 'introduction-to-macedonian-cyrillic-alphabet',
+    'cities-lakes-and-mountains': 'macedonian-geography-basics',
+};
+
 export class ApiError extends Error {
     constructor(message, status, payload = null) {
         super(message);
@@ -235,8 +240,9 @@ export function currentQuizSlug() {
 
 export function currentLessonSlug() {
     const parts = quizPathParts();
+    const slug = parts[2] || '';
 
-    return parts[2] || '';
+    return legacyLessonAliases[slug] || slug;
 }
 
 export function currentAttemptId() {
