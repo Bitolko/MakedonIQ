@@ -27,7 +27,17 @@ const title = computed(() => localizedText(lesson.value, 'title', language.value
 const summary = computed(() => localizedText(lesson.value, 'summary', language.value));
 const categoryName = computed(() => localizedText(lesson.value?.category, 'name', language.value));
 const content = computed(() => localizedText(lesson.value, 'content', language.value));
-const paragraphs = computed(() => content.value.split(/\n{2,}/).map((item) => item.trim()).filter(Boolean));
+const lessonBlocks = computed(() => content.value.split(/\n{2,}/).map((item) => {
+    const lines = item.trim().split('\n').map((line) => line.trim()).filter(Boolean);
+    const firstLine = lines[0] || '';
+    const hasHeading = firstLine.endsWith(':');
+
+    return {
+        heading: hasHeading ? firstLine.replace(/:$/, '') : '',
+        body: (hasHeading ? lines.slice(1) : lines).join('\n'),
+    };
+}).filter((block) => block.heading || block.body));
+const paragraphs = computed(() => lessonBlocks.value.map((block) => block.body).filter(Boolean));
 const relatedQuizzes = computed(() => lesson.value?.related_quizzes || []);
 const firstQuiz = computed(() => relatedQuizzes.value[0] || null);
 const resolvedCategorySlug = computed(() => lesson.value?.category?.slug || categorySlug);
@@ -259,10 +269,13 @@ onMounted(async () => {
                             </div>
                         </div>
 
-                        <div class="grid gap-5">
-                            <p v-for="paragraph in paragraphs" :key="paragraph" class="text-base leading-8 text-heritage-muted md:text-lg md:leading-9">
-                                {{ paragraph }}
-                            </p>
+                        <div class="grid gap-6">
+                            <section v-for="(block, index) in lessonBlocks" :key="`${index}-${block.heading}`" class="rounded-[1.5rem] bg-heritage-panel p-5">
+                                <h3 v-if="block.heading" class="text-xl font-black text-heritage-ink">{{ block.heading }}</h3>
+                                <p v-if="block.body" :class="['whitespace-pre-line text-base leading-8 text-heritage-muted md:text-lg md:leading-9', block.heading ? 'mt-3' : '']">
+                                    {{ block.body }}
+                                </p>
+                            </section>
                         </div>
 
                         <section v-if="isAlphabet" class="mt-8 grid gap-6">

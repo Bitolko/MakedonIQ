@@ -491,12 +491,12 @@ function formatDate(value) {
                     <div class="grid gap-5 md:grid-cols-3">
                         <label class="block">
                             <span class="label">Map X percentage</span>
-                            <input v-model.number="form.metadata.map_x" class="field mt-2 bg-white" min="0" max="100" type="number">
+                            <input v-model.number="form.metadata.map_x" class="field mt-2 bg-white" min="0" max="100" step="0.1" type="number">
                             <span v-if="fieldError('metadata.map_x')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_x') }}</span>
                         </label>
                         <label class="block">
                             <span class="label">Map Y percentage</span>
-                            <input v-model.number="form.metadata.map_y" class="field mt-2 bg-white" min="0" max="100" type="number">
+                            <input v-model.number="form.metadata.map_y" class="field mt-2 bg-white" min="0" max="100" step="0.1" type="number">
                             <span v-if="fieldError('metadata.map_y')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_y') }}</span>
                         </label>
                         <label class="block">

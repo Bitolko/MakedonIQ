@@ -97,8 +97,8 @@ class AdminQuestionController extends Controller
             'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess'],
             'translation_direction' => ['nullable', 'string', 'in:general,mk_to_en,en_to_mk'],
             'metadata' => ['nullable', 'array'],
-            'metadata.map_x' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'metadata.map_y' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'metadata.map_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'metadata.map_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'metadata.target_type' => ['nullable', 'string', 'in:city,lake,landmark,region'],
             'metadata.map_target_key' => ['nullable', 'string', 'max:100'],
             'metadata.map_target_label_en' => ['nullable', 'string', 'max:255'],
@@ -178,8 +178,8 @@ class AdminQuestionController extends Controller
         $metadata = $validated['metadata'] ?? [];
 
         return [
-            'map_x' => isset($metadata['map_x']) ? (int) $metadata['map_x'] : null,
-            'map_y' => isset($metadata['map_y']) ? (int) $metadata['map_y'] : null,
+            'map_x' => isset($metadata['map_x']) ? (float) $metadata['map_x'] : null,
+            'map_y' => isset($metadata['map_y']) ? (float) $metadata['map_y'] : null,
             'target_type' => $this->nullableString($metadata['target_type'] ?? 'city') ?? 'city',
             'map_target_key' => $this->nullableString($metadata['map_target_key'] ?? null),
             'map_target_label_en' => $this->nullableString($metadata['map_target_label_en'] ?? null),

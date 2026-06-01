@@ -76,8 +76,6 @@ class MapChallengeSeeder extends Seeder
                 'skopje',
                 'Skopje',
                 'Скопје',
-                52,
-                28,
                 'city',
                 [
                     ['Skopje', 'Скопје', true],
@@ -94,8 +92,6 @@ class MapChallengeSeeder extends Seeder
                 'ohrid',
                 'Ohrid',
                 'Охрид',
-                22,
-                72,
                 'city',
                 [
                     ['Ohrid', 'Охрид', true],
@@ -112,8 +108,6 @@ class MapChallengeSeeder extends Seeder
                 'bitola',
                 'Bitola',
                 'Битола',
-                38,
-                80,
                 'city',
                 [
                     ['Bitola', 'Битола', true],
@@ -130,8 +124,6 @@ class MapChallengeSeeder extends Seeder
                 'tetovo',
                 'Tetovo',
                 'Тетово',
-                30,
-                26,
                 'city',
                 [
                     ['Tetovo', 'Тетово', true],
@@ -148,8 +140,6 @@ class MapChallengeSeeder extends Seeder
                 'prilep',
                 'Prilep',
                 'Прилеп',
-                45,
-                70,
                 'city',
                 [
                     ['Prilep', 'Прилеп', true],
@@ -166,8 +156,6 @@ class MapChallengeSeeder extends Seeder
                 'lake-ohrid',
                 'Lake Ohrid',
                 'Охридско Езеро',
-                18,
-                75,
                 'lake',
                 [
                     ['Lake Ohrid', 'Охридско Езеро', true],
@@ -184,8 +172,6 @@ class MapChallengeSeeder extends Seeder
                 'strumica',
                 'Strumica',
                 'Струмица',
-                75,
-                78,
                 'city',
                 [
                     ['Strumica', 'Струмица', true],
@@ -202,8 +188,6 @@ class MapChallengeSeeder extends Seeder
                 'kumanovo',
                 'Kumanovo',
                 'Куманово',
-                62,
-                20,
                 'city',
                 [
                     ['Kumanovo', 'Куманово', true],
@@ -223,11 +207,11 @@ class MapChallengeSeeder extends Seeder
         string $targetKey,
         string $targetLabelEn,
         string $targetLabelMk,
-        int $x,
-        int $y,
         string $targetType,
         array $answers,
     ): array {
+        $coordinates = MapChallengeCoordinates::for($targetKey);
+
         return [
             'question_en' => $questionEn,
             'question_mk' => $questionMk,
@@ -237,8 +221,8 @@ class MapChallengeSeeder extends Seeder
                 'map_target_key' => $targetKey,
                 'map_target_label_en' => $targetLabelEn,
                 'map_target_label_mk' => $targetLabelMk,
-                'map_x' => $x,
-                'map_y' => $y,
+                'map_x' => $coordinates['x'],
+                'map_y' => $coordinates['y'],
                 'target_type' => $targetType,
             ],
             'answers' => $answers,

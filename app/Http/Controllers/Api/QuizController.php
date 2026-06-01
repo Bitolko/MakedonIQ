@@ -118,8 +118,8 @@ class QuizController extends Controller
         $metadata = $metadata ?? [];
 
         return [
-            'map_x' => isset($metadata['map_x']) ? (int) $metadata['map_x'] : null,
-            'map_y' => isset($metadata['map_y']) ? (int) $metadata['map_y'] : null,
+            'map_x' => isset($metadata['map_x']) ? (float) $metadata['map_x'] : null,
+            'map_y' => isset($metadata['map_y']) ? (float) $metadata['map_y'] : null,
             'target_type' => $metadata['target_type'] ?? null,
         ];
     }
