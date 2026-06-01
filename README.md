@@ -8,7 +8,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Public Learn section with short bilingual lessons.
 - Lessons connected to quiz themes so learners can read before taking a quiz.
 - Expanded original lesson and quiz content across language, alphabet, geography, history, culture, food, and music.
-- Macedonia Map Challenge, a lightweight geography quiz mode with local SVG-style map markers.
+- Macedonia Map Challenge, a lightweight geography quiz mode with a custom local 3D Macedonia map and dynamic quiz markers.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
 - Secure backend quiz scoring; the frontend never receives correct-answer flags during quiz taking.
@@ -182,7 +182,7 @@ Food and Music
 
 The public questions endpoint returns answer IDs and text only. It does not expose `is_correct`.
 
-Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
+Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. The frontend renders a custom 3D Macedonia map asset from `public/images` and overlays the pin dynamically from `map_x` and `map_y`. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
 
 Authenticated quiz and learner APIs:
 

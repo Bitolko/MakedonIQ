@@ -31,10 +31,11 @@ const mapMetadata = computed(() => firstMapQuestion.value?.metadata || {});
 const activeUrl = computed(() => quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : '/quizzes/geography/macedonia-map-challenge/active');
 const startUrl = computed(() => quiz.value ? quizStartUrl(quiz.value.category.slug, quiz.value.slug) : '/quizzes/geography/macedonia-map-challenge/start');
 
-const highlights = [
-    'Find Macedonian cities, lakes, and landmarks by map position.',
-    'Choose from four answers for each highlighted place.',
-    'Submit through the normal secure quiz flow when you are logged in.',
+const featureCards = [
+    { title: 'Cities', detail: 'Skopje, Bitola, Ohrid, Prilep, and regional centres.' },
+    { title: 'Lakes', detail: 'Ohrid, Prespa, Dojran, and blue map clues.' },
+    { title: 'Mountains', detail: 'Highland terrain, national parks, and ridgelines.' },
+    { title: 'Landmarks', detail: 'Canyons, peaks, and places that shape geography.' },
 ];
 
 onMounted(async () => {
@@ -87,7 +88,7 @@ onMounted(async () => {
                             Macedonia Map Challenge
                         </h1>
                         <p class="max-w-2xl text-lg leading-8 text-heritage-muted">
-                            {{ quizDescription || 'Guess the highlighted Macedonian city, lake, or landmark from a simple illustrated map.' }}
+                            Study the highlighted place and guess the city, lake, or landmark.
                         </p>
 
                         <div class="flex flex-wrap gap-2">
@@ -96,10 +97,10 @@ onMounted(async () => {
                             <AppBadge variant="red">{{ mapQuestions.length || quiz?.questions_count || 0 }} map questions</AppBadge>
                         </div>
 
-                        <div class="grid gap-4 sm:grid-cols-3">
-                            <article v-for="(item, index) in highlights" :key="item" class="rounded-[1.25rem] bg-heritage-panel p-5">
-                                <p class="text-lg font-black text-heritage-red">0{{ index + 1 }}</p>
-                                <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item }}</p>
+                        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                            <article v-for="item in featureCards" :key="item.title" class="rounded-[1.25rem] bg-heritage-panel p-5">
+                                <p class="text-lg font-black text-heritage-red">{{ item.title }}</p>
+                                <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
                             </article>
                         </div>
 
@@ -119,6 +120,7 @@ onMounted(async () => {
                                 :x="mapMetadata.map_x || 52"
                                 :y="mapMetadata.map_y || 28"
                                 :target-type="mapMetadata.target_type || 'city'"
+                                variant="wide"
                             />
                         </div>
                         <div class="rounded-[2rem] bg-heritage-navy p-6 text-white shadow-card">

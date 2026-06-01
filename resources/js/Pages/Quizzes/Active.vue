@@ -215,11 +215,12 @@ onMounted(async () => {
                         <h1 class="mt-6 text-2xl font-black leading-tight text-heritage-ink sm:text-3xl md:text-5xl">
                             {{ displayQuestion }}
                         </h1>
-                        <div v-if="isMapQuestion" class="mt-8">
+                        <div v-if="isMapQuestion" class="mx-auto mt-8 max-w-xl">
                             <MacedoniaMap
                                 :x="mapMetadata.map_x"
                                 :y="mapMetadata.map_y"
                                 :target-type="mapMetadata.target_type || 'place'"
+                                variant="compact"
                             />
                             <p class="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-red shadow-card">
                                 {{ mapPrompt }}

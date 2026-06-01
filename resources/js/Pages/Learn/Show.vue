@@ -208,7 +208,7 @@ onMounted(async () => {
                         </div>
 
                         <div v-if="isGeography" class="rounded-[2rem] bg-black/25 p-4 shadow-soft">
-                            <MacedoniaMap :x="22" :y="72" target-type="lake" />
+                            <MacedoniaMap :x="22" :y="72" target-type="lake" variant="compact" />
                         </div>
                         <div v-else-if="isAlphabet" class="rounded-[2rem] bg-white p-5 shadow-soft">
                             <div class="grid grid-cols-5 gap-3">

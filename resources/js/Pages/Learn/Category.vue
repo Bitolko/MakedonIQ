@@ -140,7 +140,7 @@ onMounted(async () => {
                     </div>
 
                     <div v-if="isGeography" class="rounded-[2rem] bg-heritage-navy p-4 shadow-soft">
-                        <MacedoniaMap :x="52" :y="28" target-type="city" />
+                        <MacedoniaMap :x="52" :y="28" target-type="city" variant="compact" />
                     </div>
                     <div v-else class="relative overflow-hidden rounded-[2rem] bg-heritage-panel p-8">
                         <div class="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-heritage-gold/25" />
