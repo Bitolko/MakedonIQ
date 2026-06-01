@@ -15,6 +15,12 @@ const difficultyVariant = {
     Intermediate: 'red',
     Advanced: 'navy',
 };
+
+const statusVariant = {
+    Completed: 'green',
+    'Not started': 'neutral',
+    Start: 'gold',
+};
 </script>
 
 <template>
@@ -23,9 +29,12 @@ const difficultyVariant = {
             <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint text-lg font-black text-heritage-gold-deep">
                 Q
             </div>
-            <AppBadge :variant="quiz.status === 'Completed' ? 'green' : difficultyVariant[quiz.difficulty]">
-                {{ quiz.isMapChallenge ? 'Map' : quiz.status }}
-            </AppBadge>
+            <div class="flex flex-wrap justify-end gap-2">
+                <AppBadge :variant="statusVariant[quiz.status] || difficultyVariant[quiz.difficulty]">
+                    {{ quiz.status }}
+                </AppBadge>
+                <AppBadge v-if="quiz.isMapChallenge" variant="gold">Map</AppBadge>
+            </div>
         </div>
         <h3 class="mt-6 text-2xl font-black text-heritage-ink">{{ quiz.title }}</h3>
         <p class="mt-3 flex-1 text-heritage-muted">{{ quiz.description }}</p>
@@ -35,10 +44,15 @@ const difficultyVariant = {
             <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.time }}</span>
         </div>
         <div class="mt-6">
-            <ProgressBar :value="quiz.progress" label="Progress" />
+            <ProgressBar :value="quiz.progress" :label="quiz.progressLabel || 'Progress'" />
+            <div v-if="quiz.progressDetails?.length" class="mt-3 flex flex-wrap gap-2 text-xs font-black text-heritage-muted">
+                <span v-for="detail in quiz.progressDetails" :key="detail" class="rounded-full bg-heritage-panel px-3 py-1">
+                    {{ detail }}
+                </span>
+            </div>
         </div>
         <PrimaryButton class="mt-6" :href="quiz.href" :variant="quiz.status === 'Completed' ? 'gold' : 'red'">
-            {{ quiz.status === 'Completed' ? 'Review' : quiz.status }}
+            {{ quiz.actionLabel || (quiz.status === 'Completed' ? 'Review' : quiz.status) }}
         </PrimaryButton>
     </article>
 </template>

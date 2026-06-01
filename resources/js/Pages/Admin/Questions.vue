@@ -485,7 +485,7 @@ function formatDate(value) {
                 <section v-if="form.question_type === 'map_guess'" class="grid gap-5 rounded-[1.5rem] border border-heritage-gold/40 bg-heritage-gold-faint p-5">
                     <div>
                         <h3 class="text-xl font-black text-heritage-ink">Map marker metadata</h3>
-                        <p class="mt-1 text-sm font-semibold text-heritage-gold-deep">Use X/Y percentages to place the marker on the Macedonia map. These labels stay admin-only.</p>
+                        <p class="mt-1 text-sm font-semibold text-heritage-gold-deep">Coordinates are percentages on the map image. Example: x=50, y=40. Target labels stay admin-only.</p>
                         <span v-if="fieldError('metadata')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata') }}</span>
                     </div>
                     <div class="grid gap-5 md:grid-cols-3">

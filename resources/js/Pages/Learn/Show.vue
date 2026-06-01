@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
-import MacedoniaMap from '../../Components/MacedoniaMap.vue';
+import LessonVisualPanel from '../../Components/LessonVisualPanel.vue';
 import {
     currentCategorySlug,
     currentLessonSlug,
@@ -27,118 +27,85 @@ const title = computed(() => localizedText(lesson.value, 'title', language.value
 const summary = computed(() => localizedText(lesson.value, 'summary', language.value));
 const categoryName = computed(() => localizedText(lesson.value?.category, 'name', language.value));
 const content = computed(() => localizedText(lesson.value, 'content', language.value));
-const lessonBlocks = computed(() => content.value.split(/\n{2,}/).map((item) => {
-    const lines = item.trim().split('\n').map((line) => line.trim()).filter(Boolean);
-    const firstLine = lines[0] || '';
-    const hasHeading = firstLine.endsWith(':');
-
-    return {
-        heading: hasHeading ? firstLine.replace(/:$/, '') : '',
-        body: (hasHeading ? lines.slice(1) : lines).join('\n'),
-    };
-}).filter((block) => block.heading || block.body));
-const paragraphs = computed(() => lessonBlocks.value.map((block) => block.body).filter(Boolean));
 const relatedQuizzes = computed(() => lesson.value?.related_quizzes || []);
 const firstQuiz = computed(() => relatedQuizzes.value[0] || null);
 const resolvedCategorySlug = computed(() => lesson.value?.category?.slug || categorySlug);
 const categoryHref = computed(() => learnCategoryUrl(resolvedCategorySlug.value));
-
-const isAlphabet = computed(() => resolvedCategorySlug.value === 'macedonian-alphabet');
+const categoryQuizHref = computed(() => `/quizzes/${resolvedCategorySlug.value}`);
 const isGeography = computed(() => resolvedCategorySlug.value === 'geography');
-const isLanguage = computed(() => resolvedCategorySlug.value === 'macedonian-language');
-const isHistory = computed(() => resolvedCategorySlug.value === 'history-of-macedonia');
-const isCulture = computed(() => resolvedCategorySlug.value === 'culture-and-traditions');
-const isFoodMusic = computed(() => resolvedCategorySlug.value === 'food-and-music');
+const lessonBlocks = computed(() => parseLessonContent(content.value));
+const lessonDetailRows = computed(() => [
+    { label: 'Category', value: categoryName.value || 'Lesson' },
+    { label: 'Difficulty', value: difficultyLabel(lesson.value?.difficulty) },
+    { label: 'Reading time', value: lesson.value?.estimated_minutes ? `${lesson.value.estimated_minutes} min` : 'Self-paced' },
+    { label: 'Languages', value: lesson.value?.content_mk ? 'English + Macedonian' : 'English' },
+]);
 
-const heroBadge = computed(() => {
-    if (isAlphabet.value) return 'Foundation series';
-    if (isGeography.value) return 'Geography module';
-    if (isLanguage.value) return 'Language lab';
-    if (isHistory.value) return 'Story path';
-    if (isCulture.value) return 'Heritage module';
-    if (isFoodMusic.value) return 'Taste and rhythm';
-
-    return 'Lesson';
-});
+const heroBadge = computed(() => ({
+    'macedonian-language': 'Language lab',
+    'macedonian-alphabet': 'Cyrillic builder',
+    geography: 'Geography module',
+    'history-of-macedonia': 'Story path',
+    'culture-and-traditions': 'Heritage module',
+    'food-and-music': 'Taste and rhythm',
+})[resolvedCategorySlug.value] || 'Lesson module');
 
 const keyPoints = computed(() => {
-    const source = paragraphs.value.length ? paragraphs.value : [summary.value].filter(Boolean);
+    const source = lessonBlocks.value
+        .flatMap((block) => block.paragraphs.length ? block.paragraphs : block.items)
+        .filter(Boolean);
 
-    return source
-        .flatMap((paragraph) => paragraph.split(/(?<=[.!?])\s+/))
+    return (source.length ? source : [summary.value])
+        .flatMap((paragraph) => String(paragraph).split(/(?<=[.!?])\s+/))
         .map((item) => item.trim())
         .filter(Boolean)
         .slice(0, 3);
 });
 
-const alphabetLetters = [
-    { letter: 'А', sound: 'ah' },
-    { letter: 'Б', sound: 'beh' },
-    { letter: 'В', sound: 'veh' },
-    { letter: 'Г', sound: 'geh' },
-    { letter: 'Д', sound: 'deh' },
-    { letter: 'М', sound: 'em' },
-    { letter: 'К', sound: 'kah' },
-    { letter: 'О', sound: 'oh' },
-    { letter: 'Р', sound: 'reh' },
-    { letter: 'С', sound: 'seh' },
-];
+const fallbackVocabulary = computed(() => {
+    if (resolvedCategorySlug.value === 'food-and-music') {
+        return [
+            { term: 'грав', detail: 'beans' },
+            { term: 'тавче', detail: 'small baking dish' },
+            { term: 'храна', detail: 'food' },
+            { term: 'песна', detail: 'song' },
+            { term: 'оро', detail: 'dance' },
+        ];
+    }
 
-const alphabetWords = [
-    { mk: 'Македонија', latin: 'Makedonija', en: 'Macedonia' },
-    { mk: 'мајка', latin: 'majka', en: 'mother' },
-    { mk: 'татко', latin: 'tatko', en: 'father' },
-    { mk: 'добро', latin: 'dobro', en: 'good' },
-];
+    if (lessonSlug.includes('number')) {
+        return [
+            { term: 'еден', detail: 'one' },
+            { term: 'два', detail: 'two' },
+            { term: 'пет', detail: 'five' },
+            { term: 'десет', detail: 'ten' },
+            { term: 'дваесет', detail: 'twenty' },
+        ];
+    }
 
-const geographyCards = [
-    { mk: 'Езеро', en: 'Lake', detail: 'Ohrid, Prespa, and Dojran' },
-    { mk: 'Планина', en: 'Mountain', detail: 'Mavrovo, Pelister, and the western highlands' },
-    { mk: 'Град', en: 'City', detail: 'Skopje, Bitola, Ohrid, and Prilep' },
-    { mk: 'Река', en: 'River', detail: 'The Vardar valley connects regions and cities' },
-];
+    if (resolvedCategorySlug.value === 'geography') {
+        return [
+            { term: 'град', detail: 'city' },
+            { term: 'езеро', detail: 'lake' },
+            { term: 'планина', detail: 'mountain' },
+            { term: 'мапа', detail: 'map' },
+        ];
+    }
 
-const geographyLocations = [
-    { title: 'Skopje', detail: 'Capital and cultural center.' },
-    { title: 'Ohrid', detail: 'Lake city known for history and natural beauty.' },
-    { title: 'Mavrovo', detail: 'Mountain region and national park.' },
-];
-
-const languageCards = [
-    { title: 'Здраво', detail: 'Hello' },
-    { title: 'Добро утро', detail: 'Good morning' },
-    { title: 'Благодарам', detail: 'Thank you' },
-    { title: 'Како си?', detail: 'How are you?' },
-];
-
-const historyCards = [
-    { title: 'Places', detail: 'Explore cities, museums, and monuments.' },
-    { title: 'Stories', detail: 'Learn beginner-friendly cultural context.' },
-    { title: 'Memory', detail: 'Connect history with family traditions.' },
-];
-
-const cultureCards = [
-    { title: 'Family', detail: 'Celebrations and connection.' },
-    { title: 'Oro', detail: 'Traditional dance and community.' },
-    { title: 'Holidays', detail: 'Customs, food, and music.' },
-];
-
-const foodMusicCards = [
-    { title: 'Tavce gravce', detail: 'Classic bean dish.' },
-    { title: 'Ajvar', detail: 'Pepper spread and family preparation.' },
-    { title: 'Folk music', detail: 'Rhythm for weddings and celebrations.' },
-];
-
-const genericCards = computed(() => {
-    if (isLanguage.value) return languageCards;
-    if (isHistory.value) return historyCards;
-    if (isCulture.value) return cultureCards;
-    if (isFoodMusic.value) return foodMusicCards;
+    if (resolvedCategorySlug.value === 'macedonian-alphabet') {
+        return [
+            { term: 'буква', detail: 'letter' },
+            { term: 'звук', detail: 'sound' },
+            { term: 'збор', detail: 'word' },
+            { term: 'азбука', detail: 'alphabet' },
+        ];
+    }
 
     return [
-        { title: 'Read', detail: 'Build context with a short bilingual lesson.' },
-        { title: 'Practise', detail: 'Take the related quiz when you are ready.' },
-        { title: 'Review', detail: 'Return to the lesson from your results.' },
+        { term: 'здраво', detail: 'hello' },
+        { term: 'благодарам', detail: 'thank you' },
+        { term: 'семејство', detail: 'family' },
+        { term: 'учење', detail: 'learning' },
     ];
 });
 
@@ -158,17 +125,161 @@ onMounted(async () => {
         isLoading.value = false;
     }
 });
+
+function parseLessonContent(value) {
+    return String(value || '')
+        .split(/\n{2,}/)
+        .map((chunk, index) => parseBlock(chunk, index))
+        .filter((block) => block.heading || block.paragraphs.length || block.items.length);
+}
+
+function parseBlock(chunk, index) {
+    const lines = chunk
+        .trim()
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+    const firstLine = lines[0] || '';
+    const hasHeading = firstLine.endsWith(':');
+    const heading = hasHeading ? firstLine.replace(/:$/, '') : '';
+    const bodyLines = hasHeading ? lines.slice(1) : lines;
+    const items = bodyLines
+        .filter((line) => /^[-•]\s+/.test(line))
+        .map((line) => line.replace(/^[-•]\s+/, '').trim());
+    const paragraphs = bodyLines
+        .filter((line) => !/^[-•]\s+/.test(line))
+        .map((line) => line.trim());
+    const type = sectionType(heading, index);
+
+    return {
+        heading: heading || fallbackHeading(type),
+        type,
+        bodyLines,
+        items,
+        paragraphs,
+    };
+}
+
+function sectionType(heading, index) {
+    const normalized = heading.toLowerCase();
+
+    if (normalized.includes('what you will learn') || normalized.includes('што ќе научиш')) return 'learn';
+    if (normalized.includes('explanation') || normalized.includes('објаснување')) return 'explanation';
+    if (normalized.includes('examples') || normalized.includes('примери')) return 'examples';
+    if (normalized.includes('vocabulary') || normalized.includes('facts') || normalized.includes('клучни')) return 'vocabulary';
+    if (normalized.includes('practice') || normalized.includes('вежбање')) return 'practice';
+    if (normalized.includes('remember') || normalized.includes('запомни')) return 'remember';
+    if (normalized.includes('introduction') || normalized.includes('вовед') || index === 0) return 'introduction';
+
+    return 'default';
+}
+
+function fallbackHeading(type) {
+    return {
+        introduction: 'Introduction',
+        learn: 'What you will learn',
+        explanation: 'Explanation',
+        examples: 'Examples',
+        vocabulary: 'Key words and facts',
+        practice: 'Practice',
+        remember: 'Remember',
+    }[type] || 'Lesson section';
+}
+
+function sectionMeta(type) {
+    return {
+        introduction: {
+            badge: 'Overview',
+            marker: '01',
+            card: 'border-heritage-line/50 bg-white',
+            badgeVariant: 'navy',
+            accent: 'bg-heritage-navy text-white',
+        },
+        learn: {
+            badge: 'Goals',
+            marker: '02',
+            card: 'border-heritage-gold/50 bg-heritage-gold-faint',
+            badgeVariant: 'gold',
+            accent: 'bg-heritage-gold text-heritage-navy',
+        },
+        explanation: {
+            badge: 'Explain',
+            marker: '03',
+            card: 'border-heritage-line/50 bg-white',
+            badgeVariant: 'red',
+            accent: 'bg-heritage-red text-white',
+        },
+        examples: {
+            badge: 'Examples',
+            marker: '04',
+            card: 'border-heritage-line/50 bg-white shadow-soft',
+            badgeVariant: 'navy',
+            accent: 'bg-heritage-navy text-white',
+        },
+        vocabulary: {
+            badge: 'Key words',
+            marker: '05',
+            card: 'border-heritage-gold/60 bg-white',
+            badgeVariant: 'gold',
+            accent: 'bg-heritage-gold text-heritage-navy',
+        },
+        practice: {
+            badge: 'Practice',
+            marker: '06',
+            card: 'border-heritage-red/20 bg-heritage-red-faint',
+            badgeVariant: 'red',
+            accent: 'bg-heritage-red text-white',
+        },
+        remember: {
+            badge: 'Remember',
+            marker: '07',
+            card: 'border-heritage-gold/60 bg-heritage-navy text-white',
+            badgeVariant: 'gold',
+            accent: 'bg-heritage-gold text-heritage-navy',
+        },
+        default: {
+            badge: 'Lesson',
+            marker: 'IQ',
+            card: 'border-heritage-line/50 bg-white',
+            badgeVariant: 'neutral',
+            accent: 'bg-heritage-panel text-heritage-muted',
+        },
+    }[type] || sectionMeta('default');
+}
+
+function contentItems(block) {
+    return block.items.length ? block.items : block.paragraphs;
+}
+
+function termCards(block) {
+    const parsed = contentItems(block)
+        .map((line) => {
+            const parts = String(line).split(/\s+(?:=|-)\s+/);
+
+            if (parts.length < 2) {
+                return null;
+            }
+
+            return {
+                term: parts[0].trim(),
+                detail: parts.slice(1).join(' - ').trim(),
+            };
+        })
+        .filter(Boolean);
+
+    return parsed.length ? parsed : fallbackVocabulary.value;
+}
 </script>
 
 <template>
     <PublicLayout>
         <main class="page-shell py-8 md:py-12">
-            <section v-if="isLoading" class="mx-auto max-w-6xl">
+            <section v-if="isLoading" class="mx-auto max-w-7xl">
                 <div class="soft-card min-h-96 animate-pulse p-8">
                     <div class="h-6 w-32 rounded-full bg-heritage-panel" />
                     <div class="mt-8 h-12 w-3/4 rounded-full bg-heritage-panel" />
                     <div class="mt-4 h-5 w-full rounded-full bg-heritage-panel" />
-                    <div class="mt-10 h-40 rounded-[2rem] bg-heritage-panel" />
+                    <div class="mt-10 h-48 rounded-[2rem] bg-heritage-panel" />
                 </div>
             </section>
 
@@ -189,70 +300,45 @@ onMounted(async () => {
                     <span class="text-heritage-ink">{{ title }}</span>
                 </div>
 
-                <section
-                    :class="[
-                        'relative overflow-hidden rounded-[2.5rem] border border-heritage-line/50 p-6 shadow-card md:p-10',
-                        isGeography ? 'bg-heritage-navy text-white' : 'bg-heritage-panel text-heritage-ink',
-                    ]"
-                >
-                    <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-                        <div class="relative z-10">
+                <section class="overflow-hidden rounded-[2.5rem] border border-heritage-line/50 bg-white p-5 shadow-card sm:p-6 md:p-8 lg:p-10">
+                    <div class="grid gap-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:items-center">
+                        <div class="min-w-0">
                             <div class="flex flex-wrap gap-2">
-                                <AppBadge :variant="isGeography ? 'gold' : 'red'">{{ heroBadge }}</AppBadge>
-                                <AppBadge :variant="isGeography ? 'navy' : 'gold'">{{ difficultyLabel(lesson.difficulty) }}</AppBadge>
-                                <span :class="['rounded-full px-4 py-2 text-xs font-black uppercase', isGeography ? 'bg-white/15 text-white' : 'bg-white text-heritage-muted shadow-card']">
-                                    {{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes"> min</span>
-                                </span>
+                                <AppBadge variant="red">{{ heroBadge }}</AppBadge>
+                                <AppBadge variant="gold">{{ difficultyLabel(lesson.difficulty) }}</AppBadge>
+                                <AppBadge variant="navy">{{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes">&nbsp;min</span></AppBadge>
                             </div>
-                            <h1 :class="['mt-5 max-w-3xl text-4xl font-black leading-tight md:text-6xl', isGeography ? 'text-white' : 'text-heritage-ink']">
+                            <h1 class="mt-5 max-w-4xl text-4xl font-black leading-tight text-heritage-red md:text-6xl">
                                 {{ title }}
                             </h1>
-                            <p :class="['mt-5 max-w-2xl text-lg leading-8', isGeography ? 'text-white/80' : 'text-heritage-muted']">
+                            <p class="mt-5 max-w-3xl text-lg leading-8 text-heritage-muted">
                                 {{ summary }}
                             </p>
                             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                                <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" size="lg">Take related quiz</PrimaryButton>
-                                <PrimaryButton v-else href="/quizzes" size="lg">Explore quizzes</PrimaryButton>
-                                <PrimaryButton v-if="isGeography" href="/map-challenge" variant="gold" size="lg">Map Challenge</PrimaryButton>
+                                <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" size="lg" class="w-full sm:w-auto">Take related quiz</PrimaryButton>
+                                <PrimaryButton v-else href="/quizzes" size="lg" class="w-full sm:w-auto">Explore quizzes</PrimaryButton>
+                                <PrimaryButton :href="categoryQuizHref" variant="soft" size="lg" class="w-full sm:w-auto">Category quizzes</PrimaryButton>
+                                <PrimaryButton v-if="isGeography" href="/map-challenge" variant="gold" size="lg" class="w-full sm:w-auto">Map Challenge</PrimaryButton>
                             </div>
                         </div>
 
-                        <div v-if="isGeography" class="rounded-[2rem] bg-black/25 p-4 shadow-soft">
-                            <MacedoniaMap :x="22" :y="72" target-type="lake" variant="compact" />
-                        </div>
-                        <div v-else-if="isAlphabet" class="rounded-[2rem] bg-white p-5 shadow-soft">
-                            <div class="grid grid-cols-5 gap-3">
-                                <div v-for="item in alphabetLetters.slice(0, 10)" :key="item.letter" class="rounded-2xl bg-heritage-panel p-4 text-center">
-                                    <p class="text-3xl font-black text-heritage-ink">{{ item.letter }}</p>
-                                    <p class="mt-1 text-xs font-bold text-heritage-muted">{{ item.sound }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else class="rounded-[2rem] bg-white p-6 shadow-soft">
-                            <p class="label">Learning module</p>
-                            <div class="mt-5 grid gap-3">
-                                <div v-for="card in genericCards.slice(0, 3)" :key="card.title" class="rounded-2xl bg-heritage-panel p-4">
-                                    <h3 class="font-black text-heritage-ink">{{ card.title }}</h3>
-                                    <p class="mt-1 text-sm leading-6 text-heritage-muted">{{ card.detail }}</p>
-                                </div>
-                            </div>
-                        </div>
+                        <LessonVisualPanel :category-slug="resolvedCategorySlug" :lesson-slug="lessonSlug" />
                     </div>
                 </section>
 
-                <section class="mt-8 grid gap-8 lg:grid-cols-[1fr_20rem]">
-                    <article class="soft-card p-6 md:p-8">
-                        <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                <section class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
+                    <article class="min-w-0">
+                        <div class="mb-5 flex flex-col justify-between gap-4 rounded-[2rem] border border-heritage-line/50 bg-white p-4 shadow-card sm:flex-row sm:items-center">
                             <div>
-                                <AppBadge>Lesson</AppBadge>
-                                <h2 class="mt-3 text-2xl font-black text-heritage-ink">Read and remember</h2>
+                                <AppBadge variant="gold">Lesson module</AppBadge>
+                                <h2 class="mt-3 text-2xl font-black text-heritage-ink">Read, practise, remember</h2>
                             </div>
-                            <div class="rounded-full bg-heritage-panel p-1">
+                            <div class="inline-flex rounded-full bg-heritage-panel p-1">
                                 <button
                                     type="button"
                                     aria-label="Show English lesson text"
                                     :aria-pressed="language === 'en'"
-                                    :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'en' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']"
+                                    :class="['rounded-full px-4 py-2 text-xs font-black transition', language === 'en' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']"
                                     @click="language = 'en'"
                                 >
                                     EN
@@ -261,7 +347,7 @@ onMounted(async () => {
                                     type="button"
                                     aria-label="Show Macedonian lesson text"
                                     :aria-pressed="language === 'mk'"
-                                    :class="['rounded-full px-3 py-1 text-xs font-black transition', language === 'mk' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']"
+                                    :class="['rounded-full px-4 py-2 text-xs font-black transition', language === 'mk' ? 'bg-white text-heritage-red shadow-card' : 'text-heritage-muted']"
                                     @click="language = 'mk'"
                                 >
                                     MK
@@ -270,104 +356,112 @@ onMounted(async () => {
                         </div>
 
                         <div class="grid gap-6">
-                            <section v-for="(block, index) in lessonBlocks" :key="`${index}-${block.heading}`" class="rounded-[1.5rem] bg-heritage-panel p-5">
-                                <h3 v-if="block.heading" class="text-xl font-black text-heritage-ink">{{ block.heading }}</h3>
-                                <p v-if="block.body" :class="['whitespace-pre-line text-base leading-8 text-heritage-muted md:text-lg md:leading-9', block.heading ? 'mt-3' : '']">
-                                    {{ block.body }}
-                                </p>
+                            <section
+                                v-for="(block, index) in lessonBlocks"
+                                :key="`${index}-${block.heading}`"
+                                :class="['rounded-[2rem] border p-5 shadow-card md:p-7', sectionMeta(block.type).card]"
+                            >
+                                <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+                                    <div :class="['flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-black shadow-card', sectionMeta(block.type).accent]">
+                                        {{ sectionMeta(block.type).marker }}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <AppBadge :variant="sectionMeta(block.type).badgeVariant">{{ sectionMeta(block.type).badge }}</AppBadge>
+                                            <h3 :class="['text-2xl font-black', block.type === 'remember' ? 'text-white' : 'text-heritage-ink']">{{ block.heading }}</h3>
+                                        </div>
+
+                                        <div v-if="block.type === 'learn'" class="mt-5 grid gap-3 sm:grid-cols-2">
+                                            <div v-for="item in contentItems(block)" :key="item" class="rounded-2xl bg-white/80 p-4 text-sm font-bold leading-6 text-heritage-gold-deep shadow-card">
+                                                {{ item }}
+                                            </div>
+                                        </div>
+
+                                        <div v-else-if="block.type === 'examples'" class="mt-5 grid gap-3">
+                                            <div v-for="item in contentItems(block)" :key="item" class="rounded-2xl border border-heritage-line/40 bg-heritage-panel p-4">
+                                                <p class="text-sm font-bold leading-7 text-heritage-muted">{{ item }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div v-else-if="block.type === 'vocabulary'" class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                                            <div v-for="card in termCards(block)" :key="`${card.term}-${card.detail}`" class="rounded-2xl bg-heritage-gold-faint p-4 shadow-card">
+                                                <p class="text-xl font-black text-heritage-ink">{{ card.term }}</p>
+                                                <p class="mt-2 text-sm font-bold leading-6 text-heritage-gold-deep">{{ card.detail }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div v-else-if="block.type === 'practice'" class="mt-5 grid gap-3">
+                                            <div v-for="item in contentItems(block)" :key="item" class="flex gap-3 rounded-2xl bg-white p-4 shadow-card">
+                                                <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white">Go</span>
+                                                <p class="text-sm font-bold leading-7 text-heritage-muted">{{ item }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div v-else class="mt-5 grid gap-4">
+                                            <p
+                                                v-for="paragraph in block.paragraphs"
+                                                :key="paragraph"
+                                                :class="['text-base leading-8 md:text-lg md:leading-9', block.type === 'remember' ? 'text-white/85' : 'text-heritage-muted']"
+                                            >
+                                                {{ paragraph }}
+                                            </p>
+                                            <ul v-if="block.items.length" :class="['grid gap-3 text-sm font-bold leading-7', block.type === 'remember' ? 'text-white/85' : 'text-heritage-muted']">
+                                                <li v-for="item in block.items" :key="item" class="rounded-2xl bg-white/10 px-4 py-3">{{ item }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </section>
                         </div>
 
-                        <section v-if="isAlphabet" class="mt-8 grid gap-6">
-                            <div class="rounded-[2rem] bg-heritage-panel p-6">
-                                <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                                    <h3 class="text-2xl font-black text-heritage-ink">The first steps</h3>
-                                    <span class="text-sm font-bold text-heritage-muted">Letter recognition</span>
-                                </div>
-                                <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-5">
-                                    <div v-for="item in alphabetLetters" :key="`letter-${item.letter}`" class="rounded-2xl bg-white p-4 text-center shadow-card">
-                                        <p class="text-4xl font-black text-heritage-ink">{{ item.letter }}</p>
-                                        <p class="mt-1 text-xs font-bold text-heritage-muted">{{ item.sound }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 class="border-l-4 border-heritage-red pl-4 text-2xl font-black text-heritage-ink">Example words</h3>
-                                <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                                    <div v-for="word in alphabetWords" :key="word.mk" class="overflow-hidden rounded-[1.5rem] bg-white shadow-card">
-                                        <div class="flex h-28 items-center justify-center bg-heritage-panel">
-                                            <p class="text-2xl font-black text-heritage-muted">{{ word.mk }}</p>
-                                        </div>
-                                        <div class="p-5">
-                                            <p class="text-sm font-black text-heritage-red">{{ word.latin }}</p>
-                                            <p class="mt-1 text-sm font-bold text-heritage-muted">{{ word.en }}</p>
-                                        </div>
-                                    </div>
+                        <section class="mt-6 rounded-[2rem] border border-heritage-gold/50 bg-heritage-gold-faint p-5 shadow-card md:p-7">
+                            <AppBadge variant="gold">Quick review</AppBadge>
+                            <h2 class="mt-3 text-2xl font-black text-heritage-ink">Three things to remember</h2>
+                            <div class="mt-5 grid gap-3 md:grid-cols-3">
+                                <div v-for="point in keyPoints" :key="point" class="rounded-2xl bg-white p-4 shadow-card">
+                                    <p class="text-sm font-bold leading-7 text-heritage-muted">{{ point }}</p>
                                 </div>
                             </div>
                         </section>
-
-                        <section v-else-if="isGeography" class="mt-8 grid gap-6">
-                            <div class="grid gap-4 sm:grid-cols-2">
-                                <div v-for="card in geographyCards" :key="card.mk" class="rounded-[1.5rem] bg-heritage-panel p-6 text-center">
-                                    <p class="text-3xl font-black text-heritage-ink">{{ card.mk }}</p>
-                                    <p class="mt-1 text-sm font-black text-heritage-red">{{ card.en }}</p>
-                                    <p class="mt-3 text-sm leading-6 text-heritage-muted">{{ card.detail }}</p>
-                                </div>
-                            </div>
-                            <div class="rounded-[1.5rem] border-2 border-dashed border-heritage-gold bg-heritage-gold-faint p-6">
-                                <h3 class="text-2xl font-black text-heritage-gold-deep">Did you know?</h3>
-                                <p class="mt-3 leading-7 text-heritage-gold-deep">
-                                    Lake Ohrid is one of Europe's oldest lakes, and Macedonia's mountains, valleys, and lakes shape daily life, food, travel, and local identity.
-                                </p>
-                            </div>
-                        </section>
-
-                        <section v-else class="mt-8 grid gap-4 sm:grid-cols-3">
-                            <div v-for="card in genericCards" :key="card.title" class="rounded-[1.5rem] bg-heritage-panel p-5">
-                                <h3 class="text-xl font-black text-heritage-ink">{{ card.title }}</h3>
-                                <p class="mt-2 text-sm leading-6 text-heritage-muted">{{ card.detail }}</p>
-                            </div>
-                        </section>
-
-                        <div class="mt-8 rounded-[1.5rem] bg-heritage-gold-faint p-5">
-                            <p class="label text-heritage-gold-deep">Key points</p>
-                            <ul class="mt-3 grid gap-2 text-sm font-bold leading-6 text-heritage-gold-deep">
-                                <li v-for="point in keyPoints" :key="`key-${point}`" class="flex gap-2">
-                                    <span>•</span>
-                                    <span>{{ point }}</span>
-                                </li>
-                            </ul>
-                        </div>
                     </article>
 
-                    <aside class="grid content-start gap-5">
-                        <div v-if="isGeography" class="soft-card p-5">
-                            <p class="label">Key locations</p>
-                            <div class="mt-4 grid gap-3">
-                                <div v-for="place in geographyLocations" :key="place.title" class="rounded-2xl bg-heritage-panel p-4">
-                                    <h3 class="font-black text-heritage-ink">{{ place.title }}</h3>
-                                    <p class="mt-1 text-sm leading-6 text-heritage-muted">{{ place.detail }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="soft-card p-5">
-                            <p class="label">Learning loop</p>
-                            <h3 class="mt-3 text-2xl font-black text-heritage-ink">Ready to practise?</h3>
-                            <p class="mt-3 text-sm leading-6 text-heritage-muted">Take the related quiz, then come back here to review anything that felt tricky.</p>
+                    <aside class="grid content-start gap-5 lg:sticky lg:top-28">
+                        <section class="soft-card p-5">
+                            <AppBadge variant="red">Ready to practise?</AppBadge>
+                            <h2 class="mt-3 text-2xl font-black text-heritage-ink">Check your learning</h2>
+                            <p class="mt-3 text-sm leading-6 text-heritage-muted">Use the quiz after reading, then return to this lesson for review.</p>
                             <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" class="mt-5 w-full">Take related quiz</PrimaryButton>
                             <PrimaryButton v-else href="/quizzes" class="mt-5 w-full">Explore quizzes</PrimaryButton>
                             <PrimaryButton v-if="isGeography" href="/map-challenge" variant="gold" class="mt-3 w-full">Map Challenge</PrimaryButton>
-                        </div>
-                        <div class="soft-card p-5">
-                            <p class="label">Navigation</p>
+                        </section>
+
+                        <section class="soft-card p-5">
+                            <AppBadge variant="gold">Lesson details</AppBadge>
+                            <dl class="mt-4 grid gap-3">
+                                <div v-for="row in lessonDetailRows" :key="row.label" class="rounded-2xl bg-heritage-panel p-4">
+                                    <dt class="label">{{ row.label }}</dt>
+                                    <dd class="mt-1 font-black text-heritage-ink">{{ row.value }}</dd>
+                                </div>
+                            </dl>
+                        </section>
+
+                        <section class="soft-card p-5">
+                            <AppBadge variant="navy">Navigation</AppBadge>
                             <div class="mt-4 grid gap-3">
                                 <PrimaryButton :href="categoryHref" variant="soft">Back to category</PrimaryButton>
                                 <PrimaryButton :href="learnUrl()" variant="ghost">All lessons</PrimaryButton>
                             </div>
-                        </div>
+                        </section>
+
+                        <section class="overflow-hidden rounded-[2rem] border border-heritage-line/50 bg-heritage-navy p-5 text-white shadow-card">
+                            <p class="text-xs font-black uppercase text-heritage-gold">Suggested next</p>
+                            <h2 class="mt-3 text-2xl font-black">{{ firstQuiz ? localizedText(firstQuiz, 'title', language) : categoryName }}</h2>
+                            <p class="mt-3 text-sm leading-6 text-white/75">
+                                {{ firstQuiz ? 'Try a short quiz connected to this lesson.' : 'Explore the full category path.' }}
+                            </p>
+                            <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" variant="gold" class="mt-5 w-full">Start quiz</PrimaryButton>
+                            <PrimaryButton v-else :href="categoryHref" variant="gold" class="mt-5 w-full">Continue category</PrimaryButton>
+                        </section>
                     </aside>
                 </section>
             </template>

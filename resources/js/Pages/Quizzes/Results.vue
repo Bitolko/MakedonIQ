@@ -38,9 +38,22 @@ const relatedLesson = computed(() => resultQuiz.value?.related_lesson || null);
 const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 const isMapChallenge = computed(() => Boolean(resultQuiz.value?.has_map_questions));
+const resultPercentage = computed(() => Number(resultAttempt.value?.percentage || 0));
 const scoreMessage = computed(() => {
     if (!resultAttempt.value) {
         return 'Complete a quiz to see your saved result.';
+    }
+
+    if (isMapChallenge.value) {
+        if (resultPercentage.value >= 90) {
+            return 'Excellent geography knowledge!';
+        }
+
+        if (resultPercentage.value >= 70) {
+            return 'Great work — you know many key places.';
+        }
+
+        return 'Good start — review the geography lesson and try again.';
     }
 
     return resultAttempt.value.passed
@@ -130,7 +143,7 @@ onMounted(async () => {
                     {{ isMapChallenge ? 'Map Challenge result' : (hasAttempt ? 'Quiz result' : 'Results preview') }}
                 </AppBadge>
                 <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
-                    {{ isMapChallenge && hasAttempt ? 'Map Challenge completed' : (hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First') }}
+                    {{ isMapChallenge && hasAttempt ? 'Map Challenge Complete' : (hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First') }}
                 </h1>
                 <p class="mt-4 text-lg text-heritage-muted">
                     <span v-if="hasAttempt">You completed {{ resultQuizTitle }}. {{ scoreMessage }}</span>
@@ -172,10 +185,10 @@ onMounted(async () => {
                     <h2 class="text-2xl font-black text-heritage-ink">Achievement message</h2>
                     <p class="mt-3 leading-7 text-heritage-muted">{{ scoreMessage }}</p>
                     <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                        <PrimaryButton v-if="relatedLesson" :href="relatedLesson.url" variant="soft">Review lesson</PrimaryButton>
-                        <PrimaryButton v-if="hasAttempt" :href="reviewUrl" variant="soft">Take again</PrimaryButton>
+                        <PrimaryButton v-if="relatedLesson" :href="relatedLesson.url" variant="soft">{{ isMapChallenge ? 'Review geography lesson' : 'Review lesson' }}</PrimaryButton>
+                        <PrimaryButton v-if="hasAttempt && !isMapChallenge" :href="reviewUrl" variant="soft">Take again</PrimaryButton>
                         <PrimaryButton :href="tryAgainUrl" variant="ghost">Try again</PrimaryButton>
-                        <PrimaryButton :href="continueUrl">Continue learning</PrimaryButton>
+                        <PrimaryButton :href="isMapChallenge ? '/learn/geography' : continueUrl">{{ isMapChallenge ? 'Explore Learn Geography' : 'Continue learning' }}</PrimaryButton>
                     </div>
                 </article>
             </section>
@@ -184,7 +197,7 @@ onMounted(async () => {
                 <AppBadge variant="gold">Review lesson</AppBadge>
                 <h2 class="mt-4 text-2xl font-black text-heritage-ink">{{ relatedLessonTitle }}</h2>
                 <p class="mt-3 max-w-3xl leading-7 text-heritage-gold-deep">{{ relatedLessonSummary }}</p>
-                <PrimaryButton :href="relatedLesson.url" class="mt-5" variant="soft">Open lesson</PrimaryButton>
+                <PrimaryButton :href="relatedLesson.url" class="mt-5" variant="soft">{{ isMapChallenge ? 'Review geography lesson' : 'Open lesson' }}</PrimaryButton>
             </section>
 
             <section v-if="hasAttempt" class="mx-auto mt-8 max-w-5xl">

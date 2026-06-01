@@ -4,11 +4,13 @@ import PublicLayout from '../../Components/PublicLayout.vue';
 import QuizCard from '../../Components/QuizCard.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import ProgressBar from '../../Components/ProgressBar.vue';
+import PrimaryButton from '../../Components/PrimaryButton.vue';
 import { categoryUrl, currentCategorySlug, difficultyLabel, fetchJson, localizedText, preferredLanguage, quizStartUrl } from '../../api/makedoniq';
 
 const category = ref(null);
 const categories = ref([]);
 const quizzes = ref([]);
+const userProgress = ref(null);
 const isLoading = ref(true);
 const error = ref('');
 const language = preferredLanguage();
@@ -27,14 +29,26 @@ const quizCards = computed(() => quizzes.value.map((quiz) => ({
     difficulty: difficultyLabel(quiz.difficulty),
     questions: quiz.questions_count || 0,
     time: quiz.estimated_minutes ? `${quiz.estimated_minutes} min` : 'Self-paced',
-    progress: 0,
-    status: 'Start',
+    progress: quiz.user_progress?.best_percentage || 0,
+    status: quizStatus(quiz),
+    actionLabel: quizActionLabel(quiz),
+    progressLabel: quizProgressLabel(quiz),
+    progressDetails: quizProgressDetails(quiz),
     href: quizStartUrl(category.value?.slug || activeSlug, quiz.slug),
     isMapChallenge: Boolean(quiz.has_map_questions),
 })));
 
 const categoryName = computed(() => localizedText(category.value, 'name', language));
 const categoryDescription = computed(() => localizedText(category.value, 'description', language));
+const isProgressAuthenticated = computed(() => Boolean(userProgress.value?.is_authenticated));
+const completedQuizzes = computed(() => userProgress.value?.completed_quizzes ?? 0);
+const totalQuizzes = computed(() => userProgress.value?.total_quizzes ?? quizzes.value.length);
+const progressPercentage = computed(() => Number(userProgress.value?.progress_percentage || 0));
+const progressSummary = computed(() => `${completedQuizzes.value} of ${totalQuizzes.value} quizzes completed`);
+const progressMessage = computed(() => userProgress.value?.message || 'Your saved quiz attempts are counted here.');
+const bestScore = computed(() => formatPercentage(userProgress.value?.best_percentage));
+const averageScore = computed(() => formatPercentage(userProgress.value?.average_percentage));
+const totalPoints = computed(() => userProgress.value?.total_points ?? 0);
 
 onMounted(async () => {
     try {
@@ -45,6 +59,7 @@ onMounted(async () => {
 
         category.value = categoryResponse.data.category;
         quizzes.value = categoryResponse.data.quizzes || [];
+        userProgress.value = categoryResponse.data.user_progress || null;
         categories.value = categoriesResponse.data || [];
     } catch (exception) {
         error.value = 'This category could not be loaded. Please check the seeded quiz data.';
@@ -52,6 +67,62 @@ onMounted(async () => {
         isLoading.value = false;
     }
 });
+
+function quizStatus(quiz) {
+    if (!quiz.user_progress) {
+        return 'Start';
+    }
+
+    return quiz.user_progress.completed ? 'Completed' : 'Not started';
+}
+
+function quizActionLabel(quiz) {
+    return quiz.user_progress?.completed ? 'Try again' : 'Start';
+}
+
+function quizProgressLabel(quiz) {
+    if (!quiz.user_progress) {
+        return 'Progress';
+    }
+
+    if (!quiz.user_progress.completed) {
+        return 'Not started';
+    }
+
+    return `Best: ${formatPercentage(quiz.user_progress.best_percentage)}`;
+}
+
+function quizProgressDetails(quiz) {
+    const progress = quiz.user_progress;
+
+    if (!progress?.completed) {
+        return [];
+    }
+
+    const details = [`${progress.attempts_count} ${progress.attempts_count === 1 ? 'attempt' : 'attempts'}`];
+
+    if (progress.last_attempted_at) {
+        details.push(`Last: ${formatDate(progress.last_attempted_at)}`);
+    }
+
+    return details;
+}
+
+function formatPercentage(value) {
+    if (value === null || value === undefined) {
+        return '--';
+    }
+
+    return `${Math.round(Number(value))}%`;
+}
+
+function formatDate(value) {
+    return new Intl.DateTimeFormat('en-AU', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(value));
+}
 </script>
 
 <template>
@@ -100,8 +171,41 @@ onMounted(async () => {
                             {{ categoryDescription }}
                         </p>
                     </div>
-                    <div class="mt-8 max-w-xl rounded-2xl bg-white/10 p-5 backdrop-blur">
-                        <ProgressBar :value="0" label="Category progress will appear after scoring is added" tone="gold" />
+                    <div class="mt-8 max-w-2xl rounded-2xl bg-white/10 p-5 backdrop-blur">
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-[0.18em] text-heritage-gold">Category progress</p>
+                                <p class="mt-2 text-xl font-black">{{ isProgressAuthenticated ? progressSummary : progressMessage }}</p>
+                                <p v-if="isProgressAuthenticated" class="mt-1 text-sm font-semibold text-white/75">
+                                    {{ userProgress.total_attempts || 0 }} completed {{ (userProgress.total_attempts || 0) === 1 ? 'attempt' : 'attempts' }} in this category
+                                </p>
+                            </div>
+                            <p class="text-4xl font-black text-heritage-gold">{{ Math.round(progressPercentage) }}%</p>
+                        </div>
+
+                        <div class="mt-5">
+                            <ProgressBar :value="progressPercentage" tone="gold" />
+                        </div>
+
+                        <div v-if="isProgressAuthenticated" class="mt-5 grid gap-3 sm:grid-cols-3">
+                            <div class="rounded-2xl bg-white/10 p-3">
+                                <p class="text-xs font-bold uppercase tracking-[0.12em] text-white/60">Best score</p>
+                                <p class="mt-1 text-lg font-black">{{ bestScore }}</p>
+                            </div>
+                            <div class="rounded-2xl bg-white/10 p-3">
+                                <p class="text-xs font-bold uppercase tracking-[0.12em] text-white/60">Average</p>
+                                <p class="mt-1 text-lg font-black">{{ averageScore }}</p>
+                            </div>
+                            <div class="rounded-2xl bg-white/10 p-3">
+                                <p class="text-xs font-bold uppercase tracking-[0.12em] text-white/60">Points</p>
+                                <p class="mt-1 text-lg font-black">{{ totalPoints }}</p>
+                            </div>
+                        </div>
+
+                        <div v-else class="mt-5 flex flex-col gap-3 sm:flex-row">
+                            <PrimaryButton href="/login" variant="gold">Login</PrimaryButton>
+                            <PrimaryButton href="/register" variant="soft">Create account</PrimaryButton>
+                        </div>
                     </div>
                 </div>
 

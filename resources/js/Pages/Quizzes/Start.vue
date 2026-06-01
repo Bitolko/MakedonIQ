@@ -23,7 +23,25 @@ const language = preferredLanguage();
 const categorySlug = currentCategorySlug();
 const quizSlug = currentQuizSlug();
 
+const categoryName = computed(() => localizedText(quiz.value?.category, 'name', language));
+const quizTitle = computed(() => localizedText(quiz.value, 'title', language));
+const quizDescription = computed(() => localizedText(quiz.value, 'description', language));
+const relatedLesson = computed(() => quiz.value?.related_lesson || null);
+const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
+const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
+const isMapChallenge = computed(() => Boolean(quiz.value?.has_map_questions || questions.value.some((question) => question.question_type === 'map_guess')));
+const questionCount = computed(() => quiz.value?.questions_count || questions.value.length || 0);
+
 const learnItems = computed(() => {
+    if (isMapChallenge.value) {
+        return [
+            'Look at the highlighted point on the map',
+            'Choose the correct city, lake, or landmark',
+            'Use the answer choices while you learn the place names',
+            'Submit normally for secure backend scoring',
+        ];
+    }
+
     if (!questions.value.length) {
         return [
             'Build confidence with bilingual Macedonian quiz prompts',
@@ -35,14 +53,6 @@ const learnItems = computed(() => {
 
     return questions.value.slice(0, 4).map((question) => localizedText(question, 'question', language));
 });
-
-const categoryName = computed(() => localizedText(quiz.value?.category, 'name', language));
-const quizTitle = computed(() => localizedText(quiz.value, 'title', language));
-const quizDescription = computed(() => localizedText(quiz.value, 'description', language));
-const relatedLesson = computed(() => quiz.value?.related_lesson || null);
-const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
-const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
-const isMapChallenge = computed(() => Boolean(quiz.value?.has_map_questions || questions.value.some((question) => question.question_type === 'map_guess')));
 
 const activeUrl = computed(() => (
     quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : quizActiveUrl(categorySlug, quizSlug)
@@ -59,6 +69,11 @@ const pointsAvailable = computed(() => {
 
     return (quiz.value.questions_count || questions.value.length || 0) * (quiz.value.points_per_question || 10);
 });
+
+const overviewText = computed(() => (isMapChallenge.value
+    ? `A short geography round with ${questionCount.value} map clues. Results are scored securely after you submit.`
+    : 'Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.'
+));
 
 onMounted(async () => {
     try {
@@ -125,7 +140,7 @@ onMounted(async () => {
                 <section class="section-panel mt-8">
                     <h2 class="text-2xl font-black text-heritage-ink">{{ isMapChallenge ? 'How the challenge works' : 'What you will learn' }}</h2>
                     <p v-if="isMapChallenge" class="mt-3 leading-7 text-heritage-muted">
-                        Guess the highlighted Macedonian city, lake, or landmark from the map clue, then submit normally for secure backend scoring.
+                        Look at the highlighted point on the map and choose the correct city, lake, or landmark.
                     </p>
                     <div class="mt-6 grid gap-4">
                         <div v-for="(item, index) in learnItems" :key="item" class="flex gap-3 rounded-2xl bg-heritage-panel p-4">
@@ -145,10 +160,10 @@ onMounted(async () => {
 
             <aside class="soft-card sticky top-28 p-6 md:p-8">
                 <div class="rounded-[1.5rem] bg-heritage-panel p-5">
-                    <p class="label">Quiz overview</p>
+                    <p class="label">{{ isMapChallenge ? 'Map overview' : 'Quiz overview' }}</p>
                     <p class="mt-3 text-3xl font-black text-heritage-ink">Earn up to {{ pointsAvailable }} points</p>
                     <p class="mt-3 leading-7 text-heritage-muted">
-                        Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.
+                        {{ overviewText }}
                     </p>
                 </div>
                 <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">{{ isMapChallenge ? 'Start Map Challenge' : 'Start Quiz' }}</PrimaryButton>

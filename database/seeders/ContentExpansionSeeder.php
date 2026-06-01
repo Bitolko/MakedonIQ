@@ -9,6 +9,33 @@ use Illuminate\Database\Seeder;
 
 class ContentExpansionSeeder extends Seeder
 {
+    private const BEGINNER_MAP_KEYS = [
+        'skopje',
+        'ohrid',
+        'bitola',
+        'tetovo',
+        'prilep',
+        'kumanovo',
+        'strumica',
+        'lake-ohrid',
+        'lake-prespa',
+        'stip',
+    ];
+
+    private const EXTENDED_MAP_KEYS = [
+        'veles',
+        'gostivar',
+        'struga',
+        'kicevo',
+        'kavadarci',
+        'gevgelija',
+        'kocani',
+        'matka-canyon',
+        'vodno',
+        'mavrovo',
+        'pelister',
+    ];
+
     public function run(): void
     {
         $this->seedLessons();
@@ -85,32 +112,97 @@ class ContentExpansionSeeder extends Seeder
 
     private function seedMapChallengeQuestions(): void
     {
-        $quiz = Quiz::where('slug', 'macedonia-map-challenge')->first();
+        $category = Category::where('slug', 'geography')->first();
 
-        if (! $quiz) {
+        if (! $category) {
             return;
         }
 
-        $sortOrder = max(1, (int) $quiz->questions()->max('sort_order'));
+        $lesson = Lesson::where('slug', 'macedonian-geography-basics')->first();
+        $questionsByKey = collect($this->mapQuestions())->keyBy('map_key');
 
-        foreach ($this->mapQuestions() as $questionData) {
+        $mainQuiz = $category->quizzes()->updateOrCreate(
+            ['slug' => 'macedonia-map-challenge'],
+            [
+                'lesson_id' => $lesson?->id,
+                'title_en' => 'Macedonia Map Challenge',
+                'title_mk' => 'Мапа предизвик за Македонија',
+                'description_en' => 'Look at the highlighted point on the map and choose the correct city, lake, or landmark.',
+                'description_mk' => 'Погледни ја означената точка на мапата и избери го точниот град, езеро или место.',
+                'difficulty' => 'beginner',
+                'estimated_minutes' => 8,
+                'points_per_question' => 10,
+                'is_published' => true,
+                'sort_order' => 2,
+            ],
+        );
+
+        $extendedQuiz = $category->quizzes()->updateOrCreate(
+            ['slug' => 'macedonia-map-challenge-extended'],
+            [
+                'lesson_id' => $lesson?->id,
+                'title_en' => 'Macedonia Map Challenge: Extended',
+                'title_mk' => 'Мапа предизвик за Македонија: проширено',
+                'description_en' => 'Practise more Macedonian cities and landmarks after the beginner map challenge.',
+                'description_mk' => 'Вежбај повеќе македонски градови и места по почетниот предизвик со мапа.',
+                'difficulty' => 'beginner',
+                'estimated_minutes' => 10,
+                'points_per_question' => 10,
+                'is_published' => true,
+                'sort_order' => 3,
+            ],
+        );
+
+        $this->syncMapQuizQuestions(
+            $mainQuiz,
+            collect(self::BEGINNER_MAP_KEYS)
+                ->map(fn (string $key) => $questionsByKey->get($key))
+                ->filter()
+                ->values()
+                ->all(),
+        );
+
+        $this->syncMapQuizQuestions(
+            $extendedQuiz,
+            collect(self::EXTENDED_MAP_KEYS)
+                ->map(fn (string $key) => $questionsByKey->get($key))
+                ->filter()
+                ->values()
+                ->all(),
+        );
+    }
+
+    private function syncMapQuizQuestions(Quiz $quiz, array $questions): void
+    {
+        $activeKeys = array_column($questions, 'map_key');
+
+        foreach ($questions as $index => $questionData) {
+            $sortOrder = $index + 1;
             $question = $quiz->questions()
                 ->where('metadata->map_target_key', $questionData['map_key'])
                 ->first();
 
             if (! $question) {
-                $sortOrder++;
                 $question = $quiz->questions()->create($this->mapQuestionAttributes($questionData, $sortOrder));
+            } else {
+                $question->update($this->mapQuestionAttributes($questionData, $sortOrder));
             }
 
-            $question->update($this->mapQuestionAttributes($questionData, (int) $question->sort_order ?: $sortOrder));
-
-            if ($question->attemptAnswers()->exists()) {
-                continue;
+            if (! $question->attemptAnswers()->exists()) {
+                $this->syncAnswers($question, $questionData['answers']);
             }
-
-            $this->syncAnswers($question, $questionData['answers']);
         }
+
+        $quiz->questions()
+            ->where('question_type', 'map_guess')
+            ->get()
+            ->each(function ($question) use ($activeKeys): void {
+                $targetKey = $question->metadata['map_target_key'] ?? null;
+
+                if ($targetKey && ! in_array($targetKey, $activeKeys, true)) {
+                    $question->update(['is_published' => false]);
+                }
+            });
     }
 
     private function syncQuestions(Quiz $quiz, array $questions): void
@@ -175,7 +267,7 @@ class ContentExpansionSeeder extends Seeder
             'question_en' => $questionData['target_type'] === 'lake'
                 ? 'Which lake is highlighted on the map?'
                 : ($questionData['target_type'] === 'landmark'
-                    ? 'Which landmark is highlighted on the map?'
+                    ? 'Which place is highlighted on the map?'
                     : 'Which city is highlighted on the map?'),
             'question_mk' => $questionData['target_type'] === 'lake'
                 ? 'Кое езеро е означено на мапата?'

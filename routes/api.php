@@ -13,10 +13,13 @@ use App\Http\Controllers\Api\QuizAttemptController;
 use App\Http\Controllers\Api\UserStatsController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/categories', [CategoryController::class, 'index'])->name('api.categories.index');
-Route::get('/categories/{slug}/quizzes', [CategoryController::class, 'quizzes'])->name('api.categories.quizzes');
+Route::middleware('web')->group(function (): void {
+    Route::get('/categories', [CategoryController::class, 'index'])->name('api.categories.index');
+    Route::get('/categories/{slug}/quizzes', [CategoryController::class, 'quizzes'])->name('api.categories.quizzes');
+    Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('api.categories.show');
+});
+
 Route::get('/categories/{category:slug}/lessons', [LessonController::class, 'category'])->name('api.categories.lessons');
-Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('api.categories.show');
 Route::get('/lessons', [LessonController::class, 'index'])->name('api.lessons.index');
 Route::get('/lessons/{lesson:slug}', [LessonController::class, 'show'])->name('api.lessons.show');
 Route::get('/quizzes/{slug}', [QuizController::class, 'show'])->name('api.quizzes.show');

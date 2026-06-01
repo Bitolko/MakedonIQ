@@ -83,9 +83,9 @@ function clampPercent(value) {
             <div class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
 
             <div class="absolute z-10 h-0 w-0 -translate-x-1/2 -translate-y-1/2" :style="markerStyle" aria-hidden="true">
-                <span class="absolute -left-4 -top-4 h-8 w-8 animate-ping rounded-full bg-heritage-gold/20 sm:-left-5 sm:-top-5 sm:h-10 sm:w-10" />
-                <span class="absolute -left-2.5 -top-2.5 h-5 w-5 rounded-full border-2 border-white bg-heritage-red shadow-[0_8px_18px_rgba(164,0,0,0.5)] ring-1 ring-heritage-gold/55 sm:-left-3 sm:-top-3 sm:h-6 sm:w-6" />
-                <span class="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-heritage-gold shadow-[0_0_14px_rgba(244,196,48,0.9)] sm:-left-1.5 sm:-top-1.5 sm:h-3 sm:w-3" />
+                <span class="absolute -left-3 -top-3 h-6 w-6 animate-ping rounded-full bg-heritage-gold/15 sm:-left-4 sm:-top-4 sm:h-8 sm:w-8" />
+                <span class="absolute -left-2 -top-2 h-4 w-4 rounded-full border-2 border-white bg-heritage-red shadow-[0_6px_14px_rgba(164,0,0,0.45)] ring-1 ring-heritage-gold/55 sm:-left-2.5 sm:-top-2.5 sm:h-5 sm:w-5" />
+                <span class="absolute -left-0.5 -top-0.5 h-1 w-1 rounded-full bg-heritage-gold shadow-[0_0_10px_rgba(244,196,48,0.9)] sm:-left-1 sm:-top-1 sm:h-2 sm:w-2" />
                 <span v-if="showLabel && label" class="absolute left-7 top-0 max-w-[10rem] rounded-full bg-white px-3 py-2 text-left text-xs font-black leading-tight text-heritage-ink shadow-card">
                     {{ label }}
                 </span>
