@@ -35,6 +35,11 @@ const quizCards = computed(() => quizzes.value.map((quiz) => ({
     progressLabel: quizProgressLabel(quiz),
     progressDetails: quizProgressDetails(quiz),
     href: quizStartUrl(category.value?.slug || activeSlug, quiz.slug),
+    isDemo: Boolean(quiz.is_demo),
+    isLocked: Boolean(quiz.is_locked),
+    lockedMessage: 'Create account to unlock all quizzes.',
+    registerHref: authHref('/register', quizStartUrl(category.value?.slug || activeSlug, quiz.slug)),
+    loginHref: authHref('/login', quizStartUrl(category.value?.slug || activeSlug, quiz.slug)),
     isMapChallenge: Boolean(quiz.has_map_questions),
 })));
 
@@ -69,6 +74,10 @@ onMounted(async () => {
 });
 
 function quizStatus(quiz) {
+    if (quiz.is_locked) {
+        return 'Locked';
+    }
+
     if (!quiz.user_progress) {
         return 'Start';
     }
@@ -77,6 +86,10 @@ function quizStatus(quiz) {
 }
 
 function quizActionLabel(quiz) {
+    if (quiz.is_locked) {
+        return 'Create account';
+    }
+
     return quiz.user_progress?.completed ? 'Try again' : 'Start';
 }
 
@@ -122,6 +135,10 @@ function formatDate(value) {
         month: 'short',
         year: 'numeric',
     }).format(new Date(value));
+}
+
+function authHref(path, intendedUrl) {
+    return `${path}?intended=${encodeURIComponent(intendedUrl)}`;
 }
 </script>
 

@@ -93,6 +93,7 @@ onMounted(async () => {
 
                         <div class="flex flex-wrap gap-2">
                             <AppBadge>{{ categoryName || 'Geography' }}</AppBadge>
+                            <AppBadge v-if="quiz?.is_demo" variant="gold">Demo</AppBadge>
                             <AppBadge variant="navy">{{ difficultyLabel(quiz?.difficulty) }}</AppBadge>
                             <AppBadge variant="red">{{ mapQuestions.length || quiz?.questions_count || 0 }} map questions</AppBadge>
                         </div>
@@ -110,7 +111,7 @@ onMounted(async () => {
                         </div>
 
                         <p v-if="!user" class="mt-4 rounded-2xl bg-heritage-gold-faint px-4 py-3 text-sm font-bold text-heritage-gold-deep">
-                            You can preview the challenge now. Login before submitting if you want to save your score.
+                            You can try this demo now. Create an account to save your score and unlock the full quiz path.
                         </p>
                     </div>
 

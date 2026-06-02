@@ -5,6 +5,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import LessonVisualPanel from '../../Components/LessonVisualPanel.vue';
 import {
+    ApiError,
     currentCategorySlug,
     currentLessonSlug,
     difficultyLabel,
@@ -18,6 +19,7 @@ import {
 const lesson = ref(null);
 const isLoading = ref(true);
 const error = ref('');
+const isLocked = ref(false);
 const language = ref(preferredLanguage() === 'mk' ? 'mk' : 'en');
 
 const categorySlug = currentCategorySlug();
@@ -29,6 +31,7 @@ const categoryName = computed(() => localizedText(lesson.value?.category, 'name'
 const content = computed(() => localizedText(lesson.value, 'content', language.value));
 const relatedQuizzes = computed(() => lesson.value?.related_quizzes || []);
 const firstQuiz = computed(() => relatedQuizzes.value[0] || null);
+const firstQuizLocked = computed(() => Boolean(firstQuiz.value?.is_locked));
 const resolvedCategorySlug = computed(() => lesson.value?.category?.slug || categorySlug);
 const categoryHref = computed(() => learnCategoryUrl(resolvedCategorySlug.value));
 const categoryQuizHref = computed(() => `/quizzes/${resolvedCategorySlug.value}`);
@@ -118,13 +121,20 @@ onMounted(async () => {
             error.value = 'This lesson belongs to a different Learn category.';
         }
     } catch (caughtError) {
-        error.value = caughtError.status === 404
-            ? 'This lesson could not be found.'
-            : caughtError.message || 'Lesson content could not be loaded.';
+        isLocked.value = caughtError instanceof ApiError && caughtError.status === 403;
+        error.value = isLocked.value
+            ? caughtError.message
+            : (caughtError.status === 404
+                ? 'This lesson could not be found.'
+                : caughtError.message || 'Lesson content could not be loaded.');
     } finally {
         isLoading.value = false;
     }
 });
+
+function authHref(path) {
+    return `${path}?intended=${encodeURIComponent(window.location.pathname)}`;
+}
 
 function parseLessonContent(value) {
     return String(value || '')
@@ -284,12 +294,16 @@ function termCards(block) {
             </section>
 
             <section v-else-if="error" class="section-panel mx-auto max-w-4xl text-center">
-                <AppBadge variant="red">Lesson unavailable</AppBadge>
-                <h1 class="mt-4 text-3xl font-black text-heritage-ink">We could not load this lesson</h1>
+                <AppBadge :variant="isLocked ? 'gold' : 'red'">{{ isLocked ? 'Locked lesson' : 'Lesson unavailable' }}</AppBadge>
+                <h1 class="mt-4 text-3xl font-black text-heritage-ink">
+                    {{ isLocked ? 'This lesson is part of the full MakedonIQ learning path.' : 'We could not load this lesson' }}
+                </h1>
                 <p class="mx-auto mt-3 max-w-2xl text-heritage-muted">{{ error }}</p>
                 <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                    <PrimaryButton :href="learnUrl()">Back to Learn</PrimaryButton>
-                    <PrimaryButton :href="categoryHref" variant="soft">Category lessons</PrimaryButton>
+                    <PrimaryButton v-if="isLocked" :href="authHref('/register')">Create free account</PrimaryButton>
+                    <PrimaryButton v-if="isLocked" :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
+                    <PrimaryButton :href="learnUrl()" :variant="isLocked ? 'ghost' : 'red'">Back to Learn</PrimaryButton>
+                    <PrimaryButton v-if="!isLocked" :href="categoryHref" variant="soft">Category lessons</PrimaryButton>
                 </div>
             </section>
 
@@ -305,6 +319,7 @@ function termCards(block) {
                         <div class="min-w-0">
                             <div class="flex flex-wrap gap-2">
                                 <AppBadge variant="red">{{ heroBadge }}</AppBadge>
+                                <AppBadge v-if="lesson.is_demo" variant="gold">Demo</AppBadge>
                                 <AppBadge variant="gold">{{ difficultyLabel(lesson.difficulty) }}</AppBadge>
                                 <AppBadge variant="navy">{{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes">&nbsp;min</span></AppBadge>
                             </div>
@@ -315,7 +330,8 @@ function termCards(block) {
                                 {{ summary }}
                             </p>
                             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                                <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" size="lg" class="w-full sm:w-auto">Take related quiz</PrimaryButton>
+                                <PrimaryButton v-if="firstQuiz && !firstQuizLocked" :href="firstQuiz.start_url" size="lg" class="w-full sm:w-auto">Take related quiz</PrimaryButton>
+                                <PrimaryButton v-else-if="firstQuizLocked" :href="authHref('/register')" size="lg" class="w-full sm:w-auto">Unlock related quiz</PrimaryButton>
                                 <PrimaryButton v-else href="/quizzes" size="lg" class="w-full sm:w-auto">Explore quizzes</PrimaryButton>
                                 <PrimaryButton :href="categoryQuizHref" variant="soft" size="lg" class="w-full sm:w-auto">Category quizzes</PrimaryButton>
                                 <PrimaryButton v-if="isGeography" href="/map-challenge" variant="gold" size="lg" class="w-full sm:w-auto">Map Challenge</PrimaryButton>
@@ -430,7 +446,8 @@ function termCards(block) {
                             <AppBadge variant="red">Ready to practise?</AppBadge>
                             <h2 class="mt-3 text-2xl font-black text-heritage-ink">Check your learning</h2>
                             <p class="mt-3 text-sm leading-6 text-heritage-muted">Use the quiz after reading, then return to this lesson for review.</p>
-                            <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" class="mt-5 w-full">Take related quiz</PrimaryButton>
+                            <PrimaryButton v-if="firstQuiz && !firstQuizLocked" :href="firstQuiz.start_url" class="mt-5 w-full">Take related quiz</PrimaryButton>
+                            <PrimaryButton v-else-if="firstQuizLocked" :href="authHref('/register')" class="mt-5 w-full">Create account to unlock quiz</PrimaryButton>
                             <PrimaryButton v-else href="/quizzes" class="mt-5 w-full">Explore quizzes</PrimaryButton>
                             <PrimaryButton v-if="isGeography" href="/map-challenge" variant="gold" class="mt-3 w-full">Map Challenge</PrimaryButton>
                         </section>
@@ -459,7 +476,8 @@ function termCards(block) {
                             <p class="mt-3 text-sm leading-6 text-white/75">
                                 {{ firstQuiz ? 'Try a short quiz connected to this lesson.' : 'Explore the full category path.' }}
                             </p>
-                            <PrimaryButton v-if="firstQuiz" :href="firstQuiz.start_url" variant="gold" class="mt-5 w-full">Start quiz</PrimaryButton>
+                            <PrimaryButton v-if="firstQuiz && !firstQuizLocked" :href="firstQuiz.start_url" variant="gold" class="mt-5 w-full">Start quiz</PrimaryButton>
+                            <PrimaryButton v-else-if="firstQuizLocked" :href="authHref('/register')" variant="gold" class="mt-5 w-full">Unlock quiz</PrimaryButton>
                             <PrimaryButton v-else :href="categoryHref" variant="gold" class="mt-5 w-full">Continue category</PrimaryButton>
                         </section>
                     </aside>

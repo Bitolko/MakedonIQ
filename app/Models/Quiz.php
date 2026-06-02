@@ -26,6 +26,7 @@ class Quiz extends Model
         'estimated_minutes',
         'points_per_question',
         'is_published',
+        'is_demo',
         'sort_order',
     ];
 
@@ -37,6 +38,7 @@ class Quiz extends Model
             'estimated_minutes' => 'integer',
             'points_per_question' => 'integer',
             'is_published' => 'boolean',
+            'is_demo' => 'boolean',
             'sort_order' => 'integer',
         ];
     }
@@ -64,6 +66,11 @@ class Quiz extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);
+    }
+
+    public function scopeDemo(Builder $query): Builder
+    {
+        return $query->where('is_demo', true);
     }
 
     public function scopeOrdered(Builder $query): Builder

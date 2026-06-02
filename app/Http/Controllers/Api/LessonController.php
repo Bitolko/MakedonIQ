@@ -8,11 +8,16 @@ use App\Models\Lesson;
 use App\Models\Quiz;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
-    public function index(): JsonResponse
+    private const LOCKED_LESSON_MESSAGE = 'Create a free account to unlock this lesson.';
+
+    public function index(Request $request): JsonResponse
     {
+        $isGuest = $this->isGuest($request);
+
         $lessons = $this->publishedLessons()
             ->with([
                 'category',
@@ -23,7 +28,7 @@ class LessonController extends Controller
             ])
             ->ordered()
             ->get()
-            ->map(fn (Lesson $lesson): array => $this->lessonListPayload($lesson))
+            ->map(fn (Lesson $lesson): array => $this->lessonListPayload($lesson, $isGuest))
             ->values();
 
         $categories = Category::query()
@@ -45,9 +50,11 @@ class LessonController extends Controller
         ]);
     }
 
-    public function category(Category $category): JsonResponse
+    public function category(Request $request, Category $category): JsonResponse
     {
         abort_unless($category->is_published, 404);
+
+        $isGuest = $this->isGuest($request);
 
         $category->loadCount([
             'lessons as lessons_count' => fn ($query) => $query->published(),
@@ -65,7 +72,7 @@ class LessonController extends Controller
             ])
             ->ordered()
             ->get()
-            ->map(fn (Lesson $lesson): array => $this->lessonListPayload($lesson))
+            ->map(fn (Lesson $lesson): array => $this->lessonListPayload($lesson, $isGuest))
             ->values();
 
         return response()->json([
@@ -76,9 +83,11 @@ class LessonController extends Controller
         ]);
     }
 
-    public function show(Lesson $lesson): JsonResponse
+    public function show(Request $request, Lesson $lesson): JsonResponse
     {
         abort_unless($lesson->is_published && $lesson->category()->published()->exists(), 404);
+
+        $this->ensureLessonAccessible($lesson, $request);
 
         $lesson->load([
             'category',
@@ -86,7 +95,7 @@ class LessonController extends Controller
         ]);
 
         return response()->json([
-            'data' => $this->lessonDetailPayload($lesson),
+            'data' => $this->lessonDetailPayload($lesson, $this->isGuest($request)),
         ]);
     }
 
@@ -122,7 +131,7 @@ class LessonController extends Controller
         ];
     }
 
-    private function lessonListPayload(Lesson $lesson): array
+    private function lessonListPayload(Lesson $lesson, bool $isGuest): array
     {
         return [
             'id' => $lesson->id,
@@ -133,18 +142,20 @@ class LessonController extends Controller
             'summary_mk' => $lesson->summary_mk,
             'difficulty' => $lesson->difficulty,
             'estimated_minutes' => $lesson->estimated_minutes,
+            'is_demo' => $lesson->is_demo,
+            'is_locked' => $isGuest && ! $lesson->is_demo,
             'category_name_en' => $lesson->category->name_en,
             'category_name_mk' => $lesson->category->name_mk,
             'category_slug' => $lesson->category->slug,
             'related_quizzes_count' => (int) ($lesson->related_quizzes_count ?? 0),
             'related_quiz' => $lesson->quizzes->first()
-                ? $this->relatedQuizPayload($lesson->quizzes->first())
+                ? $this->relatedQuizPayload($lesson->quizzes->first(), $isGuest)
                 : null,
             'url' => "/learn/{$lesson->category->slug}/{$lesson->slug}",
         ];
     }
 
-    private function lessonDetailPayload(Lesson $lesson): array
+    private function lessonDetailPayload(Lesson $lesson, bool $isGuest): array
     {
         return [
             'id' => $lesson->id,
@@ -157,14 +168,16 @@ class LessonController extends Controller
             'content_mk' => $lesson->content_mk,
             'difficulty' => $lesson->difficulty,
             'estimated_minutes' => $lesson->estimated_minutes,
+            'is_demo' => $lesson->is_demo,
+            'is_locked' => $isGuest && ! $lesson->is_demo,
             'category' => $this->categoryPayload($lesson->category),
             'related_quizzes' => $lesson->quizzes
-                ->map(fn (Quiz $quiz): array => $this->relatedQuizPayload($quiz))
+                ->map(fn (Quiz $quiz): array => $this->relatedQuizPayload($quiz, $isGuest))
                 ->values(),
         ];
     }
 
-    private function relatedQuizPayload(Quiz $quiz): array
+    private function relatedQuizPayload(Quiz $quiz, bool $isGuest): array
     {
         return [
             'id' => $quiz->id,
@@ -174,7 +187,19 @@ class LessonController extends Controller
             'category_slug' => $quiz->category->slug,
             'difficulty' => $quiz->difficulty,
             'estimated_minutes' => $quiz->estimated_minutes,
+            'is_demo' => $quiz->is_demo,
+            'is_locked' => $isGuest && ! $quiz->is_demo,
             'start_url' => "/quizzes/{$quiz->category->slug}/{$quiz->slug}/start",
         ];
+    }
+
+    private function ensureLessonAccessible(Lesson $lesson, Request $request): void
+    {
+        abort_if($this->isGuest($request) && ! $lesson->is_demo, 403, self::LOCKED_LESSON_MESSAGE);
+    }
+
+    private function isGuest(Request $request): bool
+    {
+        return $request->user() === null;
     }
 }

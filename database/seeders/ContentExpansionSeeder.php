@@ -36,6 +36,18 @@ class ContentExpansionSeeder extends Seeder
         'pelister',
     ];
 
+    private const DEMO_LESSON_SLUGS = [
+        'basic-macedonian-greetings',
+        'introduction-to-macedonian-cyrillic-alphabet',
+        'macedonian-geography-basics',
+    ];
+
+    private const DEMO_QUIZ_SLUGS = [
+        'basic-macedonian-greetings',
+        'cyrillic-alphabet-basics',
+        'macedonia-map-challenge',
+    ];
+
     public function run(): void
     {
         $this->seedLessons();
@@ -70,6 +82,7 @@ class ContentExpansionSeeder extends Seeder
                     'estimated_minutes' => $lessonData['estimated_minutes'],
                     'sort_order' => $sortByCategory[$category->slug],
                     'is_published' => true,
+                    'is_demo' => in_array($lessonData['slug'], self::DEMO_LESSON_SLUGS, true),
                 ],
             );
 
@@ -102,6 +115,7 @@ class ContentExpansionSeeder extends Seeder
                     'estimated_minutes' => $quizData['estimated_minutes'] ?? 8,
                     'points_per_question' => 10,
                     'is_published' => true,
+                    'is_demo' => in_array($quizData['slug'], self::DEMO_QUIZ_SLUGS, true),
                     'sort_order' => $quizData['sort_order'] ?? 20,
                 ],
             );
@@ -133,6 +147,7 @@ class ContentExpansionSeeder extends Seeder
                 'estimated_minutes' => 8,
                 'points_per_question' => 10,
                 'is_published' => true,
+                'is_demo' => true,
                 'sort_order' => 2,
             ],
         );
@@ -149,6 +164,7 @@ class ContentExpansionSeeder extends Seeder
                 'estimated_minutes' => 10,
                 'points_per_question' => 10,
                 'is_published' => true,
+                'is_demo' => false,
                 'sort_order' => 3,
             ],
         );

@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
-    public function show(string $slug): JsonResponse
+    private const LOCKED_QUIZ_MESSAGE = 'Create a free account to unlock this quiz.';
+
+    public function show(Request $request, string $slug): JsonResponse
     {
         $quiz = $this->publishedQuiz($slug)
             ->withCount([
@@ -18,12 +21,14 @@ class QuizController extends Controller
             ])
             ->firstOrFail();
 
+        $this->ensureQuizAccessible($quiz, $request);
+
         return response()->json([
-            'data' => $this->quizPayload($quiz),
+            'data' => $this->quizPayload($quiz, $this->isGuest($request)),
         ]);
     }
 
-    public function questions(string $slug): JsonResponse
+    public function questions(Request $request, string $slug): JsonResponse
     {
         $quiz = $this->publishedQuiz($slug)
             ->with([
@@ -37,6 +42,8 @@ class QuizController extends Controller
                     ]),
             ])
             ->firstOrFail();
+
+        $this->ensureQuizAccessible($quiz, $request);
 
         $questions = $quiz->questions->map(fn ($question): array => [
             'id' => $question->id,
@@ -61,7 +68,7 @@ class QuizController extends Controller
 
         return response()->json([
             'data' => [
-                'quiz' => $this->quizPayload($quiz),
+                'quiz' => $this->quizPayload($quiz, $this->isGuest($request)),
                 'questions' => $questions,
             ],
         ]);
@@ -76,7 +83,17 @@ class QuizController extends Controller
             ->with(['category', 'lesson.category']);
     }
 
-    private function quizPayload(Quiz $quiz): array
+    private function ensureQuizAccessible(Quiz $quiz, Request $request): void
+    {
+        abort_if($this->isGuest($request) && ! $quiz->is_demo, 403, self::LOCKED_QUIZ_MESSAGE);
+    }
+
+    private function isGuest(Request $request): bool
+    {
+        return $request->user() === null;
+    }
+
+    private function quizPayload(Quiz $quiz, bool $isGuest): array
     {
         return [
             'id' => $quiz->id,
@@ -95,10 +112,12 @@ class QuizController extends Controller
             'estimated_minutes' => $quiz->estimated_minutes,
             'points_per_question' => $quiz->points_per_question,
             'sort_order' => $quiz->sort_order,
+            'is_demo' => $quiz->is_demo,
+            'is_locked' => $isGuest && ! $quiz->is_demo,
             'questions_count' => $quiz->questions_count ?? $quiz->questions->count(),
             'map_questions_count' => $this->mapQuestionsCount($quiz),
             'has_map_questions' => $this->mapQuestionsCount($quiz) > 0,
-            'related_lesson' => $this->lessonPayload($quiz),
+            'related_lesson' => $this->lessonPayload($quiz, $isGuest),
         ];
     }
 
@@ -124,7 +143,7 @@ class QuizController extends Controller
         ];
     }
 
-    private function lessonPayload(Quiz $quiz): ?array
+    private function lessonPayload(Quiz $quiz, bool $isGuest): ?array
     {
         $lesson = $quiz->lesson;
 
@@ -141,6 +160,8 @@ class QuizController extends Controller
             'summary_mk' => $lesson->summary_mk,
             'difficulty' => $lesson->difficulty,
             'estimated_minutes' => $lesson->estimated_minutes,
+            'is_demo' => $lesson->is_demo,
+            'is_locked' => $isGuest && ! $lesson->is_demo,
             'category_slug' => $lesson->category->slug,
             'url' => "/learn/{$lesson->category->slug}/{$lesson->slug}",
         ];

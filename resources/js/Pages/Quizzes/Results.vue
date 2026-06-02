@@ -4,6 +4,7 @@ import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import {
+    ApiError,
     categoryUrl,
     currentAttemptId,
     currentCategorySlug,
@@ -20,6 +21,7 @@ const attemptResult = ref(null);
 const quiz = ref(null);
 const isLoading = ref(true);
 const error = ref('');
+const isLocked = ref(false);
 const language = preferredLanguage();
 
 const categorySlug = currentCategorySlug();
@@ -109,13 +111,20 @@ onMounted(async () => {
         const response = await fetchJson(`/api/quizzes/${quizSlug}`);
         quiz.value = response.data;
     } catch (exception) {
-        error.value = attemptId
-            ? 'This result could not be loaded. Make sure you are logged in with the account that completed the quiz.'
-            : 'Quiz details could not be loaded.';
+        isLocked.value = exception instanceof ApiError && exception.status === 403;
+        error.value = isLocked.value
+            ? exception.message
+            : (attemptId
+                ? 'This result could not be loaded. Make sure you are logged in with the account that completed the quiz.'
+                : 'Quiz details could not be loaded.');
     } finally {
         isLoading.value = false;
     }
 });
+
+function authHref(path) {
+    return `${path}?intended=${encodeURIComponent(window.location.pathname)}`;
+}
 </script>
 
 <template>
@@ -128,12 +137,16 @@ onMounted(async () => {
             </section>
 
             <section v-else-if="error" class="section-panel mx-auto max-w-4xl text-center">
-                <AppBadge variant="red">Result unavailable</AppBadge>
-                <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">We could not load this result</h1>
+                <AppBadge :variant="isLocked ? 'gold' : 'red'">{{ isLocked ? 'Locked quiz' : 'Result unavailable' }}</AppBadge>
+                <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
+                    {{ isLocked ? 'Create an account to unlock this quiz' : 'We could not load this result' }}
+                </h1>
                 <p class="mx-auto mt-4 max-w-2xl text-lg leading-8 text-heritage-muted">{{ error }}</p>
                 <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                    <PrimaryButton href="/login" variant="soft">Login</PrimaryButton>
-                    <PrimaryButton :href="tryAgainUrl">Start quiz</PrimaryButton>
+                    <PrimaryButton v-if="isLocked" :href="authHref('/register')">Create free account</PrimaryButton>
+                    <PrimaryButton :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
+                    <PrimaryButton v-if="!isLocked" :href="tryAgainUrl">Start quiz</PrimaryButton>
+                    <PrimaryButton v-else :href="continueUrl" variant="ghost">Back to quizzes</PrimaryButton>
                 </div>
             </section>
 

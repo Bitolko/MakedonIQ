@@ -4,6 +4,7 @@ import PublicLayout from '../../Components/PublicLayout.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import {
+    ApiError,
     categoryUrl,
     currentCategorySlug,
     currentQuizSlug,
@@ -18,6 +19,7 @@ const quiz = ref(null);
 const questions = ref([]);
 const isLoading = ref(true);
 const error = ref('');
+const isLocked = ref(false);
 const language = preferredLanguage();
 
 const categorySlug = currentCategorySlug();
@@ -85,11 +87,18 @@ onMounted(async () => {
         quiz.value = quizResponse.data;
         questions.value = questionsResponse.data.questions || [];
     } catch (exception) {
-        error.value = 'This quiz could not be loaded. Please check that the seeded quiz exists.';
+        isLocked.value = exception instanceof ApiError && exception.status === 403;
+        error.value = isLocked.value
+            ? exception.message
+            : 'This quiz could not be loaded. Please check that the seeded quiz exists.';
     } finally {
         isLoading.value = false;
     }
 });
+
+function authHref(path) {
+    return `${path}?intended=${encodeURIComponent(window.location.pathname)}`;
+}
 </script>
 
 <template>
@@ -105,14 +114,23 @@ onMounted(async () => {
             </section>
 
             <section v-else-if="error" class="section-panel text-center lg:col-span-2">
-                <h1 class="text-3xl font-black text-heritage-ink">Quiz unavailable</h1>
+                <AppBadge :variant="isLocked ? 'gold' : 'red'">{{ isLocked ? 'Locked quiz' : 'Quiz unavailable' }}</AppBadge>
+                <h1 class="mt-4 text-3xl font-black text-heritage-ink">
+                    {{ isLocked ? 'This quiz is part of the full MakedonIQ path.' : 'Quiz unavailable' }}
+                </h1>
                 <p class="mx-auto mt-3 max-w-2xl leading-7 text-heritage-muted">{{ error }}</p>
+                <div v-if="isLocked" class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+                    <PrimaryButton :href="authHref('/register')">Create free account</PrimaryButton>
+                    <PrimaryButton :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
+                    <PrimaryButton :href="backUrl" variant="ghost">Back to quizzes</PrimaryButton>
+                </div>
             </section>
 
             <template v-else>
             <section>
                 <div class="flex flex-wrap gap-2">
                     <AppBadge>{{ categoryName }}</AppBadge>
+                    <AppBadge v-if="quiz.is_demo" variant="gold">Demo</AppBadge>
                     <AppBadge v-if="isMapChallenge" variant="gold">Map Challenge</AppBadge>
                 </div>
                 <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-5xl">

@@ -38,6 +38,7 @@ const blankForm = (categoryId = '') => ({
     estimated_minutes: '',
     sort_order: 0,
     is_published: true,
+    is_demo: false,
 });
 
 const form = ref(blankForm());
@@ -115,6 +116,7 @@ function openEditForm(lesson) {
         estimated_minutes: lesson.estimated_minutes ?? '',
         sort_order: lesson.sort_order ?? 0,
         is_published: Boolean(lesson.is_published),
+        is_demo: Boolean(lesson.is_demo),
     };
     formErrors.value = {};
     success.value = '';
@@ -209,6 +211,7 @@ function lessonPayload(source) {
         estimated_minutes: nullableNumber(source.estimated_minutes),
         sort_order: numberOrDefault(source.sort_order, 0),
         is_published: Boolean(source.is_published),
+        is_demo: Boolean(source.is_demo),
     };
 }
 
@@ -365,10 +368,16 @@ function formatDate(value) {
                     </label>
                 </div>
 
-                <label class="inline-flex items-center gap-3 text-sm font-black text-heritage-ink">
-                    <input v-model="form.is_published" class="h-5 w-5 rounded border-heritage-line text-heritage-red" type="checkbox">
-                    Published publicly
-                </label>
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+                    <label class="inline-flex items-center gap-3 text-sm font-black text-heritage-ink">
+                        <input v-model="form.is_published" class="h-5 w-5 rounded border-heritage-line text-heritage-red" type="checkbox">
+                        Published publicly
+                    </label>
+                    <label class="inline-flex items-center gap-3 text-sm font-black text-heritage-ink">
+                        <input v-model="form.is_demo" class="h-5 w-5 rounded border-heritage-line text-heritage-red" type="checkbox">
+                        Demo lesson
+                    </label>
+                </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row">
                     <PrimaryButton type="submit" :disabled="saving">{{ saving ? 'Saving...' : 'Save lesson' }}</PrimaryButton>
@@ -421,7 +430,10 @@ function formatDate(value) {
                                 <td class="px-6 py-4 text-heritage-muted">{{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes"> min</span></td>
                                 <td class="px-6 py-4 text-heritage-muted">{{ lesson.linked_quizzes_count }}</td>
                                 <td class="px-6 py-4">
-                                    <AppBadge :variant="lesson.is_published ? 'green' : 'neutral'">{{ lesson.is_published ? 'Published' : 'Unpublished' }}</AppBadge>
+                                    <div class="flex flex-wrap gap-2">
+                                        <AppBadge :variant="lesson.is_published ? 'green' : 'neutral'">{{ lesson.is_published ? 'Published' : 'Unpublished' }}</AppBadge>
+                                        <AppBadge v-if="lesson.is_demo" variant="gold">Demo</AppBadge>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-heritage-muted">{{ lesson.sort_order }}</td>
                                 <td class="px-6 py-4 text-heritage-muted">{{ formatDate(lesson.updated_at) }}</td>

@@ -20,6 +20,7 @@ const statusVariant = {
     Completed: 'green',
     'Not started': 'neutral',
     Start: 'gold',
+    Locked: 'neutral',
 };
 </script>
 
@@ -30,6 +31,8 @@ const statusVariant = {
                 Q
             </div>
             <div class="flex flex-wrap justify-end gap-2">
+                <AppBadge v-if="quiz.isDemo" variant="gold">Demo</AppBadge>
+                <AppBadge v-if="quiz.isLocked" variant="neutral">Locked</AppBadge>
                 <AppBadge :variant="statusVariant[quiz.status] || difficultyVariant[quiz.difficulty]">
                     {{ quiz.status }}
                 </AppBadge>
@@ -51,7 +54,16 @@ const statusVariant = {
                 </span>
             </div>
         </div>
-        <PrimaryButton class="mt-6" :href="quiz.href" :variant="quiz.status === 'Completed' ? 'gold' : 'red'">
+        <div v-if="quiz.isLocked" class="mt-6 rounded-2xl border border-heritage-line bg-heritage-panel p-4">
+            <p class="text-sm font-bold leading-6 text-heritage-muted">
+                {{ quiz.lockedMessage || 'Create account to unlock all quizzes.' }}
+            </p>
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                <PrimaryButton :href="quiz.registerHref || '/register'" class="w-full" size="sm">Create account</PrimaryButton>
+                <PrimaryButton :href="quiz.loginHref || '/login'" class="w-full" variant="soft" size="sm">Log in</PrimaryButton>
+            </div>
+        </div>
+        <PrimaryButton v-else class="mt-6" :href="quiz.href" :variant="quiz.status === 'Completed' ? 'gold' : 'red'">
             {{ quiz.actionLabel || (quiz.status === 'Completed' ? 'Review' : quiz.status) }}
         </PrimaryButton>
     </article>

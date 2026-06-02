@@ -79,6 +79,7 @@ class AdminQuizController extends Controller
             'points_per_question' => ['required', 'integer', 'min:1', 'max:100'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_published' => ['sometimes', 'boolean'],
+            'is_demo' => ['sometimes', 'boolean'],
         ]);
     }
 
@@ -101,6 +102,9 @@ class AdminQuizController extends Controller
             'is_published' => array_key_exists('is_published', $validated)
                 ? (bool) $validated['is_published']
                 : (bool) ($quiz?->is_published ?? false),
+            'is_demo' => array_key_exists('is_demo', $validated)
+                ? (bool) $validated['is_demo']
+                : (bool) ($quiz?->is_demo ?? false),
         ];
     }
 
@@ -152,6 +156,7 @@ class AdminQuizController extends Controller
                 'slug' => $quiz->lesson->slug,
                 'category_slug' => $quiz->lesson->category?->slug,
                 'is_published' => $quiz->lesson->is_published,
+                'is_demo' => $quiz->lesson->is_demo,
             ] : null,
             'title_en' => $quiz->title_en,
             'title_mk' => $quiz->title_mk,
@@ -163,6 +168,7 @@ class AdminQuizController extends Controller
             'points_per_question' => $quiz->points_per_question,
             'sort_order' => $quiz->sort_order,
             'is_published' => $quiz->is_published,
+            'is_demo' => $quiz->is_demo,
             'questions_count' => $quiz->questions_count,
             'published_questions_count' => $quiz->published_questions_count,
             'attempts_count' => $quiz->attempts_count,

@@ -31,6 +31,7 @@ class MapChallengeSeeder extends Seeder
                 'estimated_minutes' => 10,
                 'points_per_question' => 10,
                 'is_published' => true,
+                'is_demo' => true,
                 'sort_order' => 2,
             ],
         );

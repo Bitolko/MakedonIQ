@@ -25,6 +25,7 @@ class Lesson extends Model
         'estimated_minutes',
         'sort_order',
         'is_published',
+        'is_demo',
     ];
 
     protected function casts(): array
@@ -34,6 +35,7 @@ class Lesson extends Model
             'estimated_minutes' => 'integer',
             'sort_order' => 'integer',
             'is_published' => 'boolean',
+            'is_demo' => 'boolean',
         ];
     }
 
@@ -50,6 +52,11 @@ class Lesson extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);
+    }
+
+    public function scopeDemo(Builder $query): Builder
+    {
+        return $query->where('is_demo', true);
     }
 
     public function scopeOrdered(Builder $query): Builder

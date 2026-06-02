@@ -9,6 +9,12 @@ use Illuminate\Database\Seeder;
 
 class LessonSeeder extends Seeder
 {
+    private const DEMO_LESSON_SLUGS = [
+        'basic-macedonian-greetings',
+        'introduction-to-macedonian-cyrillic-alphabet',
+        'macedonian-geography-basics',
+    ];
+
     public function run(): void
     {
         foreach ($this->lessons() as $index => $lessonData) {
@@ -32,6 +38,7 @@ class LessonSeeder extends Seeder
                     'estimated_minutes' => $lessonData['estimated_minutes'],
                     'sort_order' => $index + 1,
                     'is_published' => true,
+                    'is_demo' => in_array($lessonData['slug'], self::DEMO_LESSON_SLUGS, true),
                 ],
             );
 

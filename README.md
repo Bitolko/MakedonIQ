@@ -11,6 +11,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Macedonia Map Challenge, a lightweight geography quiz mode with a custom local 3D Macedonia map and dynamic quiz markers.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
+- Guest demo access: logged-out users can try selected demo lessons and quizzes, while the full published learning path requires an account.
 - Secure backend quiz scoring; the frontend never receives correct-answer flags during quiz taking.
 - Saved quiz attempts and attempt-answer review.
 - Authenticated result pages with owner-only attempt access.
@@ -88,6 +89,28 @@ php artisan route:list
 php artisan makedoniq:health-check
 npm run build
 php artisan config:clear
+```
+
+## Demo Access Model
+
+Quizzes and lessons have an `is_demo` boolean flag. Published content stays published, and `is_demo` controls whether logged-out users may open it.
+
+Guest users can browse Learn and quiz category pages. Public list APIs return published content with `is_demo` and `is_locked` so the frontend can show demo cards, locked cards, and account CTAs. Guests can open only demo lesson details and demo quiz detail/question APIs. Direct API requests for locked quiz questions return `403` with `Create a free account to unlock this quiz.` Direct API requests for locked lesson details return `403` with `Create a free account to unlock this lesson.`
+
+Logged-in users can access all published lessons and quizzes, submit quiz attempts, save scores, and see progress/results as before. Backend scoring remains server-side, and public quiz question responses still omit `is_correct`.
+
+Admins can toggle `is_demo` in Admin Lessons and Admin Quizzes. The seeded demo set is:
+
+```text
+Demo quizzes:
+- Basic Macedonian Greetings
+- Cyrillic Alphabet Basics
+- Macedonia Map Challenge
+
+Demo lessons:
+- Basic Greetings and Everyday Phrases
+- Macedonian Cyrillic Alphabet Basics
+- Cities, Lakes, and Mountains
 ```
 
 ## Making a User Admin

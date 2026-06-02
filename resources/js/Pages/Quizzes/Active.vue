@@ -22,6 +22,7 @@ const currentIndex = ref(0);
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const error = ref('');
+const isLocked = ref(false);
 const submitError = ref('');
 const showAuthPrompt = ref(false);
 
@@ -156,11 +157,18 @@ onMounted(async () => {
         quiz.value = response.data.quiz;
         questions.value = response.data.questions || [];
     } catch (exception) {
-        error.value = 'This quiz could not be loaded. Please check that the seeded questions exist.';
+        isLocked.value = exception instanceof ApiError && exception.status === 403;
+        error.value = isLocked.value
+            ? exception.message
+            : 'This quiz could not be loaded. Please check that the seeded questions exist.';
     } finally {
         isLoading.value = false;
     }
 });
+
+function authHref(path) {
+    return `${path}?intended=${encodeURIComponent(window.location.pathname)}`;
+}
 </script>
 
 <template>
@@ -203,8 +211,13 @@ onMounted(async () => {
 
             <section v-else-if="error" class="mx-auto w-full max-w-3xl">
                 <div class="soft-card p-8 text-center">
-                    <h1 class="text-3xl font-black text-heritage-ink">Quiz unavailable</h1>
+                    <h1 class="text-3xl font-black text-heritage-ink">{{ isLocked ? 'This quiz is locked' : 'Quiz unavailable' }}</h1>
                     <p class="mt-3 leading-7 text-heritage-muted">{{ error }}</p>
+                    <div v-if="isLocked" class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+                        <PrimaryButton :href="authHref('/register')">Create free account</PrimaryButton>
+                        <PrimaryButton :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
+                        <PrimaryButton :href="categoryHref" variant="ghost">Back to quizzes</PrimaryButton>
+                    </div>
                 </div>
             </section>
 
@@ -257,7 +270,7 @@ onMounted(async () => {
             </template>
         </main>
 
-        <footer class="border-t-4 border-heritage-gold bg-white">
+        <footer v-if="!error" class="border-t-4 border-heritage-gold bg-white">
             <div class="page-shell grid gap-5 py-5 md:grid-cols-[1fr_auto] md:items-center">
                 <div class="flex items-start gap-4 text-left">
                     <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-heritage-gold-faint text-base font-black text-heritage-gold-deep sm:h-14 sm:w-14 sm:text-lg">
@@ -269,9 +282,12 @@ onMounted(async () => {
                             {{ allAnswered ? 'Ready to submit when you reach the end.' : `${answeredCount} of ${totalQuestions || 0} questions answered.` }}
                         </p>
                         <p v-if="submitError" class="mt-2 text-sm font-bold text-heritage-red" role="alert">{{ submitError }}</p>
-                        <div v-if="showAuthPrompt" class="mt-3 flex flex-col gap-2 sm:flex-row">
-                            <a class="button-soft rounded-2xl px-4 py-2 text-center text-sm font-black" href="/login">Login to save score</a>
-                            <a class="pressable-gold rounded-2xl px-4 py-2 text-center text-sm font-black" href="/register">Create account</a>
+                        <div v-if="showAuthPrompt" class="mt-3">
+                            <p class="text-sm font-bold text-heritage-gold-deep">Create an account to save your score and unlock more quizzes.</p>
+                            <div class="mt-3 flex flex-col gap-2 sm:flex-row">
+                                <a class="button-soft rounded-2xl px-4 py-2 text-center text-sm font-black" :href="authHref('/login')">Log in</a>
+                                <a class="pressable-gold rounded-2xl px-4 py-2 text-center text-sm font-black" :href="authHref('/register')">Create account</a>
+                            </div>
                         </div>
                         <a v-if="relatedLesson" :href="relatedLesson.url" class="mt-3 inline-flex text-sm font-black text-heritage-red hover:text-heritage-red-dark">
                             Need help? Review lesson

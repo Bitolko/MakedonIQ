@@ -25,6 +25,7 @@ class QuizFactory extends Factory
             'estimated_minutes' => fake()->numberBetween(5, 15),
             'points_per_question' => 10,
             'is_published' => true,
+            'is_demo' => false,
             'sort_order' => fake()->numberBetween(0, 50),
         ];
     }

@@ -69,6 +69,12 @@ const featuredLessons = computed(() => lessons.value.slice(0, 6).map((lesson) =>
     summary: localizedText(lesson, 'summary', language),
     category: language === 'mk' && lesson.category_name_mk ? lesson.category_name_mk : lesson.category_name_en,
     href: lessonUrl(lesson.category_slug, lesson.slug),
+    isDemo: Boolean(lesson.is_demo),
+    isLocked: Boolean(lesson.is_locked),
+    relatedQuizLocked: Boolean(lesson.related_quiz?.is_locked),
+    registerHref: authHref('/register', lessonUrl(lesson.category_slug, lesson.slug)),
+    loginHref: authHref('/login', lessonUrl(lesson.category_slug, lesson.slug)),
+    relatedQuizRegisterHref: authHref('/register', lesson.related_quiz?.start_url || lessonUrl(lesson.category_slug, lesson.slug)),
 })));
 
 onMounted(async () => {
@@ -82,6 +88,10 @@ onMounted(async () => {
         isLoading.value = false;
     }
 });
+
+function authHref(path, intendedUrl) {
+    return `${path}?intended=${encodeURIComponent(intendedUrl)}`;
+}
 </script>
 
 <template>
@@ -175,15 +185,23 @@ onMounted(async () => {
                             <div class="p-6">
                             <div class="flex flex-wrap items-center gap-2">
                                 <AppBadge variant="gold">{{ difficultyLabel(lesson.difficulty) }}</AppBadge>
+                                <AppBadge v-if="lesson.isDemo" variant="gold">Demo</AppBadge>
+                                <AppBadge v-if="lesson.isLocked" variant="neutral">Locked</AppBadge>
                                 <span class="rounded-full bg-heritage-panel px-3 py-1 text-xs font-black text-heritage-muted">
                                     {{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes"> min</span>
                                 </span>
                             </div>
                             <h3 class="mt-4 text-2xl font-black text-heritage-ink">{{ lesson.title }}</h3>
                             <p class="mt-3 leading-7 text-heritage-muted">{{ lesson.summary }}</p>
+                            <p v-if="lesson.isLocked" class="mt-4 rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-bold text-heritage-muted">
+                                Create account to unlock this lesson and the full learning path.
+                            </p>
                             <div class="mt-5 flex flex-col gap-3 sm:flex-row">
-                                <PrimaryButton :href="lesson.href" variant="soft">Start lesson</PrimaryButton>
-                                <PrimaryButton v-if="lesson.related_quiz" :href="lesson.related_quiz.start_url" variant="soft">Take quiz</PrimaryButton>
+                                <PrimaryButton v-if="lesson.isLocked" :href="lesson.registerHref" variant="soft">Create account</PrimaryButton>
+                                <PrimaryButton v-if="lesson.isLocked" :href="lesson.loginHref" variant="ghost">Log in</PrimaryButton>
+                                <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href" variant="soft">Start lesson</PrimaryButton>
+                                <PrimaryButton v-if="!lesson.isLocked && lesson.related_quiz && !lesson.relatedQuizLocked" :href="lesson.related_quiz.start_url" variant="soft">Take quiz</PrimaryButton>
+                                <PrimaryButton v-else-if="!lesson.isLocked && lesson.relatedQuizLocked" :href="lesson.relatedQuizRegisterHref" variant="soft">Unlock quiz</PrimaryButton>
                             </div>
                             </div>
                         </article>

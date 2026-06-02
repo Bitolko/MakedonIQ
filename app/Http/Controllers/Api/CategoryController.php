@@ -61,6 +61,8 @@ class CategoryController extends Controller
                 'estimated_minutes' => $quiz->estimated_minutes,
                 'points_per_question' => $quiz->points_per_question,
                 'sort_order' => $quiz->sort_order,
+                'is_demo' => $quiz->is_demo,
+                'is_locked' => $this->isQuizLocked($quiz, $user),
                 'questions_count' => $quiz->questions_count,
                 'map_questions_count' => $quiz->map_questions_count,
                 'has_map_questions' => (int) $quiz->map_questions_count > 0,
@@ -160,6 +162,11 @@ class CategoryController extends Controller
             'last_attempted_at' => $lastAttempt?->completed_at?->toISOString(),
             'completed' => $attempts->isNotEmpty(),
         ];
+    }
+
+    private function isQuizLocked($quiz, ?User $user): bool
+    {
+        return ! $user && ! $quiz->is_demo;
     }
 
     private function percentageOrZero(mixed $value): float

@@ -79,6 +79,7 @@ class AdminLessonController extends Controller
             'estimated_minutes' => ['nullable', 'integer', 'min:1', 'max:300'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_published' => ['sometimes', 'boolean'],
+            'is_demo' => ['sometimes', 'boolean'],
         ]);
     }
 
@@ -101,6 +102,9 @@ class AdminLessonController extends Controller
             'is_published' => array_key_exists('is_published', $validated)
                 ? (bool) $validated['is_published']
                 : (bool) ($lesson?->is_published ?? false),
+            'is_demo' => array_key_exists('is_demo', $validated)
+                ? (bool) $validated['is_demo']
+                : (bool) ($lesson?->is_demo ?? false),
         ];
     }
 
@@ -142,6 +146,7 @@ class AdminLessonController extends Controller
             'estimated_minutes' => $lesson->estimated_minutes,
             'sort_order' => $lesson->sort_order,
             'is_published' => $lesson->is_published,
+            'is_demo' => $lesson->is_demo,
             'linked_quizzes_count' => $lesson->linked_quizzes_count,
             'created_at' => $lesson->created_at?->toISOString(),
             'updated_at' => $lesson->updated_at?->toISOString(),

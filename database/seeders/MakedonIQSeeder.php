@@ -8,6 +8,12 @@ use Illuminate\Database\Seeder;
 
 class MakedonIQSeeder extends Seeder
 {
+    private const DEMO_QUIZ_SLUGS = [
+        'basic-macedonian-greetings',
+        'cyrillic-alphabet-basics',
+        'macedonia-map-challenge',
+    ];
+
     public function run(): void
     {
         foreach ($this->content() as $categoryIndex => $categoryData) {
@@ -36,6 +42,7 @@ class MakedonIQSeeder extends Seeder
                         'estimated_minutes' => $quizData['estimated_minutes'],
                         'points_per_question' => 10,
                         'is_published' => true,
+                        'is_demo' => in_array($quizData['slug'], self::DEMO_QUIZ_SLUGS, true),
                         'sort_order' => $quizIndex + 1,
                     ],
                 );
