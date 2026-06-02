@@ -18,6 +18,7 @@ class QuizController extends Controller
             ->withCount([
                 'questions as questions_count' => fn ($query) => $query->published(),
                 'questions as map_questions_count' => fn ($query) => $query->published()->where('question_type', 'map_guess'),
+                'questions as picture_questions_count' => fn ($query) => $query->published()->where('question_type', 'picture_choice'),
             ])
             ->firstOrFail();
 
@@ -50,9 +51,7 @@ class QuizController extends Controller
             'quiz_id' => $question->quiz_id,
             'question_type' => $question->question_type,
             'translation_direction' => $question->translation_direction,
-            'metadata' => $question->question_type === 'map_guess'
-                ? $this->publicQuestionMetadata($question->metadata ?? [])
-                : null,
+            'metadata' => $this->publicQuestionMetadata($question->metadata ?? [], $question->question_type),
             'question_en' => $question->question_en,
             'question_mk' => $question->question_mk,
             'sort_order' => $question->sort_order,
@@ -117,6 +116,8 @@ class QuizController extends Controller
             'questions_count' => $quiz->questions_count ?? $quiz->questions->count(),
             'map_questions_count' => $this->mapQuestionsCount($quiz),
             'has_map_questions' => $this->mapQuestionsCount($quiz) > 0,
+            'picture_questions_count' => $this->pictureQuestionsCount($quiz),
+            'has_picture_questions' => $this->pictureQuestionsCount($quiz) > 0,
             'related_lesson' => $this->lessonPayload($quiz, $isGuest),
         ];
     }
@@ -132,7 +133,27 @@ class QuizController extends Controller
         return (int) ($quiz->map_questions_count ?? 0);
     }
 
-    private function publicQuestionMetadata(?array $metadata): array
+    private function pictureQuestionsCount(Quiz $quiz): int
+    {
+        if ($quiz->relationLoaded('questions')) {
+            return $quiz->questions
+                ->where('question_type', 'picture_choice')
+                ->count();
+        }
+
+        return (int) ($quiz->picture_questions_count ?? 0);
+    }
+
+    private function publicQuestionMetadata(?array $metadata, ?string $questionType): ?array
+    {
+        return match ($questionType) {
+            'map_guess' => $this->publicMapQuestionMetadata($metadata),
+            'picture_choice' => $this->publicPictureQuestionMetadata($metadata),
+            default => null,
+        };
+    }
+
+    private function publicMapQuestionMetadata(?array $metadata): array
     {
         $metadata = $metadata ?? [];
 
@@ -141,6 +162,25 @@ class QuizController extends Controller
             'map_y' => isset($metadata['map_y']) ? (float) $metadata['map_y'] : null,
             'target_type' => $metadata['target_type'] ?? null,
         ];
+    }
+
+    private function publicPictureQuestionMetadata(?array $metadata): array
+    {
+        $metadata = $metadata ?? [];
+
+        return [
+            'image_path' => $this->nullableMetadataString($metadata['image_path'] ?? null),
+            'image_alt_en' => $this->nullableMetadataString($metadata['image_alt_en'] ?? null),
+            'image_alt_mk' => $this->nullableMetadataString($metadata['image_alt_mk'] ?? null),
+            'image_type' => $this->nullableMetadataString($metadata['image_type'] ?? null) ?? 'other',
+        ];
+    }
+
+    private function nullableMetadataString(mixed $value): ?string
+    {
+        $value = trim((string) ($value ?? ''));
+
+        return $value === '' ? null : $value;
     }
 
     private function lessonPayload(Quiz $quiz, bool $isGuest): ?array

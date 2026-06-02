@@ -9,6 +9,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Lessons connected to quiz themes so learners can read before taking a quiz.
 - Expanded original lesson and quiz content across language, alphabet, geography, history, culture, food, and music.
 - Macedonia Map Challenge, a lightweight geography quiz mode with a custom local 3D Macedonia map and dynamic quiz markers.
+- Picture quizzes using `question_type = picture_choice`, optional image metadata, and polished placeholders while final images are prepared.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
 - Guest demo access: logged-out users can try selected demo lessons and quizzes, while the full published learning path requires an account.
@@ -232,6 +233,20 @@ The public questions endpoint returns answer IDs and text only. It does not expo
 
 Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. The frontend renders a custom 3D Macedonia map asset from `public/images` and overlays the pin dynamically from `map_x` and `map_y`. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
 
+Picture quiz questions use `question_type = picture_choice` with optional `questions.metadata`:
+
+```json
+{
+  "image_path": "/images/quizzes/quiz_img_001.jpg",
+  "image_alt_en": "Picture quiz clue",
+  "image_alt_mk": "Привремена слика за квиз",
+  "image_type": "food",
+  "image_credit": "Original MakedonIQ image / public domain / licensed source"
+}
+```
+
+`image_path` is optional. When it is blank, null, missing, or fails to load, the quiz UI shows a placeholder card instead of a broken image. Public quiz-taking responses expose only safe picture metadata: `image_path`, `image_alt_en`, `image_alt_mk`, and `image_type`. Admin-only notes such as `image_credit` are not needed for quiz taking. There is no upload system yet; admins can later enter a neutral path such as `/images/quizzes/quiz_img_001.jpg` after adding an original, public-domain, or properly licensed image file.
+
 Authenticated quiz and learner APIs:
 
 ```text
@@ -313,6 +328,8 @@ GET /api/admin/attempts
 - Questions must have exactly four answers.
 - Exactly one answer must be correct.
 - Map guess questions can store marker metadata for the local illustrated map.
+- Picture choice questions can store optional image path, alt text, image type, and image credit/source note metadata.
+- Picture quiz images should be original, public domain, or properly licensed. Do not use copied textbook or schoolbook images.
 - Questions used in attempts are protected from destructive delete/answer replacement.
 - Unpublished lessons do not appear on public Learn pages.
 
@@ -335,6 +352,7 @@ Each lesson belongs to a category and can be connected to one or more quizzes th
 - Quiz scoring is performed on the backend only.
 - Public quiz-taking endpoints do not expose correct answers.
 - Public map metadata exposes marker position/type only, not admin target keys or target labels.
+- Public picture metadata exposes neutral image path, alt text, and image type only, and seeded picture quizzes use null paths until real images are added.
 - Attempt results require authentication and ownership.
 - Profile endpoints cannot update `is_admin`.
 - Password updates require the current password and store only a hash.
@@ -359,8 +377,10 @@ Public:
 11. Macedonia Map Challenge loads and shows a marker without revealing the answer.
 12. Public questions endpoint hides is_correct.
 13. Public map metadata does not expose answer-revealing target labels.
-14. About and contact load.
-15. Invalid paths show the friendly 404 page.
+14. Picture quizzes show an image when available or a placeholder when `image_path` is blank.
+15. Public picture metadata handles `image_path: null` without a broken image.
+16. About and contact load.
+17. Invalid paths show the friendly 404 page.
 ```
 
 Auth/user:
@@ -384,6 +404,7 @@ Admin:
 5. Admin quiz CRUD works, including related lesson assignment.
 6. Admin question builder validates exactly four answers and exactly one correct answer.
 7. Admin question endpoint may show correctness because it is admin-only.
+8. Admin question builder can create or edit `picture_choice` metadata with a blank image path.
 ```
 
 ## Deployment Notes

@@ -159,6 +159,9 @@ class QuizAttemptController extends Controller
                     'has_map_questions' => $attempt->quiz->questions()
                         ->where('question_type', 'map_guess')
                         ->exists(),
+                    'has_picture_questions' => $attempt->quiz->questions()
+                        ->where('question_type', 'picture_choice')
+                        ->exists(),
                     'related_lesson' => $this->lessonPayload($attempt->quiz),
                 ],
                 'category' => [
@@ -213,7 +216,11 @@ class QuizAttemptController extends Controller
             'points_awarded' => $attemptAnswer->points_awarded,
             'question' => [
                 'id' => $question->id,
+                'question_type' => $question->question_type,
                 'translation_direction' => $question->translation_direction,
+                'metadata' => $question->question_type === 'picture_choice'
+                    ? $this->publicPictureQuestionMetadata($question->metadata ?? [])
+                    : null,
                 'question_en' => $question->question_en,
                 'question_mk' => $question->question_mk,
                 'explanation_en' => $question->explanation_en,
@@ -231,5 +238,24 @@ class QuizAttemptController extends Controller
                 'answer_mk' => $correctAnswer?->answer_mk,
             ],
         ];
+    }
+
+    private function publicPictureQuestionMetadata(?array $metadata): array
+    {
+        $metadata = $metadata ?? [];
+
+        return [
+            'image_path' => $this->nullableMetadataString($metadata['image_path'] ?? null),
+            'image_alt_en' => $this->nullableMetadataString($metadata['image_alt_en'] ?? null),
+            'image_alt_mk' => $this->nullableMetadataString($metadata['image_alt_mk'] ?? null),
+            'image_type' => $this->nullableMetadataString($metadata['image_type'] ?? null) ?? 'other',
+        ];
+    }
+
+    private function nullableMetadataString(mixed $value): ?string
+    {
+        $value = trim((string) ($value ?? ''));
+
+        return $value === '' ? null : $value;
     }
 }

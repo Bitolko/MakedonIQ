@@ -463,6 +463,13 @@ class ContentExpansionSeeder extends Seeder
                 $this->factQuestion('Where is folk music often heard?', 'Каде често се слуша народна музика?', 'It is often heard at weddings, festivals, and community events.', 'Често се слуша на свадби, фестивали и настани во заедницата.', [['Weddings and events', 'Свадби и настани', true], ['Only libraries', 'Само библиотеки', false], ['Only empty rooms', 'Само празни соби', false], ['Only tests', 'Само тестови', false]]),
                 $this->factQuestion('Why can music carry memory?', 'Зошто музиката може да носи сеќавање?', 'Songs can remind families of people, places, and celebrations.', 'Песните можат да потсетат на луѓе, места и прослави.', [['It reminds families', 'Ги потсетува семејствата', true], ['It erases stories', 'Брише приказни', false], ['It stops dancing', 'Го запира орото', false], ['It hides language', 'Го крие јазикот', false]]),
             ]),
+            $this->factQuiz('food-and-music', 'macedonian-food-and-music-basics', 'macedonian-food-picture-quiz', 'Macedonian Food Picture Quiz', 'Квиз со слики за македонска храна', 'Look at the picture clue and choose the correct Macedonian food. Images can be added later from the admin panel.', 'Погледни го сликовниот знак и избери ја точната македонска храна. Сликите може да се додадат подоцна од админ панелот.', 24, [
+                $this->pictureQuestion('Which food is shown in the picture?', 'Која храна е прикажана на сликата?', 'Tavče gravče is a traditional baked bean dish.', 'Тавче гравче е традиционално јадење со печен грав.', 'food', [['Tavče gravče', 'Тавче гравче', true], ['Ajvar', 'Ајвар', false], ['Shopska salad', 'Шопска салата', false], ['Burek', 'Бурек', false]]),
+                $this->pictureQuestion('Which spread is shown in the picture?', 'Кој намаз е прикажан на сликата?', 'Ajvar is a pepper spread often eaten with bread or meals.', 'Ајвар е намаз од пиперки што често се јаде со леб или оброци.', 'food', [['Ajvar', 'Ајвар', true], ['Tavče gravče', 'Тавче гравче', false], ['Yogurt', 'Јогурт', false], ['Cheese', 'Сирење', false]]),
+                $this->pictureQuestion('Which salad is shown in the picture?', 'Која салата е прикажана на сликата?', 'Shopska salad often has tomatoes, cucumbers, peppers, and cheese.', 'Шопска салата често има домати, краставици, пиперки и сирење.', 'food', [['Shopska salad', 'Шопска салата', true], ['Bean stew', 'Јадење со грав', false], ['Bread', 'Леб', false], ['Peppers', 'Пиперки', false]]),
+                $this->pictureQuestion('Which food is often made with beans?', 'Која храна често се прави со грав?', 'Tavče gravče is made with beans.', 'Тавче гравче се прави со грав.', 'food', [['Tavče gravče', 'Тавче гравче', true], ['Ajvar', 'Ајвар', false], ['Baklava', 'Баклава', false], ['Sarma', 'Сарма', false]]),
+                $this->pictureQuestion('Which food is commonly made from peppers?', 'Која храна најчесто се прави од пиперки?', 'Ajvar is commonly made from roasted peppers.', 'Ајвар најчесто се прави од печени пиперки.', 'food', [['Ajvar', 'Ајвар', true], ['Tavče gravče', 'Тавче гравче', false], ['Shopska salad', 'Шопска салата', false], ['Bread', 'Леб', false]]),
+            ]),
         ];
     }
 
@@ -789,6 +796,29 @@ class ContentExpansionSeeder extends Seeder
     private function factQuestion(string $questionEn, string $questionMk, string $explanationEn, string $explanationMk, array $answers): array
     {
         return [
+            'question_en' => $questionEn,
+            'question_mk' => $questionMk,
+            'explanation_en' => $explanationEn,
+            'explanation_mk' => $explanationMk,
+            'answers' => array_map(fn (array $answer): array => [
+                'answer_en' => $answer[0],
+                'answer_mk' => $answer[1],
+                'is_correct' => $answer[2],
+            ], $answers),
+        ];
+    }
+
+    private function pictureQuestion(string $questionEn, string $questionMk, string $explanationEn, string $explanationMk, string $imageType, array $answers): array
+    {
+        return [
+            'question_type' => 'picture_choice',
+            'metadata' => [
+                'image_path' => null,
+                'image_alt_en' => 'Food picture quiz placeholder',
+                'image_alt_mk' => 'Привремена слика за квиз со храна',
+                'image_type' => $imageType,
+                'image_credit' => 'Placeholder. Final image to be added later.',
+            ],
             'question_en' => $questionEn,
             'question_mk' => $questionMk,
             'explanation_en' => $explanationEn,

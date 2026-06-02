@@ -23,6 +23,16 @@ const showForm = ref(false);
 const editingQuestion = ref(null);
 const formErrors = ref({});
 const correctIndex = ref(0);
+const pictureImageTypes = [
+    { value: 'food', label: 'Food' },
+    { value: 'city', label: 'City' },
+    { value: 'lake', label: 'Lake' },
+    { value: 'landmark', label: 'Landmark' },
+    { value: 'alphabet', label: 'Alphabet' },
+    { value: 'culture', label: 'Culture' },
+    { value: 'music', label: 'Music' },
+    { value: 'other', label: 'Other' },
+];
 
 const blankAnswers = () => [1, 2, 3, 4].map((sortOrder, index) => ({
     answer_en: '',
@@ -48,6 +58,11 @@ const blankForm = () => ({
         map_target_key: '',
         map_target_label_en: '',
         map_target_label_mk: '',
+        image_path: '',
+        image_alt_en: '',
+        image_alt_mk: '',
+        image_type: 'food',
+        image_credit: '',
     },
     answers: blankAnswers(),
 });
@@ -242,7 +257,7 @@ function questionPayload(source, selectedCorrectIndex = correctIndex.value) {
         question_en: source.question_en,
         question_type: source.question_type || 'multiple_choice',
         translation_direction: normalizeTranslationDirection(source.translation_direction),
-        metadata: source.question_type === 'map_guess' ? normalizedMetadata(source.metadata) : null,
+        metadata: metadataPayload(source),
         question_mk: nullableString(source.question_mk),
         explanation_en: nullableString(source.explanation_en),
         explanation_mk: nullableString(source.explanation_mk),
@@ -266,6 +281,48 @@ function normalizedMetadata(metadata = {}) {
         map_target_key: metadata?.map_target_key || '',
         map_target_label_en: metadata?.map_target_label_en || '',
         map_target_label_mk: metadata?.map_target_label_mk || '',
+        image_path: metadata?.image_path || '',
+        image_alt_en: metadata?.image_alt_en || '',
+        image_alt_mk: metadata?.image_alt_mk || '',
+        image_type: metadata?.image_type || 'food',
+        image_credit: metadata?.image_credit || '',
+    };
+}
+
+function metadataPayload(source) {
+    if (source.question_type === 'map_guess') {
+        return mapMetadataPayload(source.metadata);
+    }
+
+    if (source.question_type === 'picture_choice') {
+        return pictureMetadataPayload(source.metadata);
+    }
+
+    return null;
+}
+
+function mapMetadataPayload(metadata = {}) {
+    return {
+        map_x: numberOrDefault(metadata?.map_x, 50),
+        map_y: numberOrDefault(metadata?.map_y, 50),
+        target_type: metadata?.target_type || 'city',
+        map_target_key: nullableString(metadata?.map_target_key),
+        map_target_label_en: nullableString(metadata?.map_target_label_en),
+        map_target_label_mk: nullableString(metadata?.map_target_label_mk),
+    };
+}
+
+function pictureMetadataPayload(metadata = {}) {
+    const imageType = pictureImageTypes.some((type) => type.value === metadata?.image_type)
+        ? metadata.image_type
+        : 'other';
+
+    return {
+        image_path: nullableString(metadata?.image_path),
+        image_alt_en: nullableString(metadata?.image_alt_en),
+        image_alt_mk: nullableString(metadata?.image_alt_mk),
+        image_type: imageType,
+        image_credit: nullableString(metadata?.image_credit),
     };
 }
 
@@ -454,6 +511,7 @@ function formatDate(value) {
                         <select v-model="form.question_type" class="field mt-2">
                             <option value="multiple_choice">Multiple choice</option>
                             <option value="map_guess">Map guess</option>
+                            <option value="picture_choice">Picture choice</option>
                         </select>
                         <span v-if="fieldError('question_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('question_type') }}</span>
                     </label>
@@ -527,6 +585,49 @@ function formatDate(value) {
                             <span v-if="fieldError('metadata.map_target_label_mk')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.map_target_label_mk') }}</span>
                         </label>
                     </div>
+                </section>
+
+                <section v-if="form.question_type === 'picture_choice'" class="grid gap-5 rounded-[1.5rem] border border-heritage-gold/40 bg-white p-5 shadow-card">
+                    <div>
+                        <h3 class="text-xl font-black text-heritage-ink">Picture metadata</h3>
+                        <p class="mt-1 text-sm font-semibold leading-6 text-heritage-muted">
+                            Image path is optional for now. If left blank, users will see a placeholder card. Use original, public domain, or properly licensed images only. Do not use copied textbook images.
+                        </p>
+                        <span v-if="fieldError('metadata')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata') }}</span>
+                    </div>
+                    <div class="grid gap-5 md:grid-cols-[1fr_14rem]">
+                        <label class="block">
+                            <span class="label">Image path optional</span>
+                            <input v-model="form.metadata.image_path" class="field mt-2 bg-white" placeholder="/images/quizzes/quiz_img_001.jpg" type="text">
+                            <span v-if="fieldError('metadata.image_path')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_path') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Image type</span>
+                            <select v-model="form.metadata.image_type" class="field mt-2 bg-white">
+                                <option v-for="type in pictureImageTypes" :key="type.value" :value="type.value">
+                                    {{ type.label }}
+                                </option>
+                            </select>
+                            <span v-if="fieldError('metadata.image_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_type') }}</span>
+                        </label>
+                    </div>
+                    <div class="grid gap-5 md:grid-cols-2">
+                        <label class="block">
+                            <span class="label">Image alt English</span>
+                            <input v-model="form.metadata.image_alt_en" class="field mt-2 bg-white" type="text">
+                            <span v-if="fieldError('metadata.image_alt_en')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_alt_en') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Image alt Macedonian</span>
+                            <input v-model="form.metadata.image_alt_mk" class="field mt-2 bg-white" type="text">
+                            <span v-if="fieldError('metadata.image_alt_mk')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_alt_mk') }}</span>
+                        </label>
+                    </div>
+                    <label class="block">
+                        <span class="label">Image credit or source note</span>
+                        <textarea v-model="form.metadata.image_credit" class="field mt-2 min-h-20 bg-white" />
+                        <span v-if="fieldError('metadata.image_credit')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_credit') }}</span>
+                    </label>
                 </section>
 
                 <section class="grid gap-4">
@@ -611,6 +712,7 @@ function formatDate(value) {
                                     <p v-if="question.question_mk" class="mt-2 text-xs font-semibold leading-snug text-heritage-muted">{{ question.question_mk }}</p>
                                     <div class="mt-3 flex flex-wrap gap-2">
                                         <AppBadge v-if="question.question_type === 'map_guess'" variant="gold">Map guess</AppBadge>
+                                        <AppBadge v-if="question.question_type === 'picture_choice'" variant="gold">Picture choice</AppBadge>
                                         <AppBadge v-if="question.translation_direction" variant="navy">{{ formatTranslationDirection(question.translation_direction) }}</AppBadge>
                                         <AppBadge v-if="question.used_in_attempts" variant="red">Has attempts</AppBadge>
                                     </div>

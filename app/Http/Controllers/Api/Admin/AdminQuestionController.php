@@ -12,6 +12,17 @@ use Illuminate\Validation\ValidationException;
 
 class AdminQuestionController extends Controller
 {
+    private const PICTURE_IMAGE_TYPES = [
+        'food',
+        'city',
+        'lake',
+        'landmark',
+        'alphabet',
+        'culture',
+        'music',
+        'other',
+    ];
+
     public function index(Quiz $quiz): JsonResponse
     {
         $questions = $quiz->questions()
@@ -94,7 +105,7 @@ class AdminQuestionController extends Controller
     private function validatedData(Request $request): array
     {
         $validated = $request->validate([
-            'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess'],
+            'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess,picture_choice'],
             'translation_direction' => ['nullable', 'string', 'in:general,mk_to_en,en_to_mk'],
             'metadata' => ['nullable', 'array'],
             'metadata.map_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -103,6 +114,11 @@ class AdminQuestionController extends Controller
             'metadata.map_target_key' => ['nullable', 'string', 'max:100'],
             'metadata.map_target_label_en' => ['nullable', 'string', 'max:255'],
             'metadata.map_target_label_mk' => ['nullable', 'string', 'max:255'],
+            'metadata.image_path' => ['nullable', 'string', 'max:255'],
+            'metadata.image_alt_en' => ['nullable', 'string', 'max:255'],
+            'metadata.image_alt_mk' => ['nullable', 'string', 'max:255'],
+            'metadata.image_credit' => ['nullable', 'string', 'max:500'],
+            'metadata.image_type' => ['nullable', 'string', 'in:food,city,lake,landmark,alphabet,culture,music,other'],
             'question_en' => ['required', 'string'],
             'question_mk' => ['nullable', 'string'],
             'explanation_en' => ['nullable', 'string'],
@@ -171,11 +187,23 @@ class AdminQuestionController extends Controller
 
     private function metadataAttributes(array $validated): ?array
     {
-        if (($validated['question_type'] ?? 'multiple_choice') !== 'map_guess') {
-            return null;
-        }
+        $questionType = $validated['question_type'] ?? 'multiple_choice';
 
         $metadata = $validated['metadata'] ?? [];
+
+        if ($questionType === 'picture_choice') {
+            return [
+                'image_path' => $this->nullableString($metadata['image_path'] ?? null),
+                'image_alt_en' => $this->nullableString($metadata['image_alt_en'] ?? null),
+                'image_alt_mk' => $this->nullableString($metadata['image_alt_mk'] ?? null),
+                'image_credit' => $this->nullableString($metadata['image_credit'] ?? null),
+                'image_type' => $this->pictureImageType($metadata['image_type'] ?? null),
+            ];
+        }
+
+        if ($questionType !== 'map_guess') {
+            return null;
+        }
 
         return [
             'map_x' => isset($metadata['map_x']) ? (float) $metadata['map_x'] : null,
@@ -185,6 +213,13 @@ class AdminQuestionController extends Controller
             'map_target_label_en' => $this->nullableString($metadata['map_target_label_en'] ?? null),
             'map_target_label_mk' => $this->nullableString($metadata['map_target_label_mk'] ?? null),
         ];
+    }
+
+    private function pictureImageType(?string $value): string
+    {
+        $value = $this->nullableString($value);
+
+        return in_array($value, self::PICTURE_IMAGE_TYPES, true) ? $value : 'other';
     }
 
     private function translationDirection(?string $value): ?string

@@ -32,6 +32,7 @@ const relatedLesson = computed(() => quiz.value?.related_lesson || null);
 const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 const isMapChallenge = computed(() => Boolean(quiz.value?.has_map_questions || questions.value.some((question) => question.question_type === 'map_guess')));
+const isPictureQuiz = computed(() => Boolean(quiz.value?.has_picture_questions || questions.value.some((question) => question.question_type === 'picture_choice')));
 const questionCount = computed(() => quiz.value?.questions_count || questions.value.length || 0);
 
 const learnItems = computed(() => {
@@ -40,6 +41,15 @@ const learnItems = computed(() => {
             'Look at the highlighted point on the map',
             'Choose the correct city, lake, or landmark',
             'Use the answer choices while you learn the place names',
+            'Submit normally for secure backend scoring',
+        ];
+    }
+
+    if (isPictureQuiz.value) {
+        return [
+            'Look at the image or picture clue',
+            'Use placeholders safely while final images are being prepared',
+            'Choose the correct Macedonian food, place, letter, or culture answer',
             'Submit normally for secure backend scoring',
         ];
     }
@@ -72,10 +82,53 @@ const pointsAvailable = computed(() => {
     return (quiz.value.questions_count || questions.value.length || 0) * (quiz.value.points_per_question || 10);
 });
 
-const overviewText = computed(() => (isMapChallenge.value
-    ? `A short geography round with ${questionCount.value} map clues. Results are scored securely after you submit.`
-    : 'Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.'
-));
+const overviewText = computed(() => {
+    if (isMapChallenge.value) {
+        return `A short geography round with ${questionCount.value} map clues. Results are scored securely after you submit.`;
+    }
+
+    if (isPictureQuiz.value) {
+        return `A visual quiz with ${questionCount.value} picture clues. Some clues may use placeholders until final images are added.`;
+    }
+
+    return 'Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.';
+});
+
+const guideTitle = computed(() => {
+    if (isMapChallenge.value) {
+        return 'How the challenge works';
+    }
+
+    if (isPictureQuiz.value) {
+        return 'How the picture quiz works';
+    }
+
+    return 'What you will learn';
+});
+
+const overviewLabel = computed(() => {
+    if (isMapChallenge.value) {
+        return 'Map overview';
+    }
+
+    return isPictureQuiz.value ? 'Picture overview' : 'Quiz overview';
+});
+
+const startButtonLabel = computed(() => {
+    if (quiz.value?.is_demo) {
+        if (isMapChallenge.value) {
+            return 'Start demo challenge';
+        }
+
+        return isPictureQuiz.value ? 'Start picture demo' : 'Start demo';
+    }
+
+    if (isMapChallenge.value) {
+        return 'Start Map Challenge';
+    }
+
+    return isPictureQuiz.value ? 'Start Picture Quiz' : 'Start Quiz';
+});
 
 onMounted(async () => {
     try {
@@ -137,6 +190,7 @@ function authHref(path) {
                     <AppBadge>{{ categoryName }}</AppBadge>
                     <AppBadge v-if="quiz.is_demo" variant="gold">Demo</AppBadge>
                     <AppBadge v-if="isMapChallenge" variant="gold">Map Challenge</AppBadge>
+                    <AppBadge v-if="isPictureQuiz" variant="gold">Picture Quiz</AppBadge>
                 </div>
                 <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-5xl">
                     {{ quizTitle }}
@@ -161,9 +215,12 @@ function authHref(path) {
                 </div>
 
                 <section class="section-panel mt-8">
-                    <h2 class="text-2xl font-black text-heritage-ink">{{ isMapChallenge ? 'How the challenge works' : 'What you will learn' }}</h2>
+                    <h2 class="text-2xl font-black text-heritage-ink">{{ guideTitle }}</h2>
                     <p v-if="isMapChallenge" class="mt-3 leading-7 text-heritage-muted">
                         Look at the highlighted point on the map and choose the correct city, lake, or landmark.
+                    </p>
+                    <p v-else-if="isPictureQuiz" class="mt-3 leading-7 text-heritage-muted">
+                        Look at the image or picture clue and choose the correct answer. Some picture clues may use placeholders while images are being prepared.
                     </p>
                     <div class="mt-6 grid gap-4">
                         <div v-for="(item, index) in learnItems" :key="item" class="flex gap-3 rounded-2xl bg-heritage-panel p-4">
@@ -183,13 +240,13 @@ function authHref(path) {
 
             <aside class="soft-card sticky top-28 p-6 md:p-8">
                 <div class="rounded-[1.5rem] bg-heritage-panel p-5">
-                    <p class="label">{{ isMapChallenge ? 'Map overview' : 'Quiz overview' }}</p>
+                    <p class="label">{{ overviewLabel }}</p>
                     <p class="mt-3 text-3xl font-black text-heritage-ink">Earn up to {{ pointsAvailable }} points</p>
                     <p class="mt-3 leading-7 text-heritage-muted">
                         {{ overviewText }}
                     </p>
                 </div>
-                <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">{{ quiz.is_demo ? (isMapChallenge ? 'Start demo challenge' : 'Start demo') : (isMapChallenge ? 'Start Map Challenge' : 'Start Quiz') }}</PrimaryButton>
+                <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">{{ startButtonLabel }}</PrimaryButton>
                 <PrimaryButton :href="backUrl" variant="soft" class="mt-4 w-full">Back to quizzes</PrimaryButton>
             </aside>
             </template>

@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
+import PictureQuestionVisual from '../../Components/PictureQuestionVisual.vue';
 import {
     ApiError,
     categoryUrl,
@@ -40,6 +41,7 @@ const relatedLesson = computed(() => resultQuiz.value?.related_lesson || null);
 const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'title', language));
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 const isMapChallenge = computed(() => Boolean(resultQuiz.value?.has_map_questions));
+const isPictureQuiz = computed(() => Boolean(resultQuiz.value?.has_picture_questions || reviewAnswers.value.some((answer) => answer.question?.question_type === 'picture_choice')));
 const resultPercentage = computed(() => Number(resultAttempt.value?.percentage || 0));
 const scoreMessage = computed(() => {
     if (!resultAttempt.value) {
@@ -100,6 +102,10 @@ function answerText(answer, question) {
     return localizedText(answer, 'answer', language);
 }
 
+function isPictureQuestion(question) {
+    return question?.question_type === 'picture_choice';
+}
+
 onMounted(async () => {
     try {
         if (attemptId) {
@@ -158,7 +164,7 @@ function authHref(path) {
             <template v-else>
             <section class="mx-auto max-w-4xl text-center">
                 <AppBadge :variant="resultAttempt?.passed ? 'green' : 'gold'">
-                    {{ isMapChallenge ? 'Map Challenge result' : (hasAttempt ? 'Quiz result' : 'Results preview') }}
+                    {{ isMapChallenge ? 'Map Challenge result' : (isPictureQuiz ? 'Picture Quiz result' : (hasAttempt ? 'Quiz result' : 'Results preview')) }}
                 </AppBadge>
                 <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
                     {{ isMapChallenge && hasAttempt ? 'Map Challenge Complete' : (hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First') }}
@@ -243,6 +249,14 @@ function authHref(path) {
                                 {{ answer.points_awarded }} pts
                             </div>
                         </div>
+
+                        <PictureQuestionVisual
+                            v-if="isPictureQuestion(answer.question)"
+                            class="mt-5"
+                            :metadata="answer.question.metadata || {}"
+                            :language="language"
+                            compact
+                        />
 
                         <div class="mt-5 grid gap-3 md:grid-cols-2">
                             <div :class="['rounded-2xl border p-4', answer.is_correct ? 'border-emerald-200 bg-emerald-50' : 'border-heritage-red/20 bg-heritage-red-faint']">

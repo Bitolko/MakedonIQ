@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import MacedoniaMap from '../../Components/MacedoniaMap.vue';
+import PictureQuestionVisual from '../../Components/PictureQuestionVisual.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import {
     ApiError,
@@ -54,6 +55,9 @@ const tryAnotherDemoHref = computed(() => {
 const relatedLesson = computed(() => quiz.value?.related_lesson || null);
 const isMapQuestion = computed(() => currentQuestion.value?.question_type === 'map_guess');
 const mapMetadata = computed(() => currentQuestion.value?.metadata || {});
+const isPictureQuestion = computed(() => currentQuestion.value?.question_type === 'picture_choice');
+const pictureMetadata = computed(() => currentQuestion.value?.metadata || {});
+const pictureLanguage = computed(() => language.value.toLowerCase());
 const mapPrompt = computed(() => {
     const targetType = mapMetadata.value.target_type || 'place';
 
@@ -255,6 +259,9 @@ function authHref(path) {
                             <p class="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-black text-heritage-red shadow-card">
                                 {{ mapPrompt }}
                             </p>
+                        </div>
+                        <div v-if="isPictureQuestion" class="mx-auto mt-8 max-w-xl">
+                            <PictureQuestionVisual :metadata="pictureMetadata" :language="pictureLanguage" />
                         </div>
                         <div class="mx-auto mt-8 rounded-[2rem] bg-heritage-panel p-4">
                             <p class="text-sm font-bold leading-7 text-heritage-muted">

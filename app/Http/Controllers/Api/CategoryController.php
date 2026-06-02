@@ -41,6 +41,7 @@ class CategoryController extends Controller
             ->withCount([
                 'questions as questions_count' => fn ($query) => $query->published(),
                 'questions as map_questions_count' => fn ($query) => $query->published()->where('question_type', 'map_guess'),
+                'questions as picture_questions_count' => fn ($query) => $query->published()->where('question_type', 'picture_choice'),
             ])
             ->get();
 
@@ -66,6 +67,8 @@ class CategoryController extends Controller
                 'questions_count' => $quiz->questions_count,
                 'map_questions_count' => $quiz->map_questions_count,
                 'has_map_questions' => (int) $quiz->map_questions_count > 0,
+                'picture_questions_count' => $quiz->picture_questions_count,
+                'has_picture_questions' => (int) $quiz->picture_questions_count > 0,
                 'user_progress' => $user
                     ? $this->quizUserProgress($attemptsByQuiz->get($quiz->id, collect()))
                     : null,

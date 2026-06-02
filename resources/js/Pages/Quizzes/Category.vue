@@ -41,6 +41,7 @@ const quizCards = computed(() => quizzes.value.map((quiz) => ({
     registerHref: authHref('/register', quizStartUrl(category.value?.slug || activeSlug, quiz.slug)),
     loginHref: authHref('/login', quizStartUrl(category.value?.slug || activeSlug, quiz.slug)),
     isMapChallenge: Boolean(quiz.has_map_questions),
+    isPictureQuiz: Boolean(quiz.has_picture_questions),
 })));
 
 const categoryName = computed(() => localizedText(category.value, 'name', language));
