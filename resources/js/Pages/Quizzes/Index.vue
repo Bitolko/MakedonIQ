@@ -24,7 +24,6 @@ const demoItems = [
         practise: 'Greetings, polite words, family phrases',
         questions: 5,
         time: '6 min',
-        accent: 'red',
         visualClass: 'bg-linear-to-br from-heritage-red-faint via-white to-heritage-gold-faint',
     },
     {
@@ -36,7 +35,6 @@ const demoItems = [
         practise: 'Letter shapes, sounds, first words',
         questions: 5,
         time: '7 min',
-        accent: 'gold',
         visualClass: 'bg-linear-to-br from-heritage-gold-faint via-white to-heritage-navy-soft',
     },
     {
@@ -48,7 +46,6 @@ const demoItems = [
         practise: 'Cities, lakes, landmarks',
         questions: 10,
         time: '8 min',
-        accent: 'navy',
         visualClass: 'bg-linear-to-br from-heritage-navy-soft via-white to-heritage-gold-faint',
     },
 ];
