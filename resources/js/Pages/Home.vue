@@ -3,7 +3,6 @@ import PublicLayout from '../Components/PublicLayout.vue';
 import CategoryCard from '../Components/CategoryCard.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import AppBadge from '../Components/AppBadge.vue';
-import ProgressBar from '../Components/ProgressBar.vue';
 import MacedoniaMap from '../Components/MacedoniaMap.vue';
 import { categories, historyQuizzes } from '../data/makedoniq';
 import { currentUser } from '../api/makedoniq';
@@ -73,10 +72,10 @@ const demoItems = [
                     <div class="rounded-[1.5rem] bg-white p-5 shadow-card">
                         <div class="flex items-center justify-between gap-4">
                             <div>
-                                <p class="label">Today's warm-up</p>
+                                <p class="label">{{ isGuest ? "Today's warm-up preview" : "Today's warm-up" }}</p>
                                 <h2 class="mt-1 text-2xl font-black text-heritage-red">Добро утро</h2>
                             </div>
-                            <AppBadge>+15 points</AppBadge>
+                            <AppBadge variant="gold">{{ isGuest ? 'Demo preview' : 'Practice' }}</AppBadge>
                         </div>
                         <div class="mt-6 rounded-2xl bg-heritage-panel p-5">
                             <p class="text-sm font-black text-heritage-muted">What does this phrase mean?</p>
@@ -89,13 +88,17 @@ const demoItems = [
                         </div>
                         <div class="mt-6 grid gap-4 sm:grid-cols-2">
                             <div class="rounded-2xl bg-heritage-red-faint p-4">
-                                <p class="label">Daily streak</p>
-                                <p class="mt-2 text-2xl font-black text-heritage-red">5 days</p>
+                                <p class="label">{{ isGuest ? 'Free demos' : 'Continue' }}</p>
+                                <p class="mt-2 text-2xl font-black text-heritage-red">{{ isGuest ? '3 unlocked' : 'Learning' }}</p>
                             </div>
                             <div class="rounded-2xl bg-heritage-panel p-4">
-                                <ProgressBar :value="62" label="History progress" tone="navy" />
+                                <p class="label">{{ isGuest ? 'Progress' : 'Dashboard' }}</p>
+                                <p class="mt-2 text-2xl font-black text-heritage-navy">{{ isGuest ? 'Saved after signup' : 'View real stats' }}</p>
                             </div>
                         </div>
+                        <PrimaryButton :href="isGuest ? '/quizzes/macedonian-language/basic-macedonian-greetings/start' : '/dashboard'" class="mt-5 w-full" variant="soft">
+                            {{ isGuest ? 'Try demo quiz' : 'View dashboard' }}
+                        </PrimaryButton>
                     </div>
                 </div>
             </section>
