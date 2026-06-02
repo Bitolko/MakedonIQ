@@ -6,6 +6,7 @@ import AppBadge from '../../Components/AppBadge.vue';
 import MacedoniaMap from '../../Components/MacedoniaMap.vue';
 import {
     currentCategorySlug,
+    currentUser,
     difficultyLabel,
     getCategoryLessons,
     learnUrl,
@@ -20,6 +21,7 @@ const isLoading = ref(true);
 const error = ref('');
 const language = preferredLanguage();
 const categorySlug = currentCategorySlug();
+const user = currentUser();
 
 const categoryName = computed(() => localizedText(category.value, 'name', language));
 const categoryDescription = computed(() => localizedText(category.value, 'description', language));
@@ -97,6 +99,7 @@ const lessonCards = computed(() => lessons.value.map((lesson) => ({
     isDemo: Boolean(lesson.is_demo),
     isLocked: Boolean(lesson.is_locked),
     relatedQuizLocked: Boolean(lesson.related_quiz?.is_locked),
+    actionLabel: user ? 'Start' : (lesson.is_demo ? 'Try demo' : 'Start'),
     registerHref: authHref('/register', lessonUrl(lesson.category_slug, lesson.slug)),
     loginHref: authHref('/login', lessonUrl(lesson.category_slug, lesson.slug)),
     relatedQuizRegisterHref: authHref('/register', lesson.related_quiz?.start_url || lessonUrl(lesson.category_slug, lesson.slug)),
@@ -202,7 +205,7 @@ function authHref(path, intendedUrl) {
                                     <div class="flex flex-col gap-3 sm:min-w-40">
                                         <PrimaryButton v-if="lesson.isLocked" :href="lesson.registerHref">Unlock free</PrimaryButton>
                                         <a v-if="lesson.isLocked" :href="lesson.loginHref" class="text-center text-xs font-black text-heritage-red hover:text-heritage-red-dark">Already have an account? Log in</a>
-                                        <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href">{{ lesson.isDemo ? 'Try demo' : 'Start' }}</PrimaryButton>
+                                        <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href">{{ lesson.actionLabel }}</PrimaryButton>
                                         <PrimaryButton v-if="!lesson.isLocked && lesson.related_quiz && !lesson.relatedQuizLocked" :href="lesson.related_quiz.start_url" variant="soft">Quiz</PrimaryButton>
                                         <PrimaryButton v-else-if="!lesson.isLocked && lesson.relatedQuizLocked" :href="lesson.relatedQuizRegisterHref" variant="soft">Unlock quiz</PrimaryButton>
                                     </div>

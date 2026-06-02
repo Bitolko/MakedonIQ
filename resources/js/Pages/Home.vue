@@ -9,6 +9,7 @@ import { categories, historyQuizzes } from '../data/makedoniq';
 import { currentUser } from '../api/makedoniq';
 
 const user = currentUser();
+const isGuest = !user;
 
 const steps = [
     { title: 'Choose a topic', text: 'Pick language, alphabet, history, geography, food, music, or traditions.', icon: '01' },
@@ -46,11 +47,11 @@ const demoItems = [
                         Learn Macedonian through fun quizzes
                     </h1>
                     <p class="mt-6 max-w-xl text-lg leading-8 text-heritage-muted">
-                        Try a few lessons and quizzes free. Create a free account to unlock the full learning path, save scores, and track progress.
+                        {{ isGuest ? 'Try a few lessons and quizzes free. Create a free account to unlock the full learning path, save scores, and track progress.' : 'Welcome back. Jump into lessons, quizzes, progress, or geography practice whenever you are ready.' }}
                     </p>
                     <div class="mt-8 flex flex-col gap-4 sm:flex-row">
-                        <PrimaryButton href="/quizzes" variant="gold" size="lg">Try demo quizzes</PrimaryButton>
-                        <PrimaryButton :href="user ? '/dashboard' : '/register'" size="lg">{{ user ? 'Go to dashboard' : 'Create free account' }}</PrimaryButton>
+                        <PrimaryButton href="/quizzes" variant="gold" size="lg">{{ isGuest ? 'Try demo quizzes' : 'Browse quizzes' }}</PrimaryButton>
+                        <PrimaryButton :href="isGuest ? '/register' : '/dashboard'" size="lg">{{ isGuest ? 'Create free account' : 'Go to dashboard' }}</PrimaryButton>
                     </div>
                     <div class="mt-8 grid max-w-xl grid-cols-3 gap-3">
                         <div class="metric-card">
@@ -99,7 +100,7 @@ const demoItems = [
                 </div>
             </section>
 
-            <section class="page-shell pb-6">
+            <section v-if="isGuest" class="page-shell pb-6">
                 <div class="rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div>
@@ -115,6 +116,23 @@ const demoItems = [
                             <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
                             <PrimaryButton :href="item.href" class="mt-4 w-full" size="sm" variant="soft">Try demo</PrimaryButton>
                         </article>
+                    </div>
+                </div>
+            </section>
+
+            <section v-else class="page-shell pb-6">
+                <div class="rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
+                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                        <div>
+                            <AppBadge variant="gold">Welcome back</AppBadge>
+                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Keep building your Macedonian path</h2>
+                        </div>
+                        <PrimaryButton href="/dashboard" variant="soft">Dashboard</PrimaryButton>
+                    </div>
+                    <div class="mt-6 grid gap-4 md:grid-cols-3">
+                        <PrimaryButton href="/learn" class="w-full" variant="soft">Continue learning</PrimaryButton>
+                        <PrimaryButton href="/progress" class="w-full" variant="soft">View progress</PrimaryButton>
+                        <PrimaryButton href="/map-challenge" class="w-full" variant="soft">Map Challenge</PrimaryButton>
                     </div>
                 </div>
             </section>

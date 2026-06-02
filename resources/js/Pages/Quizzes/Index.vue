@@ -105,7 +105,7 @@ onMounted(async () => {
                     <AppBadge>Quiz Categories</AppBadge>
                     <h1 class="mt-4 text-4xl font-black text-heritage-ink md:text-5xl">Explore Categories</h1>
                     <p class="mt-3 max-w-2xl text-lg leading-8 text-heritage-muted">
-                        Try a few demo quizzes free. Create a free account to unlock all quizzes, save scores, and track progress.
+                        {{ isGuest ? 'Try a few demo quizzes free. Create a free account to unlock all quizzes, save scores, and track progress.' : 'Browse published quiz categories, practise by topic, and keep building your saved progress.' }}
                     </p>
                 </div>
                 <div class="grid gap-3 sm:grid-cols-[1fr_auto]">
@@ -204,6 +204,22 @@ onMounted(async () => {
                 </div>
             </section>
 
+            <section v-else class="mb-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
+                <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                    <div>
+                        <AppBadge variant="gold">Continue practising</AppBadge>
+                        <h2 class="mt-3 text-3xl font-black text-heritage-ink">Choose your next quiz path</h2>
+                    </div>
+                    <PrimaryButton href="/progress" variant="soft">View progress</PrimaryButton>
+                </div>
+                <div class="mt-6 grid gap-4 md:grid-cols-4">
+                    <PrimaryButton href="#quiz-categories" class="w-full" variant="soft">Browse quiz categories</PrimaryButton>
+                    <PrimaryButton href="/progress" class="w-full" variant="soft">View progress</PrimaryButton>
+                    <PrimaryButton href="/map-challenge" class="w-full" variant="soft">Try Map Challenge</PrimaryButton>
+                    <PrimaryButton href="/learn" class="w-full" variant="soft">Review lessons</PrimaryButton>
+                </div>
+            </section>
+
             <section v-if="isLoading" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <div v-for="index in 6" :key="index" class="soft-card min-h-72 animate-pulse bg-white p-6">
                     <div class="h-14 w-14 rounded-2xl bg-heritage-panel" />
@@ -218,7 +234,7 @@ onMounted(async () => {
                 <p class="mx-auto mt-3 max-w-2xl leading-7 text-heritage-muted">{{ error }}</p>
             </section>
 
-            <section v-else-if="filteredCategories.length" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <section v-else-if="filteredCategories.length" id="quiz-categories" class="scroll-mt-24 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <CategoryCard v-for="category in filteredCategories" :key="category.slug" :category="category" />
             </section>
 

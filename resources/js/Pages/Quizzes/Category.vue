@@ -5,7 +5,7 @@ import QuizCard from '../../Components/QuizCard.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import ProgressBar from '../../Components/ProgressBar.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
-import { categoryUrl, currentCategorySlug, difficultyLabel, fetchJson, localizedText, preferredLanguage, quizStartUrl } from '../../api/makedoniq';
+import { categoryUrl, currentCategorySlug, currentUser, difficultyLabel, fetchJson, localizedText, preferredLanguage, quizStartUrl } from '../../api/makedoniq';
 
 const category = ref(null);
 const categories = ref([]);
@@ -14,6 +14,7 @@ const userProgress = ref(null);
 const isLoading = ref(true);
 const error = ref('');
 const language = preferredLanguage();
+const user = currentUser();
 
 const activeSlug = currentCategorySlug();
 
@@ -91,7 +92,7 @@ function quizActionLabel(quiz) {
         return 'Unlock free';
     }
 
-    if (quiz.is_demo && !quiz.user_progress) {
+    if (!user && quiz.is_demo && !quiz.user_progress) {
         return 'Start demo';
     }
 

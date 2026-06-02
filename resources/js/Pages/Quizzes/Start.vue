@@ -8,6 +8,7 @@ import {
     categoryUrl,
     currentCategorySlug,
     currentQuizSlug,
+    currentUser,
     difficultyLabel,
     fetchJson,
     localizedText,
@@ -21,6 +22,7 @@ const isLoading = ref(true);
 const error = ref('');
 const isLocked = ref(false);
 const language = preferredLanguage();
+const user = currentUser();
 
 const categorySlug = currentCategorySlug();
 const quizSlug = currentQuizSlug();
@@ -115,7 +117,7 @@ const overviewLabel = computed(() => {
 });
 
 const startButtonLabel = computed(() => {
-    if (quiz.value?.is_demo) {
+    if (!user && quiz.value?.is_demo) {
         if (isMapChallenge.value) {
             return 'Start demo challenge';
         }

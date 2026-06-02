@@ -5,6 +5,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import {
     difficultyLabel,
+    currentUser,
     getLessons,
     learnCategoryUrl,
     lessonUrl,
@@ -17,6 +18,8 @@ const lessons = ref([]);
 const isLoading = ref(true);
 const error = ref('');
 const language = preferredLanguage();
+const user = currentUser();
+const isGuest = computed(() => !user);
 
 const categoryVisuals = {
     'macedonian-language': {
@@ -72,6 +75,7 @@ const featuredLessons = computed(() => lessons.value.slice(0, 6).map((lesson) =>
     isDemo: Boolean(lesson.is_demo),
     isLocked: Boolean(lesson.is_locked),
     relatedQuizLocked: Boolean(lesson.related_quiz?.is_locked),
+    actionLabel: user ? 'Start lesson' : (lesson.is_demo ? 'Try demo' : 'Start lesson'),
     registerHref: authHref('/register', lessonUrl(lesson.category_slug, lesson.slug)),
     loginHref: authHref('/login', lessonUrl(lesson.category_slug, lesson.slug)),
     relatedQuizRegisterHref: authHref('/register', lesson.related_quiz?.start_url || lessonUrl(lesson.category_slug, lesson.slug)),
@@ -124,7 +128,7 @@ function authHref(path, intendedUrl) {
                     <AppBadge variant="red">Learn</AppBadge>
                     <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-6xl">Learn Macedonian step by step</h1>
                     <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-heritage-navy/80">
-                        Try a few lessons free, then create an account to unlock all lessons, quizzes, progress tracking, and saved results.
+                        {{ isGuest ? 'Try a few lessons free, then create an account to unlock all lessons, quizzes, progress tracking, and saved results.' : 'Explore published lessons, practise with quizzes, and keep your learning moving at your own pace.' }}
                     </p>
                     <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                         <PrimaryButton href="#learn-categories" size="lg">Start learning</PrimaryButton>
@@ -134,7 +138,7 @@ function authHref(path, intendedUrl) {
                 </div>
                 </section>
 
-                <section class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
+                <section v-if="isGuest" class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div>
                             <AppBadge variant="gold">Try these demos</AppBadge>
@@ -149,6 +153,22 @@ function authHref(path, intendedUrl) {
                             <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
                             <PrimaryButton :href="item.href" class="mt-4 w-full" size="sm" variant="soft">{{ item.cta }}</PrimaryButton>
                         </article>
+                    </div>
+                </section>
+
+                <section v-else class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
+                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                        <div>
+                            <AppBadge variant="gold">Continue learning</AppBadge>
+                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Pick up your learning path</h2>
+                        </div>
+                        <PrimaryButton href="/dashboard" variant="soft">Open dashboard</PrimaryButton>
+                    </div>
+                    <div class="mt-6 grid gap-4 md:grid-cols-4">
+                        <PrimaryButton href="#learn-categories" class="w-full" variant="soft">Browse all lessons</PrimaryButton>
+                        <PrimaryButton href="/quizzes" class="w-full" variant="soft">Take a quiz</PrimaryButton>
+                        <PrimaryButton href="/progress" class="w-full" variant="soft">View progress</PrimaryButton>
+                        <PrimaryButton href="/map-challenge" class="w-full" variant="soft">Try Map Challenge</PrimaryButton>
                     </div>
                 </section>
 
@@ -242,7 +262,7 @@ function authHref(path, intendedUrl) {
                                 <a v-if="lesson.isLocked" :href="lesson.loginHref" class="inline-flex items-center justify-center rounded-2xl px-3 py-2 text-center text-xs font-black text-heritage-red hover:text-heritage-red-dark">
                                     Already have an account? Log in
                                 </a>
-                                <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href" variant="soft">{{ lesson.isDemo ? 'Try demo' : 'Start lesson' }}</PrimaryButton>
+                                <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href" variant="soft">{{ lesson.actionLabel }}</PrimaryButton>
                                 <PrimaryButton v-if="!lesson.isLocked && lesson.related_quiz && !lesson.relatedQuizLocked" :href="lesson.related_quiz.start_url" variant="soft">Take quiz</PrimaryButton>
                                 <PrimaryButton v-else-if="!lesson.isLocked && lesson.relatedQuizLocked" :href="lesson.relatedQuizRegisterHref" variant="soft">Unlock quiz</PrimaryButton>
                             </div>
