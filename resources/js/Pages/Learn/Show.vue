@@ -294,11 +294,16 @@ function termCards(block) {
             </section>
 
             <section v-else-if="error" class="section-panel mx-auto max-w-4xl text-center">
+                <div v-if="isLocked" class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-heritage-gold/40 bg-heritage-gold-faint text-xs font-black text-heritage-gold-deep shadow-card">
+                    LOCK
+                </div>
                 <AppBadge :variant="isLocked ? 'gold' : 'red'">{{ isLocked ? 'Locked lesson' : 'Lesson unavailable' }}</AppBadge>
                 <h1 class="mt-4 text-3xl font-black text-heritage-ink">
                     {{ isLocked ? 'This lesson is part of the full MakedonIQ learning path.' : 'We could not load this lesson' }}
                 </h1>
-                <p class="mx-auto mt-3 max-w-2xl text-heritage-muted">{{ error }}</p>
+                <p class="mx-auto mt-3 max-w-2xl text-heritage-muted">
+                    {{ isLocked ? 'Create a free account to unlock all lessons, quizzes, progress tracking, and saved results.' : error }}
+                </p>
                 <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
                     <PrimaryButton v-if="isLocked" :href="authHref('/register')">Create free account</PrimaryButton>
                     <PrimaryButton v-if="isLocked" :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
@@ -447,7 +452,7 @@ function termCards(block) {
                             <h2 class="mt-3 text-2xl font-black text-heritage-ink">Check your learning</h2>
                             <p class="mt-3 text-sm leading-6 text-heritage-muted">Use the quiz after reading, then return to this lesson for review.</p>
                             <PrimaryButton v-if="firstQuiz && !firstQuizLocked" :href="firstQuiz.start_url" class="mt-5 w-full">Take related quiz</PrimaryButton>
-                            <PrimaryButton v-else-if="firstQuizLocked" :href="authHref('/register')" class="mt-5 w-full">Create account to unlock quiz</PrimaryButton>
+                            <PrimaryButton v-else-if="firstQuizLocked" :href="authHref('/register')" class="mt-5 w-full">Unlock quiz free</PrimaryButton>
                             <PrimaryButton v-else href="/quizzes" class="mt-5 w-full">Explore quizzes</PrimaryButton>
                             <PrimaryButton v-if="isGeography" href="/map-challenge" variant="gold" class="mt-3 w-full">Map Challenge</PrimaryButton>
                         </section>

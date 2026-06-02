@@ -25,10 +25,10 @@ const statusVariant = {
 </script>
 
 <template>
-    <article class="soft-card soft-card-hover flex h-full flex-col p-6">
+    <article :class="['soft-card soft-card-hover flex h-full flex-col p-6', quiz.isLocked ? 'border-heritage-gold/50 bg-white' : '']">
         <div class="flex items-start justify-between gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint text-lg font-black text-heritage-gold-deep">
-                Q
+            <div :class="['flex h-12 w-12 items-center justify-center rounded-2xl border text-lg font-black', quiz.isLocked ? 'border-heritage-line bg-heritage-panel text-xs text-heritage-muted' : 'border-heritage-gold/40 bg-heritage-gold-faint text-heritage-gold-deep']">
+                {{ quiz.isLocked ? 'LOCK' : 'Q' }}
             </div>
             <div class="flex flex-wrap justify-end gap-2">
                 <AppBadge v-if="quiz.isDemo" variant="gold">Demo</AppBadge>
@@ -54,14 +54,18 @@ const statusVariant = {
                 </span>
             </div>
         </div>
-        <div v-if="quiz.isLocked" class="mt-6 rounded-2xl border border-heritage-line bg-heritage-panel p-4">
+        <div v-if="quiz.isLocked" class="mt-6 rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint p-4">
+            <p class="text-xs font-black uppercase text-heritage-gold-deep">Free account required</p>
             <p class="text-sm font-bold leading-6 text-heritage-muted">
-                {{ quiz.lockedMessage || 'Create account to unlock all quizzes.' }}
+                {{ quiz.lockedMessage || 'Create a free account to unlock.' }}
             </p>
             <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-                <PrimaryButton :href="quiz.registerHref || '/register'" class="w-full" size="sm">Create account</PrimaryButton>
+                <PrimaryButton :href="quiz.registerHref || '/register'" class="w-full" size="sm">Unlock free</PrimaryButton>
                 <PrimaryButton :href="quiz.loginHref || '/login'" class="w-full" variant="soft" size="sm">Log in</PrimaryButton>
             </div>
+            <a :href="quiz.loginHref || '/login'" class="mt-3 inline-flex text-xs font-black text-heritage-red hover:text-heritage-red-dark">
+                Already have an account? Log in
+            </a>
         </div>
         <PrimaryButton v-else class="mt-6" :href="quiz.href" :variant="quiz.status === 'Completed' ? 'gold' : 'red'">
             {{ quiz.actionLabel || (quiz.status === 'Completed' ? 'Review' : quiz.status) }}

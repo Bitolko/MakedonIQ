@@ -137,16 +137,21 @@ function authHref(path) {
             </section>
 
             <section v-else-if="error" class="section-panel mx-auto max-w-4xl text-center">
+                <div v-if="isLocked" class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-heritage-gold/40 bg-heritage-gold-faint text-xs font-black text-heritage-gold-deep shadow-card">
+                    LOCK
+                </div>
                 <AppBadge :variant="isLocked ? 'gold' : 'red'">{{ isLocked ? 'Locked quiz' : 'Result unavailable' }}</AppBadge>
                 <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
-                    {{ isLocked ? 'Create an account to unlock this quiz' : 'We could not load this result' }}
+                    {{ isLocked ? 'This quiz is locked for guests.' : 'We could not load this result' }}
                 </h1>
-                <p class="mx-auto mt-4 max-w-2xl text-lg leading-8 text-heritage-muted">{{ error }}</p>
+                <p class="mx-auto mt-4 max-w-2xl text-lg leading-8 text-heritage-muted">
+                    {{ isLocked ? 'Create a free account to unlock all quizzes and save your progress.' : error }}
+                </p>
                 <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
                     <PrimaryButton v-if="isLocked" :href="authHref('/register')">Create free account</PrimaryButton>
                     <PrimaryButton :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
                     <PrimaryButton v-if="!isLocked" :href="tryAgainUrl">Start quiz</PrimaryButton>
-                    <PrimaryButton v-else :href="continueUrl" variant="ghost">Back to quizzes</PrimaryButton>
+                    <PrimaryButton v-else :href="continueUrl" variant="ghost">Back to Quizzes</PrimaryButton>
                 </div>
             </section>
 

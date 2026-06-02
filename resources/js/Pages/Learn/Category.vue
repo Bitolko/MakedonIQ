@@ -177,7 +177,7 @@ function authHref(path, intendedUrl) {
                         </div>
 
                         <div v-if="lessonCards.length" class="mt-6 grid gap-5">
-                            <article v-for="lesson in lessonCards" :key="lesson.slug" class="soft-card p-5 transition hover:-translate-y-1 hover:shadow-soft md:p-6">
+                            <article v-for="lesson in lessonCards" :key="lesson.slug" :class="['soft-card p-5 transition hover:-translate-y-1 hover:shadow-soft md:p-6', lesson.isLocked ? 'border-heritage-gold/50' : '']">
                                 <div class="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2">
@@ -188,16 +188,21 @@ function authHref(path, intendedUrl) {
                                                 {{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes"> min</span>
                                             </span>
                                         </div>
-                                        <h3 class="mt-4 text-2xl font-black text-heritage-ink">{{ lesson.title }}</h3>
+                                        <div class="mt-4 flex gap-4">
+                                            <div v-if="lesson.isLocked" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint text-[0.65rem] font-black text-heritage-gold-deep">
+                                                LOCK
+                                            </div>
+                                            <h3 class="text-2xl font-black text-heritage-ink">{{ lesson.title }}</h3>
+                                        </div>
                                         <p class="mt-3 leading-7 text-heritage-muted">{{ lesson.summary }}</p>
                                         <p v-if="lesson.isLocked" class="mt-4 rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-bold text-heritage-muted">
-                                            Create account to unlock this lesson and continue the full path.
+                                            Create a free account to unlock.
                                         </p>
                                     </div>
                                     <div class="flex flex-col gap-3 sm:min-w-40">
-                                        <PrimaryButton v-if="lesson.isLocked" :href="lesson.registerHref">Create account</PrimaryButton>
-                                        <PrimaryButton v-if="lesson.isLocked" :href="lesson.loginHref" variant="soft">Log in</PrimaryButton>
-                                        <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href">Start</PrimaryButton>
+                                        <PrimaryButton v-if="lesson.isLocked" :href="lesson.registerHref">Unlock free</PrimaryButton>
+                                        <a v-if="lesson.isLocked" :href="lesson.loginHref" class="text-center text-xs font-black text-heritage-red hover:text-heritage-red-dark">Already have an account? Log in</a>
+                                        <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href">{{ lesson.isDemo ? 'Try demo' : 'Start' }}</PrimaryButton>
                                         <PrimaryButton v-if="!lesson.isLocked && lesson.related_quiz && !lesson.relatedQuizLocked" :href="lesson.related_quiz.start_url" variant="soft">Quiz</PrimaryButton>
                                         <PrimaryButton v-else-if="!lesson.isLocked && lesson.relatedQuizLocked" :href="lesson.relatedQuizRegisterHref" variant="soft">Unlock quiz</PrimaryButton>
                                     </div>

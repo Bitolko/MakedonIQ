@@ -6,12 +6,33 @@ import AppBadge from '../Components/AppBadge.vue';
 import ProgressBar from '../Components/ProgressBar.vue';
 import MacedoniaMap from '../Components/MacedoniaMap.vue';
 import { categories, historyQuizzes } from '../data/makedoniq';
+import { currentUser } from '../api/makedoniq';
+
+const user = currentUser();
 
 const steps = [
     { title: 'Choose a topic', text: 'Pick language, alphabet, history, geography, food, music, or traditions.', icon: '01' },
     { title: 'Answer questions', text: 'Practise with short bilingual prompts that feel playful and clear.', icon: '02' },
     { title: 'Earn points', text: 'Celebrate progress with points, streaks, badges, and encouraging feedback.', icon: '03' },
     { title: 'Track progress', text: 'See strengths by category and keep learning at your own pace.', icon: '04' },
+];
+
+const demoItems = [
+    {
+        title: 'Basic Macedonian Greetings',
+        detail: 'Start with friendly everyday phrases.',
+        href: '/quizzes/macedonian-language/basic-macedonian-greetings/start',
+    },
+    {
+        title: 'Cyrillic Alphabet Basics',
+        detail: 'Preview letters, sounds, and first words.',
+        href: '/quizzes/macedonian-alphabet/cyrillic-alphabet-basics/start',
+    },
+    {
+        title: 'Macedonia Map Challenge',
+        detail: 'Guess cities, lakes, and landmarks.',
+        href: '/map-challenge',
+    },
 ];
 </script>
 
@@ -25,11 +46,11 @@ const steps = [
                         Learn Macedonian through fun quizzes
                     </h1>
                     <p class="mt-6 max-w-xl text-lg leading-8 text-heritage-muted">
-                        A bilingual learning platform for Macedonian families in Australia.
+                        Try a few lessons and quizzes free. Create a free account to unlock the full learning path, save scores, and track progress.
                     </p>
                     <div class="mt-8 flex flex-col gap-4 sm:flex-row">
-                        <PrimaryButton href="/register" size="lg">Start Learning</PrimaryButton>
-                        <PrimaryButton href="/quizzes" variant="gold" size="lg">Explore Quizzes</PrimaryButton>
+                        <PrimaryButton href="/quizzes" variant="gold" size="lg">Try demo quizzes</PrimaryButton>
+                        <PrimaryButton :href="user ? '/dashboard' : '/register'" size="lg">{{ user ? 'Go to dashboard' : 'Create free account' }}</PrimaryButton>
                     </div>
                     <div class="mt-8 grid max-w-xl grid-cols-3 gap-3">
                         <div class="metric-card">
@@ -74,6 +95,26 @@ const steps = [
                                 <ProgressBar :value="62" label="History progress" tone="navy" />
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="page-shell pb-6">
+                <div class="rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
+                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                        <div>
+                            <AppBadge variant="gold">Try these demos</AppBadge>
+                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Free previews to start with</h2>
+                        </div>
+                        <PrimaryButton :href="user ? '/dashboard' : '/register'" variant="soft">{{ user ? 'Open dashboard' : 'Create free account' }}</PrimaryButton>
+                    </div>
+                    <div class="mt-6 grid gap-4 md:grid-cols-3">
+                        <article v-for="item in demoItems" :key="item.title" class="rounded-[1.5rem] border border-heritage-line bg-heritage-panel p-5">
+                            <p class="text-xs font-black uppercase text-heritage-red">Demo</p>
+                            <h3 class="mt-2 text-xl font-black text-heritage-ink">{{ item.title }}</h3>
+                            <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
+                            <PrimaryButton :href="item.href" class="mt-4 w-full" size="sm" variant="soft">Try demo</PrimaryButton>
+                        </article>
                     </div>
                 </div>
             </section>

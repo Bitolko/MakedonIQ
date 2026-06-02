@@ -37,8 +37,20 @@ const totalQuestions = computed(() => questions.value.length);
 const answeredCount = computed(() => Object.keys(selectedAnswers.value).length);
 const isLastQuestion = computed(() => currentIndex.value >= totalQuestions.value - 1);
 const allAnswered = computed(() => totalQuestions.value > 0 && answeredCount.value === totalQuestions.value);
+const guestDemoCompleted = computed(() => !user && allAnswered.value && isLastQuestion.value);
 const categoryHref = computed(() => categoryUrl(quiz.value?.category?.slug || categorySlug));
 const placeholderResultsHref = computed(() => quizResultsUrl(quiz.value?.category?.slug || categorySlug, quiz.value?.slug || quizSlug));
+const tryAnotherDemoHref = computed(() => {
+    if (quiz.value?.slug === 'basic-macedonian-greetings') {
+        return '/quizzes/macedonian-alphabet/cyrillic-alphabet-basics/start';
+    }
+
+    if (quiz.value?.slug === 'cyrillic-alphabet-basics') {
+        return '/map-challenge';
+    }
+
+    return '/quizzes/macedonian-language/basic-macedonian-greetings/start';
+});
 const relatedLesson = computed(() => quiz.value?.related_lesson || null);
 const isMapQuestion = computed(() => currentQuestion.value?.question_type === 'map_guess');
 const mapMetadata = computed(() => currentQuestion.value?.metadata || {});
@@ -211,12 +223,17 @@ function authHref(path) {
 
             <section v-else-if="error" class="mx-auto w-full max-w-3xl">
                 <div class="soft-card p-8 text-center">
-                    <h1 class="text-3xl font-black text-heritage-ink">{{ isLocked ? 'This quiz is locked' : 'Quiz unavailable' }}</h1>
-                    <p class="mt-3 leading-7 text-heritage-muted">{{ error }}</p>
+                    <div v-if="isLocked" class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-heritage-gold/40 bg-heritage-gold-faint text-xs font-black text-heritage-gold-deep shadow-card">
+                        LOCK
+                    </div>
+                    <h1 class="text-3xl font-black text-heritage-ink">{{ isLocked ? 'This quiz is locked for guests.' : 'Quiz unavailable' }}</h1>
+                    <p class="mt-3 leading-7 text-heritage-muted">
+                        {{ isLocked ? 'Create a free account to unlock all quizzes and save your progress.' : error }}
+                    </p>
                     <div v-if="isLocked" class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
                         <PrimaryButton :href="authHref('/register')">Create free account</PrimaryButton>
                         <PrimaryButton :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
-                        <PrimaryButton :href="categoryHref" variant="ghost">Back to quizzes</PrimaryButton>
+                        <PrimaryButton :href="categoryHref" variant="ghost">Back to Quizzes</PrimaryButton>
                     </div>
                 </div>
             </section>
@@ -277,16 +294,18 @@ function authHref(path) {
                         {{ selectedAnswerId ? 'OK' : '?' }}
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xl font-black text-heritage-ink">{{ selectedAnswerId ? 'Answer saved' : 'Choose an answer' }}</p>
+                        <p class="text-xl font-black text-heritage-ink">{{ selectedAnswerId ? 'Answer selected' : 'Choose an answer' }}</p>
                         <p class="text-sm text-heritage-muted">
                             {{ allAnswered ? 'Ready to submit when you reach the end.' : `${answeredCount} of ${totalQuestions || 0} questions answered.` }}
                         </p>
                         <p v-if="submitError" class="mt-2 text-sm font-bold text-heritage-red" role="alert">{{ submitError }}</p>
-                        <div v-if="showAuthPrompt" class="mt-3">
-                            <p class="text-sm font-bold text-heritage-gold-deep">Create an account to save your score and unlock more quizzes.</p>
+                        <div v-if="showAuthPrompt || guestDemoCompleted" class="mt-3 rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint p-4">
+                            <p class="text-base font-black text-heritage-ink">Nice work!</p>
+                            <p class="mt-1 text-sm font-bold leading-6 text-heritage-gold-deep">Create a free account to save your score and unlock all lessons and quizzes.</p>
                             <div class="mt-3 flex flex-col gap-2 sm:flex-row">
+                                <a class="pressable-gold rounded-2xl px-4 py-2 text-center text-sm font-black" :href="authHref('/register')">Create free account</a>
                                 <a class="button-soft rounded-2xl px-4 py-2 text-center text-sm font-black" :href="authHref('/login')">Log in</a>
-                                <a class="pressable-gold rounded-2xl px-4 py-2 text-center text-sm font-black" :href="authHref('/register')">Create account</a>
+                                <a class="button-ghost rounded-2xl px-4 py-2 text-center text-sm font-black" :href="tryAnotherDemoHref">Try another demo</a>
                             </div>
                         </div>
                         <a v-if="relatedLesson" :href="relatedLesson.url" class="mt-3 inline-flex text-sm font-black text-heritage-red hover:text-heritage-red-dark">
@@ -297,6 +316,7 @@ function authHref(path) {
                 <div class="flex flex-col gap-3 sm:flex-row md:justify-end">
                     <PrimaryButton v-if="currentIndex > 0" class="w-full sm:w-auto" variant="soft" size="lg" @click="goPrevious">Previous</PrimaryButton>
                     <PrimaryButton v-if="!isLastQuestion" class="w-full sm:w-auto" size="lg" @click="goNext">Next</PrimaryButton>
+                    <PrimaryButton v-else-if="guestDemoCompleted" class="w-full sm:w-auto" :href="authHref('/register')" size="lg">Save score free</PrimaryButton>
                     <PrimaryButton
                         v-else
                         class="w-full sm:w-auto"
@@ -306,7 +326,8 @@ function authHref(path) {
                     >
                         {{ isSubmitting ? 'Submitting...' : 'Submit quiz' }}
                     </PrimaryButton>
-                    <PrimaryButton v-if="!user" class="w-full sm:w-auto" :href="placeholderResultsHref" variant="ghost" size="lg">Results info</PrimaryButton>
+                    <PrimaryButton v-if="!user && !guestDemoCompleted" class="w-full sm:w-auto" :href="placeholderResultsHref" variant="ghost" size="lg">Results info</PrimaryButton>
+                    <PrimaryButton v-if="guestDemoCompleted" class="w-full sm:w-auto" :href="tryAnotherDemoHref" variant="ghost" size="lg">Try another demo</PrimaryButton>
                 </div>
             </div>
         </footer>

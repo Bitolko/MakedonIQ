@@ -111,7 +111,7 @@ onMounted(async () => {
                         </div>
 
                         <p v-if="!user" class="mt-4 rounded-2xl bg-heritage-gold-faint px-4 py-3 text-sm font-bold text-heritage-gold-deep">
-                            You can try this demo now. Create an account to save your score and unlock the full quiz path.
+                            You can try this demo now. Create a free account to save your score and unlock the full quiz path.
                         </p>
                     </div>
 

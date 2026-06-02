@@ -114,15 +114,20 @@ function authHref(path) {
             </section>
 
             <section v-else-if="error" class="section-panel text-center lg:col-span-2">
+                <div v-if="isLocked" class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-heritage-gold/40 bg-heritage-gold-faint text-xs font-black text-heritage-gold-deep shadow-card">
+                    LOCK
+                </div>
                 <AppBadge :variant="isLocked ? 'gold' : 'red'">{{ isLocked ? 'Locked quiz' : 'Quiz unavailable' }}</AppBadge>
                 <h1 class="mt-4 text-3xl font-black text-heritage-ink">
-                    {{ isLocked ? 'This quiz is part of the full MakedonIQ path.' : 'Quiz unavailable' }}
+                    {{ isLocked ? 'This quiz is locked for guests.' : 'Quiz unavailable' }}
                 </h1>
-                <p class="mx-auto mt-3 max-w-2xl leading-7 text-heritage-muted">{{ error }}</p>
+                <p class="mx-auto mt-3 max-w-2xl leading-7 text-heritage-muted">
+                    {{ isLocked ? 'Create a free account to unlock all quizzes and save your progress.' : error }}
+                </p>
                 <div v-if="isLocked" class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
                     <PrimaryButton :href="authHref('/register')">Create free account</PrimaryButton>
                     <PrimaryButton :href="authHref('/login')" variant="soft">Log in</PrimaryButton>
-                    <PrimaryButton :href="backUrl" variant="ghost">Back to quizzes</PrimaryButton>
+                    <PrimaryButton :href="backUrl" variant="ghost">Back to Quizzes</PrimaryButton>
                 </div>
             </section>
 
@@ -184,7 +189,7 @@ function authHref(path) {
                         {{ overviewText }}
                     </p>
                 </div>
-                <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">{{ isMapChallenge ? 'Start Map Challenge' : 'Start Quiz' }}</PrimaryButton>
+                <PrimaryButton :href="activeUrl" class="mt-6 w-full" size="lg">{{ quiz.is_demo ? (isMapChallenge ? 'Start demo challenge' : 'Start demo') : (isMapChallenge ? 'Start Map Challenge' : 'Start Quiz') }}</PrimaryButton>
                 <PrimaryButton :href="backUrl" variant="soft" class="mt-4 w-full">Back to quizzes</PrimaryButton>
             </aside>
             </template>

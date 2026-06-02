@@ -37,7 +37,7 @@ const quizCards = computed(() => quizzes.value.map((quiz) => ({
     href: quizStartUrl(category.value?.slug || activeSlug, quiz.slug),
     isDemo: Boolean(quiz.is_demo),
     isLocked: Boolean(quiz.is_locked),
-    lockedMessage: 'Create account to unlock all quizzes.',
+    lockedMessage: 'Create a free account to unlock',
     registerHref: authHref('/register', quizStartUrl(category.value?.slug || activeSlug, quiz.slug)),
     loginHref: authHref('/login', quizStartUrl(category.value?.slug || activeSlug, quiz.slug)),
     isMapChallenge: Boolean(quiz.has_map_questions),
@@ -87,7 +87,11 @@ function quizStatus(quiz) {
 
 function quizActionLabel(quiz) {
     if (quiz.is_locked) {
-        return 'Create account';
+        return 'Unlock free';
+    }
+
+    if (quiz.is_demo && !quiz.user_progress) {
+        return 'Start demo';
     }
 
     return quiz.user_progress?.completed ? 'Try again' : 'Start';
@@ -221,7 +225,7 @@ function authHref(path, intendedUrl) {
 
                         <div v-else class="mt-5 flex flex-col gap-3 sm:flex-row">
                             <PrimaryButton href="/login" variant="gold">Login</PrimaryButton>
-                            <PrimaryButton href="/register" variant="soft">Create account</PrimaryButton>
+                            <PrimaryButton href="/register" variant="soft">Create free account</PrimaryButton>
                         </div>
                     </div>
                 </div>
