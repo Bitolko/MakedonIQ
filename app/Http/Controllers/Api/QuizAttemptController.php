@@ -162,6 +162,9 @@ class QuizAttemptController extends Controller
                     'has_picture_questions' => $attempt->quiz->questions()
                         ->where('question_type', 'picture_choice')
                         ->exists(),
+                    'has_sound_questions' => $attempt->quiz->questions()
+                        ->where('question_type', 'sound_choice')
+                        ->exists(),
                     'related_lesson' => $this->lessonPayload($attempt->quiz),
                 ],
                 'category' => [
@@ -218,9 +221,7 @@ class QuizAttemptController extends Controller
                 'id' => $question->id,
                 'question_type' => $question->question_type,
                 'translation_direction' => $question->translation_direction,
-                'metadata' => $question->question_type === 'picture_choice'
-                    ? $this->publicPictureQuestionMetadata($question->metadata ?? [])
-                    : null,
+                'metadata' => $this->publicQuestionMetadata($question->metadata ?? [], $question->question_type),
                 'question_en' => $question->question_en,
                 'question_mk' => $question->question_mk,
                 'explanation_en' => $question->explanation_en,
@@ -240,6 +241,15 @@ class QuizAttemptController extends Controller
         ];
     }
 
+    private function publicQuestionMetadata(?array $metadata, ?string $questionType): ?array
+    {
+        return match ($questionType) {
+            'picture_choice' => $this->publicPictureQuestionMetadata($metadata),
+            'sound_choice' => $this->publicSoundQuestionMetadata($metadata),
+            default => null,
+        };
+    }
+
     private function publicPictureQuestionMetadata(?array $metadata): array
     {
         $metadata = $metadata ?? [];
@@ -249,6 +259,15 @@ class QuizAttemptController extends Controller
             'image_alt_en' => $this->nullableMetadataString($metadata['image_alt_en'] ?? null),
             'image_alt_mk' => $this->nullableMetadataString($metadata['image_alt_mk'] ?? null),
             'image_type' => $this->nullableMetadataString($metadata['image_type'] ?? null) ?? 'other',
+        ];
+    }
+
+    private function publicSoundQuestionMetadata(?array $metadata): array
+    {
+        $metadata = $metadata ?? [];
+
+        return [
+            'audio_path' => $this->nullableMetadataString($metadata['audio_path'] ?? null),
         ];
     }
 

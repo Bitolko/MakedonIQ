@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 class QuizController extends Controller
 {
     private const LOCKED_QUIZ_MESSAGE = 'Create a free account to unlock this quiz.';
+    private const LOCKED_SOUND_DEMO_MESSAGE = 'Create a free account to unlock more sound quizzes.';
+    private const SOUND_DEMO_SESSION_KEY = 'makedoniq.sound_demo_quiz_slug';
 
     public function show(Request $request, string $slug): JsonResponse
     {
@@ -19,6 +21,7 @@ class QuizController extends Controller
                 'questions as questions_count' => fn ($query) => $query->published(),
                 'questions as map_questions_count' => fn ($query) => $query->published()->where('question_type', 'map_guess'),
                 'questions as picture_questions_count' => fn ($query) => $query->published()->where('question_type', 'picture_choice'),
+                'questions as sound_questions_count' => fn ($query) => $query->published()->where('question_type', 'sound_choice'),
             ])
             ->firstOrFail();
 
@@ -45,6 +48,7 @@ class QuizController extends Controller
             ->firstOrFail();
 
         $this->ensureQuizAccessible($quiz, $request);
+        $this->ensureGuestSoundPreviewAccessible($quiz, $request);
 
         $questions = $quiz->questions->map(fn ($question): array => [
             'id' => $question->id,
@@ -118,6 +122,8 @@ class QuizController extends Controller
             'has_map_questions' => $this->mapQuestionsCount($quiz) > 0,
             'picture_questions_count' => $this->pictureQuestionsCount($quiz),
             'has_picture_questions' => $this->pictureQuestionsCount($quiz) > 0,
+            'sound_questions_count' => $this->soundQuestionsCount($quiz),
+            'has_sound_questions' => $this->soundQuestionsCount($quiz) > 0,
             'related_lesson' => $this->lessonPayload($quiz, $isGuest),
         ];
     }
@@ -144,11 +150,23 @@ class QuizController extends Controller
         return (int) ($quiz->picture_questions_count ?? 0);
     }
 
+    private function soundQuestionsCount(Quiz $quiz): int
+    {
+        if ($quiz->relationLoaded('questions')) {
+            return $quiz->questions
+                ->where('question_type', 'sound_choice')
+                ->count();
+        }
+
+        return (int) ($quiz->sound_questions_count ?? 0);
+    }
+
     private function publicQuestionMetadata(?array $metadata, ?string $questionType): ?array
     {
         return match ($questionType) {
             'map_guess' => $this->publicMapQuestionMetadata($metadata),
             'picture_choice' => $this->publicPictureQuestionMetadata($metadata),
+            'sound_choice' => $this->publicSoundQuestionMetadata($metadata),
             default => null,
         };
     }
@@ -176,11 +194,45 @@ class QuizController extends Controller
         ];
     }
 
+    private function publicSoundQuestionMetadata(?array $metadata): array
+    {
+        $metadata = $metadata ?? [];
+
+        return [
+            'audio_path' => $this->nullableMetadataString($metadata['audio_path'] ?? null),
+        ];
+    }
+
     private function nullableMetadataString(mixed $value): ?string
     {
         $value = trim((string) ($value ?? ''));
 
         return $value === '' ? null : $value;
+    }
+
+    private function ensureGuestSoundPreviewAccessible(Quiz $quiz, Request $request): void
+    {
+        if (! $this->isGuest($request) || ! $this->quizHasSoundQuestions($quiz)) {
+            return;
+        }
+
+        $previewSlug = $request->session()->get(self::SOUND_DEMO_SESSION_KEY);
+
+        abort_if($previewSlug && $previewSlug !== $quiz->slug, 403, self::LOCKED_SOUND_DEMO_MESSAGE);
+
+        $request->session()->put(self::SOUND_DEMO_SESSION_KEY, $quiz->slug);
+    }
+
+    private function quizHasSoundQuestions(Quiz $quiz): bool
+    {
+        if ($quiz->relationLoaded('questions')) {
+            return $quiz->questions->contains('question_type', 'sound_choice');
+        }
+
+        return $quiz->questions()
+            ->published()
+            ->where('question_type', 'sound_choice')
+            ->exists();
     }
 
     private function lessonPayload(Quiz $quiz, bool $isGuest): ?array

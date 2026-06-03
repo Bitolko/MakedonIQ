@@ -83,6 +83,27 @@ export async function deleteJson(url) {
     });
 }
 
+export async function postForm(url, body) {
+    return fetchJson(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body,
+    });
+}
+
+export async function patchForm(url, body) {
+    body.append('_method', 'PATCH');
+
+    return postForm(url, body);
+}
+
+function isFormData(value) {
+    return typeof FormData !== 'undefined' && value instanceof FormData;
+}
+
 export async function submitQuizAttempt(quizSlug, answers) {
     return postJson(`/api/quizzes/${quizSlug}/attempts`, { answers });
 }
@@ -196,7 +217,9 @@ export async function getAdminQuizQuestions(quizId) {
 }
 
 export async function createAdminQuestion(quizId, payload) {
-    return postJson(`/api/admin/quizzes/${quizId}/questions`, payload);
+    const url = `/api/admin/quizzes/${quizId}/questions`;
+
+    return isFormData(payload) ? postForm(url, payload) : postJson(url, payload);
 }
 
 export async function getAdminQuestion(questionId) {
@@ -204,7 +227,9 @@ export async function getAdminQuestion(questionId) {
 }
 
 export async function updateAdminQuestion(questionId, payload) {
-    return patchJson(`/api/admin/questions/${questionId}`, payload);
+    const url = `/api/admin/questions/${questionId}`;
+
+    return isFormData(payload) ? patchForm(url, payload) : patchJson(url, payload);
 }
 
 export async function deleteAdminQuestion(questionId) {

@@ -18,8 +18,8 @@ const lessons = ref([]);
 const isLoading = ref(true);
 const error = ref('');
 const language = preferredLanguage();
-const user = currentUser();
-const isGuest = computed(() => !user);
+const user = computed(() => currentUser());
+const isGuest = computed(() => !user.value);
 
 const categoryVisuals = {
     'macedonian-language': {
@@ -72,10 +72,10 @@ const featuredLessons = computed(() => lessons.value.slice(0, 6).map((lesson) =>
     summary: localizedText(lesson, 'summary', language),
     category: language === 'mk' && lesson.category_name_mk ? lesson.category_name_mk : lesson.category_name_en,
     href: lessonUrl(lesson.category_slug, lesson.slug),
-    isDemo: Boolean(lesson.is_demo),
+    isDemo: isGuest.value && Boolean(lesson.is_demo),
     isLocked: Boolean(lesson.is_locked),
     relatedQuizLocked: Boolean(lesson.related_quiz?.is_locked),
-    actionLabel: user ? 'Start lesson' : (lesson.is_demo ? 'Try demo' : 'Start lesson'),
+    actionLabel: user.value ? 'Start lesson' : (lesson.is_demo ? 'Try demo' : 'Start lesson'),
     registerHref: authHref('/register', lessonUrl(lesson.category_slug, lesson.slug)),
     loginHref: authHref('/login', lessonUrl(lesson.category_slug, lesson.slug)),
     relatedQuizRegisterHref: authHref('/register', lesson.related_quiz?.start_url || lessonUrl(lesson.category_slug, lesson.slug)),
@@ -99,6 +99,33 @@ const demoItems = [
         detail: 'Guess cities, lakes, and landmarks on the map.',
         href: '/map-challenge',
         cta: 'Open demo',
+    },
+];
+
+const continueItems = [
+    {
+        title: 'Browse all lessons',
+        detail: 'Return to the full Learn path and choose your next topic.',
+        href: '/learn',
+        accent: 'bg-heritage-red text-white',
+    },
+    {
+        title: 'Take a quiz',
+        detail: 'Practise what you remember with category quizzes.',
+        href: '/quizzes',
+        accent: 'bg-heritage-gold text-heritage-navy',
+    },
+    {
+        title: 'View progress',
+        detail: 'Review saved attempts, scores, and learning history.',
+        href: '/progress',
+        accent: 'bg-heritage-navy text-white',
+    },
+    {
+        title: 'Try Map Challenge',
+        detail: 'Guess Macedonian cities, lakes, and landmarks from map clues.',
+        href: '/map-challenge',
+        accent: 'bg-heritage-red text-white',
     },
 ];
 
@@ -128,7 +155,7 @@ function authHref(path, intendedUrl) {
                     <AppBadge variant="red">Learn</AppBadge>
                     <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-6xl">Learn Macedonian step by step</h1>
                     <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-heritage-navy/80">
-                        {{ isGuest ? 'Try a few lessons free, then create an account to unlock all lessons, quizzes, progress tracking, and saved results.' : 'Explore published lessons, practise with quizzes, and keep your learning moving at your own pace.' }}
+                        {{ isGuest ? 'Try a few lessons free, then create an account to unlock all lessons, quizzes, progress tracking, and saved results.' : 'Explore lessons, practise with quizzes, and keep building your Macedonian learning path.' }}
                     </p>
                     <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                         <PrimaryButton href="#learn-categories" size="lg">Start learning</PrimaryButton>
@@ -159,16 +186,23 @@ function authHref(path, intendedUrl) {
                 <section v-else class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div>
-                            <AppBadge variant="gold">Continue learning</AppBadge>
-                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Pick up your learning path</h2>
+                            <AppBadge variant="gold">CONTINUE</AppBadge>
+                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Continue your learning journey</h2>
+                            <p class="mt-2 max-w-2xl text-heritage-muted">Pick up a lesson, practise with quizzes, or review your progress.</p>
                         </div>
                         <PrimaryButton href="/dashboard" variant="soft">Open dashboard</PrimaryButton>
                     </div>
-                    <div class="mt-6 grid gap-4 md:grid-cols-4">
-                        <PrimaryButton href="#learn-categories" class="w-full" variant="soft">Browse all lessons</PrimaryButton>
-                        <PrimaryButton href="/quizzes" class="w-full" variant="soft">Take a quiz</PrimaryButton>
-                        <PrimaryButton href="/progress" class="w-full" variant="soft">View progress</PrimaryButton>
-                        <PrimaryButton href="/map-challenge" class="w-full" variant="soft">Try Map Challenge</PrimaryButton>
+                    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        <a
+                            v-for="item in continueItems"
+                            :key="item.title"
+                            :href="item.href"
+                            class="group rounded-[1.5rem] border border-heritage-line bg-heritage-panel p-5 shadow-card transition hover:-translate-y-1 hover:border-heritage-red/30 hover:bg-white hover:shadow-soft"
+                        >
+                            <span :class="['flex h-11 w-11 items-center justify-center rounded-2xl text-xs font-black shadow-card', item.accent]">GO</span>
+                            <h3 class="mt-4 text-xl font-black text-heritage-ink group-hover:text-heritage-red">{{ item.title }}</h3>
+                            <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
+                        </a>
                     </div>
                 </section>
 

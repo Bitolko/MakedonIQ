@@ -34,6 +34,33 @@ const demoItems = [
         href: '/map-challenge',
     },
 ];
+
+const homeActions = [
+    {
+        title: 'Dashboard',
+        detail: 'Open your learning overview.',
+        href: '/dashboard',
+        badge: 'Stats',
+    },
+    {
+        title: 'Progress',
+        detail: 'Review saved quiz results.',
+        href: '/progress',
+        badge: 'Review',
+    },
+    {
+        title: 'Continue lessons',
+        detail: 'Browse the Learn path.',
+        href: '/learn',
+        badge: 'Learn',
+    },
+    {
+        title: 'Map Challenge',
+        detail: 'Practise geography clues.',
+        href: '/map-challenge',
+        badge: 'Map',
+    },
+];
 </script>
 
 <template>
@@ -43,14 +70,15 @@ const demoItems = [
                 <div>
                     <span class="eyebrow">Australia's Macedonian learning hub</span>
                     <h1 class="mt-6 max-w-3xl text-4xl font-black leading-tight text-heritage-ink sm:text-5xl lg:text-6xl">
-                        Learn Macedonian through fun quizzes
+                        {{ isGuest ? 'Learn Macedonian through fun quizzes' : 'Continue learning Macedonian' }}
                     </h1>
                     <p class="mt-6 max-w-xl text-lg leading-8 text-heritage-muted">
-                        {{ isGuest ? 'Try a few lessons and quizzes free. Create a free account to unlock the full learning path, save scores, and track progress.' : 'Welcome back. Jump into lessons, quizzes, progress, or geography practice whenever you are ready.' }}
+                        {{ isGuest ? 'Try a few lessons and quizzes free. Create a free account to unlock the full learning path, save scores, and track progress.' : 'Explore lessons, practise with quizzes, and keep building your progress.' }}
                     </p>
                     <div class="mt-8 flex flex-col gap-4 sm:flex-row">
-                        <PrimaryButton href="/quizzes" variant="gold" size="lg">{{ isGuest ? 'Try demo quizzes' : 'Browse quizzes' }}</PrimaryButton>
-                        <PrimaryButton :href="isGuest ? '/register' : '/dashboard'" size="lg">{{ isGuest ? 'Create free account' : 'Go to dashboard' }}</PrimaryButton>
+                        <PrimaryButton :href="isGuest ? '/quizzes#free-demos' : '/dashboard'" variant="gold" size="lg">{{ isGuest ? 'Try demo quizzes' : 'Dashboard' }}</PrimaryButton>
+                        <PrimaryButton :href="isGuest ? '/register' : '/learn'" size="lg">{{ isGuest ? 'Create free account' : 'Continue learning' }}</PrimaryButton>
+                        <PrimaryButton v-if="!isGuest" href="/map-challenge" variant="white" size="lg">Map Challenge</PrimaryButton>
                     </div>
                     <div class="mt-8 grid max-w-xl grid-cols-3 gap-3">
                         <div class="metric-card">
@@ -69,13 +97,13 @@ const demoItems = [
                 </div>
 
                 <div class="heritage-pattern rounded-[2rem] p-4 shadow-soft">
-                    <div class="rounded-[1.5rem] bg-white p-5 shadow-card">
+                    <div v-if="isGuest" class="rounded-[1.5rem] bg-white p-5 shadow-card">
                         <div class="flex items-center justify-between gap-4">
                             <div>
-                                <p class="label">{{ isGuest ? "Today's warm-up preview" : "Today's warm-up" }}</p>
+                                <p class="label">Demo quiz preview</p>
                                 <h2 class="mt-1 text-2xl font-black text-heritage-red">Добро утро</h2>
                             </div>
-                            <AppBadge variant="gold">{{ isGuest ? 'Demo preview' : 'Practice' }}</AppBadge>
+                            <AppBadge variant="gold">DEMO PREVIEW</AppBadge>
                         </div>
                         <div class="mt-6 rounded-2xl bg-heritage-panel p-5">
                             <p class="text-sm font-black text-heritage-muted">What does this phrase mean?</p>
@@ -88,17 +116,43 @@ const demoItems = [
                         </div>
                         <div class="mt-6 grid gap-4 sm:grid-cols-2">
                             <div class="rounded-2xl bg-heritage-red-faint p-4">
-                                <p class="label">{{ isGuest ? 'Free demos' : 'Continue' }}</p>
-                                <p class="mt-2 text-2xl font-black text-heritage-red">{{ isGuest ? '3 unlocked' : 'Learning' }}</p>
+                                <p class="label">Free demos</p>
+                                <p class="mt-2 text-2xl font-black text-heritage-red">3 unlocked</p>
                             </div>
                             <div class="rounded-2xl bg-heritage-panel p-4">
-                                <p class="label">{{ isGuest ? 'Progress' : 'Dashboard' }}</p>
-                                <p class="mt-2 text-2xl font-black text-heritage-navy">{{ isGuest ? 'Saved after signup' : 'View real stats' }}</p>
+                                <p class="label">Save progress</p>
+                                <p class="mt-2 text-2xl font-black text-heritage-navy">After signup</p>
                             </div>
                         </div>
-                        <PrimaryButton :href="isGuest ? '/quizzes/macedonian-language/basic-macedonian-greetings/start' : '/dashboard'" class="mt-5 w-full" variant="soft">
-                            {{ isGuest ? 'Try demo quiz' : 'View dashboard' }}
-                        </PrimaryButton>
+                        <PrimaryButton href="/quizzes/macedonian-language/basic-macedonian-greetings/start" class="mt-5 w-full" variant="soft">Try demo quiz</PrimaryButton>
+                    </div>
+
+                    <div v-else class="rounded-[1.5rem] bg-white p-5 shadow-card">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <p class="label">Signed-in learning</p>
+                                <h2 class="mt-1 text-2xl font-black text-heritage-red">Continue your Macedonian journey</h2>
+                            </div>
+                            <AppBadge variant="gold">WELCOME BACK</AppBadge>
+                        </div>
+
+                        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                            <a
+                                v-for="action in homeActions"
+                                :key="action.title"
+                                :href="action.href"
+                                class="rounded-2xl border border-heritage-line bg-heritage-panel p-4 shadow-card transition hover:-translate-y-0.5 hover:border-heritage-gold hover:bg-white"
+                            >
+                                <span class="rounded-full bg-heritage-gold-faint px-3 py-1 text-xs font-black text-heritage-gold-deep">{{ action.badge }}</span>
+                                <h3 class="mt-3 text-lg font-black text-heritage-ink">{{ action.title }}</h3>
+                                <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">{{ action.detail }}</p>
+                            </a>
+                        </div>
+
+                        <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+                            <PrimaryButton href="/dashboard" class="w-full" variant="soft">Go to dashboard</PrimaryButton>
+                            <PrimaryButton href="/learn" class="w-full" variant="gold">Continue learning</PrimaryButton>
+                        </div>
                     </div>
                 </div>
             </section>

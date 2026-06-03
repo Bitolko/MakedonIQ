@@ -10,6 +10,7 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 - Expanded original lesson and quiz content across language, alphabet, geography, history, culture, food, and music.
 - Macedonia Map Challenge, a lightweight geography quiz mode with a custom local 3D Macedonia map and dynamic quiz markers.
 - Picture quizzes using `question_type = picture_choice`, optional image metadata, and polished placeholders while final images are prepared.
+- Folklore music lessons with linked `sound_choice` quizzes and MP3 metadata.
 - Bilingual public quiz categories, quizzes, questions, and answers.
 - Published-only public content for categories, quizzes, and questions.
 - Guest demo access: logged-out users can try selected demo lessons and quizzes, while the full published learning path requires an account.
@@ -107,12 +108,16 @@ Demo quizzes:
 - Basic Macedonian Greetings
 - Cyrillic Alphabet Basics
 - Macedonia Map Challenge
+- Jovano, Jovanke Sound Quiz
 
 Demo lessons:
 - Basic Greetings and Everyday Phrases
 - Macedonian Cyrillic Alphabet Basics
 - Cities, Lakes, and Mountains
+- Jovano, Jovanke
 ```
+
+Guest users can preview one demo `sound_choice` quiz per session. Logged-in users can access all published sound quizzes.
 
 ## Making a User Admin
 
@@ -231,6 +236,22 @@ Food and Music
 
 The public questions endpoint returns answer IDs and text only. It does not expose `is_correct`.
 
+Folklore song lessons are normal Learn records linked to normal quizzes through `quizzes.lesson_id`. Seeded sound quizzes use `question_type = sound_choice` with safe public metadata:
+
+```json
+{
+  "audio_path": "/audio/lessons/song_001.mp3"
+}
+```
+
+Audio files belong in:
+
+```text
+public/audio/lessons/
+```
+
+Use neutral MP3 filenames such as `song_001.mp3`, `song_002.mp3`, and `song_003.mp3`. Keep recordings optimized for web playback, around 1-3 MB each. Public quiz-taking responses expose `audio_path` only; they do not expose `is_correct`, `correct_answer`, or admin-only answer-key data.
+
 Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. The frontend renders a custom 3D Macedonia map asset from `public/images` and overlays the pin dynamically from `map_x` and `map_y`. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
 
 Picture quiz questions use `question_type = picture_choice` with optional `questions.metadata`:
@@ -312,9 +333,12 @@ GET /api/admin/quizzes/{quiz}/questions
 POST /api/admin/quizzes/{quiz}/questions
 GET /api/admin/questions/{question}
 PATCH /api/admin/questions/{question}
+POST /api/admin/questions/{question}
 DELETE /api/admin/questions/{question}
 GET /api/admin/attempts
 ```
+
+`POST /api/admin/questions/{question}` accepts multipart updates with `_method=PATCH` for MP3 replacement uploads from the admin question builder.
 
 ## Admin Content Rules
 
@@ -330,6 +354,8 @@ GET /api/admin/attempts
 - Map guess questions can store marker metadata for the local illustrated map.
 - Picture choice questions can store optional image path, alt text, image type, and image credit/source note metadata.
 - Picture quiz images should be original, public domain, or properly licensed. Do not use copied textbook or schoolbook images.
+- Sound choice questions can store `/audio/lessons/song_###.mp3` metadata or accept an MP3 upload in Admin Questions.
+- Sound quiz uploads are saved to `public/audio/lessons/` with neutral `song_###.mp3` filenames.
 - Questions used in attempts are protected from destructive delete/answer replacement.
 - Unpublished lessons do not appear on public Learn pages.
 
@@ -345,6 +371,14 @@ Seeded lessons currently cover beginner-friendly language, alphabet, geography, 
 
 Each lesson belongs to a category and can be connected to one or more quizzes through `quizzes.lesson_id`. Quiz start and result pages can show a related lesson CTA when a quiz is connected.
 
+Folklore song lessons seed through `Database\Seeders\FolkloreMusicSeeder`, which is called by the main database seeder. To recreate the demo sound quizzes locally:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Then place or upload optimized MP3 files at the seeded paths in `public/audio/lessons/`.
+
 ## Security Notes
 
 - `.env` is ignored and must not be committed.
@@ -353,6 +387,7 @@ Each lesson belongs to a category and can be connected to one or more quizzes th
 - Public quiz-taking endpoints do not expose correct answers.
 - Public map metadata exposes marker position/type only, not admin target keys or target labels.
 - Public picture metadata exposes neutral image path, alt text, and image type only, and seeded picture quizzes use null paths until real images are added.
+- Public sound metadata exposes only the neutral `audio_path`.
 - Attempt results require authentication and ownership.
 - Profile endpoints cannot update `is_admin`.
 - Password updates require the current password and store only a hash.
@@ -379,8 +414,10 @@ Public:
 13. Public map metadata does not expose answer-revealing target labels.
 14. Picture quizzes show an image when available or a placeholder when `image_path` is blank.
 15. Public picture metadata handles `image_path: null` without a broken image.
-16. About and contact load.
-17. Invalid paths show the friendly 404 page.
+16. Sound quizzes show an audio player when `audio_path` points to an MP3.
+17. Public sound quiz metadata does not expose `is_correct` or `correct_answer`.
+18. About and contact load.
+19. Invalid paths show the friendly 404 page.
 ```
 
 Auth/user:
@@ -405,6 +442,7 @@ Admin:
 6. Admin question builder validates exactly four answers and exactly one correct answer.
 7. Admin question endpoint may show correctness because it is admin-only.
 8. Admin question builder can create or edit `picture_choice` metadata with a blank image path.
+9. Admin question builder can create or edit `sound_choice` metadata and upload MP3 files.
 ```
 
 ## Deployment Notes

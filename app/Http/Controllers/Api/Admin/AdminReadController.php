@@ -85,6 +85,7 @@ class AdminReadController extends Controller
                 'questions as questions_count',
                 'questions as published_questions_count' => fn ($query) => $query->published(),
                 'questions as map_questions_count' => fn ($query) => $query->where('question_type', 'map_guess'),
+                'questions as sound_questions_count' => fn ($query) => $query->where('question_type', 'sound_choice'),
                 'attempts as attempts_count' => fn ($query) => $query->whereNotNull('completed_at'),
             ])
             ->selectSub(function ($query): void {
@@ -117,6 +118,8 @@ class AdminReadController extends Controller
                 'published_questions_count' => $quiz->published_questions_count,
                 'map_questions_count' => $quiz->map_questions_count,
                 'has_map_questions' => (int) $quiz->map_questions_count > 0,
+                'sound_questions_count' => $quiz->sound_questions_count,
+                'has_sound_questions' => (int) $quiz->sound_questions_count > 0,
                 'attempts_count' => $quiz->attempts_count,
                 'average_percentage' => $quiz->average_percentage === null ? null : $this->percentageOrZero($quiz->average_percentage),
                 'created_at' => $quiz->created_at?->toISOString(),

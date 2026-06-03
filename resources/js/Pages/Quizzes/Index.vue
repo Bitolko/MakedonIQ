@@ -48,6 +48,17 @@ const demoItems = [
         time: '8 min',
         visualClass: 'bg-linear-to-br from-heritage-navy-soft via-white to-heritage-gold-faint',
     },
+    {
+        title: 'Jovano, Jovanke Sound Quiz',
+        detail: 'Listen to a folklore music clue and choose the matching song title.',
+        href: '/quizzes/food-and-music/sound-quiz-jovano-jovanke/start',
+        category: 'Music',
+        visual: 'sound',
+        practise: 'Folklore song titles, melody memory',
+        questions: 1,
+        time: '3 min',
+        visualClass: 'bg-linear-to-br from-heritage-red-faint via-white to-heritage-navy-soft',
+    },
 ];
 
 const accountBenefits = [
@@ -56,7 +67,7 @@ const accountBenefits = [
     'Save quiz scores',
     'Track progress',
     'Continue learning anytime',
-    'Access Map Challenge and future picture quizzes',
+    'Access Map Challenge, picture quizzes, and sound quizzes',
 ];
 
 const categoryCards = computed(() => categories.value.map((category, index) => ({
@@ -154,6 +165,21 @@ onMounted(async () => {
                                         <span class="flex aspect-square items-center justify-center rounded-2xl bg-white text-3xl font-black text-heritage-red shadow-card">А</span>
                                         <span class="flex aspect-square items-center justify-center rounded-2xl bg-heritage-gold text-3xl font-black text-heritage-navy shadow-card">Б</span>
                                         <span class="flex aspect-square items-center justify-center rounded-2xl bg-heritage-red text-3xl font-black text-white shadow-card">В</span>
+                                    </div>
+
+                                    <div v-else-if="item.visual === 'sound'" class="mt-5 rounded-[1.25rem] bg-white/85 p-4 shadow-card">
+                                        <div class="flex items-end gap-2">
+                                            <span class="h-8 w-3 rounded-full bg-heritage-red" />
+                                            <span class="h-16 w-3 rounded-full bg-heritage-gold" />
+                                            <span class="h-11 w-3 rounded-full bg-heritage-navy" />
+                                            <span class="h-20 w-3 rounded-full bg-heritage-red" />
+                                            <span class="h-12 w-3 rounded-full bg-heritage-gold" />
+                                            <span class="h-7 w-3 rounded-full bg-heritage-navy" />
+                                        </div>
+                                        <div class="mt-4 flex items-center gap-3 rounded-2xl bg-heritage-panel px-4 py-3">
+                                            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white">MP3</span>
+                                            <span class="text-sm font-black text-heritage-ink">song_001</span>
+                                        </div>
                                     </div>
 
                                     <div v-else class="relative mt-4 min-h-28 rounded-[1.25rem] bg-white/80 p-4 shadow-card">

@@ -8,6 +8,7 @@ use App\Models\Quiz;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 
 class AdminQuestionController extends Controller
@@ -39,6 +40,7 @@ class AdminQuestionController extends Controller
     public function store(Request $request, Quiz $quiz): JsonResponse
     {
         $validated = $this->validatedData($request);
+        $validated = $this->withUploadedAudioPath($request, $validated);
 
         $question = DB::transaction(function () use ($quiz, $validated): Question {
             $question = $quiz->questions()->create($this->questionAttributes($validated));
@@ -62,6 +64,7 @@ class AdminQuestionController extends Controller
     public function update(Request $request, Question $question): JsonResponse
     {
         $validated = $this->validatedData($request);
+        $validated = $this->withUploadedAudioPath($request, $validated);
         $question = $this->questionWithDetails($question);
         $hasAttemptHistory = $this->hasAttemptHistory($question);
 
@@ -105,7 +108,7 @@ class AdminQuestionController extends Controller
     private function validatedData(Request $request): array
     {
         $validated = $request->validate([
-            'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess,picture_choice'],
+            'question_type' => ['sometimes', 'string', 'in:multiple_choice,map_guess,picture_choice,sound_choice'],
             'translation_direction' => ['nullable', 'string', 'in:general,mk_to_en,en_to_mk'],
             'metadata' => ['nullable', 'array'],
             'metadata.map_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -119,6 +122,8 @@ class AdminQuestionController extends Controller
             'metadata.image_alt_mk' => ['nullable', 'string', 'max:255'],
             'metadata.image_credit' => ['nullable', 'string', 'max:500'],
             'metadata.image_type' => ['nullable', 'string', 'in:food,city,lake,landmark,alphabet,culture,music,other'],
+            'metadata.audio_path' => ['nullable', 'string', 'max:255'],
+            'audio_file' => ['nullable', 'file', 'mimes:mp3', 'max:5120'],
             'question_en' => ['required', 'string'],
             'question_mk' => ['nullable', 'string'],
             'explanation_en' => ['nullable', 'string'],
@@ -149,6 +154,23 @@ class AdminQuestionController extends Controller
             if (! isset($metadata['map_x'], $metadata['map_y'])) {
                 throw ValidationException::withMessages([
                     'metadata' => 'Map guess questions need map X and map Y percentages.',
+                ]);
+            }
+        }
+
+        if (($validated['question_type'] ?? 'multiple_choice') === 'sound_choice') {
+            $metadata = $validated['metadata'] ?? [];
+            $audioPath = $this->normalizeAudioPath($metadata['audio_path'] ?? null);
+
+            if (! $request->hasFile('audio_file') && ! $audioPath) {
+                throw ValidationException::withMessages([
+                    'metadata.audio_path' => 'Sound choice questions need an MP3 upload or an audio path.',
+                ]);
+            }
+
+            if ($audioPath && ! str_starts_with($audioPath, '/audio/lessons/')) {
+                throw ValidationException::withMessages([
+                    'metadata.audio_path' => 'Audio paths must use /audio/lessons/.',
                 ]);
             }
         }
@@ -201,6 +223,12 @@ class AdminQuestionController extends Controller
             ];
         }
 
+        if ($questionType === 'sound_choice') {
+            return [
+                'audio_path' => $this->normalizeAudioPath($metadata['audio_path'] ?? null),
+            ];
+        }
+
         if ($questionType !== 'map_guess') {
             return null;
         }
@@ -220,6 +248,65 @@ class AdminQuestionController extends Controller
         $value = $this->nullableString($value);
 
         return in_array($value, self::PICTURE_IMAGE_TYPES, true) ? $value : 'other';
+    }
+
+    private function withUploadedAudioPath(Request $request, array $validated): array
+    {
+        if (($validated['question_type'] ?? 'multiple_choice') !== 'sound_choice' || ! $request->hasFile('audio_file')) {
+            return $validated;
+        }
+
+        $validated['metadata'] ??= [];
+        $validated['metadata']['audio_path'] = $this->storeAudioFile($request->file('audio_file'));
+
+        return $validated;
+    }
+
+    private function storeAudioFile($file): string
+    {
+        $directory = public_path('audio/lessons');
+
+        File::ensureDirectoryExists($directory);
+
+        $filename = $this->nextAudioFilename($directory);
+        $file->move($directory, $filename);
+
+        return "/audio/lessons/{$filename}";
+    }
+
+    private function nextAudioFilename(string $directory): string
+    {
+        $usedIndexes = collect(File::glob($directory.DIRECTORY_SEPARATOR.'song_*.mp3') ?: [])
+            ->map(fn (string $path): int => $this->songIndexFromPath($path));
+
+        Question::query()
+            ->where('question_type', 'sound_choice')
+            ->get(['metadata'])
+            ->each(function (Question $question) use ($usedIndexes): void {
+                $usedIndexes->push($this->songIndexFromPath($question->metadata['audio_path'] ?? ''));
+            });
+
+        $nextIndex = max(0, ...$usedIndexes->filter()->values()->all()) + 1;
+
+        return sprintf('song_%03d.mp3', $nextIndex);
+    }
+
+    private function songIndexFromPath(?string $path): int
+    {
+        preg_match('/song_(\d+)\.mp3$/i', (string) $path, $matches);
+
+        return isset($matches[1]) ? (int) $matches[1] : 0;
+    }
+
+    private function normalizeAudioPath(mixed $value): ?string
+    {
+        $path = $this->nullableString(is_string($value) ? $value : null);
+
+        if (! $path) {
+            return null;
+        }
+
+        return str_starts_with($path, '/') ? $path : "/{$path}";
     }
 
     private function translationDirection(?string $value): ?string

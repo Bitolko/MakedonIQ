@@ -58,6 +58,8 @@ const mapMetadata = computed(() => currentQuestion.value?.metadata || {});
 const isPictureQuestion = computed(() => currentQuestion.value?.question_type === 'picture_choice');
 const pictureMetadata = computed(() => currentQuestion.value?.metadata || {});
 const pictureLanguage = computed(() => language.value.toLowerCase());
+const isSoundQuestion = computed(() => currentQuestion.value?.question_type === 'sound_choice');
+const soundMetadata = computed(() => currentQuestion.value?.metadata || {});
 const mapPrompt = computed(() => {
     const targetType = mapMetadata.value.target_type || 'place';
 
@@ -262,6 +264,23 @@ function authHref(path) {
                         </div>
                         <div v-if="isPictureQuestion" class="mx-auto mt-8 max-w-xl">
                             <PictureQuestionVisual :metadata="pictureMetadata" :language="pictureLanguage" />
+                        </div>
+                        <div v-if="isSoundQuestion" class="mx-auto mt-8 max-w-xl rounded-[1.5rem] border border-heritage-gold/40 bg-white p-4 shadow-card">
+                            <div class="mb-3 flex items-center justify-between gap-3">
+                                <span class="label">Sound clue</span>
+                                <span class="rounded-full bg-heritage-gold-faint px-3 py-1 text-xs font-black text-heritage-gold-deep">MP3</span>
+                            </div>
+                            <audio
+                                v-if="soundMetadata.audio_path"
+                                :key="currentQuestion.id"
+                                class="w-full"
+                                controls
+                                preload="metadata"
+                                :src="soundMetadata.audio_path"
+                            />
+                            <div v-else class="rounded-2xl bg-heritage-panel p-4 text-sm font-bold text-heritage-muted">
+                                Audio file pending.
+                            </div>
                         </div>
                         <div class="mx-auto mt-8 rounded-[2rem] bg-heritage-panel p-4">
                             <p class="text-sm font-bold leading-7 text-heritage-muted">

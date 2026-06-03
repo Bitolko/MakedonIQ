@@ -30,7 +30,7 @@ const statusVariant = {
         <div class="flex flex-1 flex-col p-6">
             <div class="flex items-start justify-between gap-4">
                 <div :class="['flex h-14 w-14 items-center justify-center rounded-2xl border text-base font-black shadow-card', quiz.isLocked ? 'border-heritage-gold/40 bg-heritage-gold-faint text-xs text-heritage-gold-deep' : 'border-heritage-gold/40 bg-heritage-gold-faint text-heritage-gold-deep']">
-                    {{ quiz.isLocked ? 'LOCK' : (quiz.isPictureQuiz ? 'PIC' : (quiz.isMapChallenge ? 'MAP' : 'Q')) }}
+                    {{ quiz.isLocked ? 'LOCK' : (quiz.isSoundQuiz ? 'AUD' : (quiz.isPictureQuiz ? 'PIC' : (quiz.isMapChallenge ? 'MAP' : 'Q'))) }}
                 </div>
                 <div class="flex flex-wrap justify-end gap-2">
                     <AppBadge v-if="quiz.isDemo" variant="gold">Demo</AppBadge>
@@ -40,6 +40,7 @@ const statusVariant = {
                     </AppBadge>
                     <AppBadge v-if="quiz.isMapChallenge" variant="gold">Map</AppBadge>
                     <AppBadge v-if="quiz.isPictureQuiz" variant="gold">Picture</AppBadge>
+                    <AppBadge v-if="quiz.isSoundQuiz" variant="gold">Sound</AppBadge>
                 </div>
             </div>
             <h3 class="mt-6 text-2xl font-black text-heritage-ink">{{ quiz.title }}</h3>

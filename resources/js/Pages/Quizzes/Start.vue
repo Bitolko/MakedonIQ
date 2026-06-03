@@ -35,6 +35,7 @@ const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'ti
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 const isMapChallenge = computed(() => Boolean(quiz.value?.has_map_questions || questions.value.some((question) => question.question_type === 'map_guess')));
 const isPictureQuiz = computed(() => Boolean(quiz.value?.has_picture_questions || questions.value.some((question) => question.question_type === 'picture_choice')));
+const isSoundQuiz = computed(() => Boolean(quiz.value?.has_sound_questions || questions.value.some((question) => question.question_type === 'sound_choice')));
 const questionCount = computed(() => quiz.value?.questions_count || questions.value.length || 0);
 
 const learnItems = computed(() => {
@@ -52,6 +53,15 @@ const learnItems = computed(() => {
             'Look at the image or picture clue',
             'Use placeholders safely while final images are being prepared',
             'Choose the correct Macedonian food, place, letter, or culture answer',
+            'Submit normally for secure backend scoring',
+        ];
+    }
+
+    if (isSoundQuiz.value) {
+        return [
+            'Listen to the MP3 sound clue',
+            'Choose the matching folklore song title',
+            'Use the related lesson lyrics and context for review',
             'Submit normally for secure backend scoring',
         ];
     }
@@ -93,6 +103,10 @@ const overviewText = computed(() => {
         return `A visual quiz with ${questionCount.value} picture clues. Some clues may use placeholders until final images are added.`;
     }
 
+    if (isSoundQuiz.value) {
+        return `A listening quiz with ${questionCount.value} sound clues. Results are scored securely after you submit.`;
+    }
+
     return 'Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.';
 });
 
@@ -105,6 +119,10 @@ const guideTitle = computed(() => {
         return 'How the picture quiz works';
     }
 
+    if (isSoundQuiz.value) {
+        return 'How the sound quiz works';
+    }
+
     return 'What you will learn';
 });
 
@@ -113,7 +131,11 @@ const overviewLabel = computed(() => {
         return 'Map overview';
     }
 
-    return isPictureQuiz.value ? 'Picture overview' : 'Quiz overview';
+    if (isPictureQuiz.value) {
+        return 'Picture overview';
+    }
+
+    return isSoundQuiz.value ? 'Sound overview' : 'Quiz overview';
 });
 
 const startButtonLabel = computed(() => {
@@ -122,14 +144,22 @@ const startButtonLabel = computed(() => {
             return 'Start demo challenge';
         }
 
-        return isPictureQuiz.value ? 'Start picture demo' : 'Start demo';
+        if (isPictureQuiz.value) {
+            return 'Start picture demo';
+        }
+
+        return isSoundQuiz.value ? 'Start sound demo' : 'Start demo';
     }
 
     if (isMapChallenge.value) {
         return 'Start Map Challenge';
     }
 
-    return isPictureQuiz.value ? 'Start Picture Quiz' : 'Start Quiz';
+    if (isPictureQuiz.value) {
+        return 'Start Picture Quiz';
+    }
+
+    return isSoundQuiz.value ? 'Start Sound Quiz' : 'Start Quiz';
 });
 
 onMounted(async () => {
@@ -193,6 +223,7 @@ function authHref(path) {
                     <AppBadge v-if="quiz.is_demo" variant="gold">Demo</AppBadge>
                     <AppBadge v-if="isMapChallenge" variant="gold">Map Challenge</AppBadge>
                     <AppBadge v-if="isPictureQuiz" variant="gold">Picture Quiz</AppBadge>
+                    <AppBadge v-if="isSoundQuiz" variant="gold">Sound Quiz</AppBadge>
                 </div>
                 <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-5xl">
                     {{ quizTitle }}
@@ -223,6 +254,9 @@ function authHref(path) {
                     </p>
                     <p v-else-if="isPictureQuiz" class="mt-3 leading-7 text-heritage-muted">
                         Look at the image or picture clue and choose the correct answer. Some picture clues may use placeholders while images are being prepared.
+                    </p>
+                    <p v-else-if="isSoundQuiz" class="mt-3 leading-7 text-heritage-muted">
+                        Play the sound clue and choose the folklore song title that matches it.
                     </p>
                     <div class="mt-6 grid gap-4">
                         <div v-for="(item, index) in learnItems" :key="item" class="flex gap-3 rounded-2xl bg-heritage-panel p-4">

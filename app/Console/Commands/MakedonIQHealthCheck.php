@@ -30,6 +30,7 @@ class MakedonIQHealthCheck extends Command
         $this->checkContentCounts();
         $this->checkQuestionAnswerIntegrity();
         $this->checkMapQuestions();
+        $this->checkSoundQuestions();
         $this->checkPublicQuizControllerSource();
         $this->checkAdminAndDebugState();
 
@@ -127,6 +128,53 @@ class MakedonIQHealthCheck extends Command
         }
     }
 
+    private function checkSoundQuestions(): void
+    {
+        $soundQuestions = Question::query()
+            ->where('question_type', 'sound_choice')
+            ->get(['id', 'metadata']);
+
+        if ($soundQuestions->isEmpty()) {
+            $this->warning('No sound_choice questions found.');
+
+            return;
+        }
+
+        $missingAudioPaths = $soundQuestions->filter(function (Question $question): bool {
+            $audioPath = $question->metadata['audio_path'] ?? null;
+
+            return ! is_string($audioPath) || trim($audioPath) === '';
+        });
+
+        if ($missingAudioPaths->isNotEmpty()) {
+            $this->failed($missingAudioPaths->count().' sound_choice question(s) are missing audio_path metadata.');
+
+            return;
+        }
+
+        $wrongDirectory = $soundQuestions->filter(function (Question $question): bool {
+            return ! str_starts_with((string) ($question->metadata['audio_path'] ?? ''), '/audio/lessons/');
+        });
+
+        if ($wrongDirectory->isEmpty()) {
+            $this->pass('Sound choice questions use /audio/lessons/ audio paths.');
+        } else {
+            $this->failed($wrongDirectory->count().' sound_choice question(s) use audio paths outside /audio/lessons/.');
+        }
+
+        $missingFiles = $soundQuestions->filter(function (Question $question): bool {
+            $audioPath = ltrim((string) ($question->metadata['audio_path'] ?? ''), '/');
+
+            return $audioPath === '' || ! is_file(public_path($audioPath));
+        });
+
+        if ($missingFiles->isEmpty()) {
+            $this->pass('Sound choice MP3 files are present in public/audio/lessons.');
+        } else {
+            $this->warning($missingFiles->count().' sound_choice MP3 file(s) are not present yet.');
+        }
+    }
+
     private function checkPublicQuizControllerSource(): void
     {
         $sourcePath = app_path('Http/Controllers/Api/QuizController.php');
@@ -142,6 +190,12 @@ class MakedonIQHealthCheck extends Command
             $this->failed('Public QuizController source contains an is_correct response key.');
         } else {
             $this->pass('Public QuizController source does not expose is_correct.');
+        }
+
+        if (str_contains($source, "'correct_answer'") || str_contains($source, '"correct_answer"')) {
+            $this->failed('Public QuizController source contains a correct_answer response key.');
+        } else {
+            $this->pass('Public QuizController source does not expose correct_answer.');
         }
 
         if (str_contains($source, 'map_target_key') || str_contains($source, 'map_target_label')) {

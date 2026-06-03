@@ -44,14 +44,20 @@ const lessonDetailRows = computed(() => [
     { label: 'Languages', value: lesson.value?.content_mk ? 'English + Macedonian' : 'English' },
 ]);
 
-const heroBadge = computed(() => ({
-    'macedonian-language': 'Language lab',
-    'macedonian-alphabet': 'Cyrillic builder',
-    geography: 'Geography module',
-    'history-of-macedonia': 'Story path',
-    'culture-and-traditions': 'Heritage module',
-    'food-and-music': 'Taste and rhythm',
-})[resolvedCategorySlug.value] || 'Lesson module');
+const heroBadge = computed(() => {
+    if (lessonSlug.startsWith('folklore-song-')) {
+        return 'Folklore Music';
+    }
+
+    return ({
+        'macedonian-language': 'Language lab',
+        'macedonian-alphabet': 'Cyrillic builder',
+        geography: 'Geography module',
+        'history-of-macedonia': 'Story path',
+        'culture-and-traditions': 'Heritage module',
+        'food-and-music': 'Taste and rhythm',
+    })[resolvedCategorySlug.value] || 'Lesson module';
+});
 
 const keyPoints = computed(() => {
     const source = lessonBlocks.value
@@ -176,7 +182,7 @@ function sectionType(heading, index) {
     if (normalized.includes('what you will learn') || normalized.includes('што ќе научиш')) return 'learn';
     if (normalized.includes('explanation') || normalized.includes('објаснување')) return 'explanation';
     if (normalized.includes('examples') || normalized.includes('примери')) return 'examples';
-    if (normalized.includes('vocabulary') || normalized.includes('facts') || normalized.includes('клучни')) return 'vocabulary';
+    if (normalized.includes('vocabulary') || normalized.includes('facts') || normalized.includes('key points') || normalized.includes('клучни')) return 'vocabulary';
     if (normalized.includes('practice') || normalized.includes('вежбање')) return 'practice';
     if (normalized.includes('remember') || normalized.includes('запомни')) return 'remember';
     if (normalized.includes('introduction') || normalized.includes('вовед') || index === 0) return 'introduction';

@@ -23,6 +23,8 @@ const showForm = ref(false);
 const editingQuestion = ref(null);
 const formErrors = ref({});
 const correctIndex = ref(0);
+const audioFileInput = ref(null);
+const selectedAudioFile = ref(null);
 const pictureImageTypes = [
     { value: 'food', label: 'Food' },
     { value: 'city', label: 'City' },
@@ -63,6 +65,7 @@ const blankForm = () => ({
         image_alt_mk: '',
         image_type: 'food',
         image_credit: '',
+        audio_path: '',
     },
     answers: blankAnswers(),
 });
@@ -71,6 +74,13 @@ const form = ref(blankForm());
 
 const selectedQuiz = computed(() => quizzes.value.find((quiz) => quiz.id === Number(selectedQuizId.value)) || null);
 const hasSelectedQuiz = computed(() => Boolean(selectedQuiz.value));
+const selectedQuizLessonUrl = computed(() => {
+    if (!selectedQuiz.value?.lesson_slug || !selectedQuiz.value?.lesson_category_slug) {
+        return '';
+    }
+
+    return `/learn/${selectedQuiz.value.lesson_category_slug}/${selectedQuiz.value.lesson_slug}`;
+});
 
 onMounted(async () => {
     await loadQuizzes();
@@ -134,6 +144,8 @@ async function loadQuestions() {
 function openCreateForm() {
     editingQuestion.value = null;
     correctIndex.value = 0;
+    selectedAudioFile.value = null;
+    clearAudioFileInput();
     form.value = blankForm();
     formErrors.value = {};
     error.value = '';
@@ -147,6 +159,8 @@ function openEditForm(question) {
 
     editingQuestion.value = question;
     correctIndex.value = existingCorrectIndex >= 0 ? existingCorrectIndex : 0;
+    selectedAudioFile.value = null;
+    clearAudioFileInput();
     form.value = {
         question_type: question.question_type || 'multiple_choice',
         translation_direction: question.translation_direction || '',
@@ -172,6 +186,8 @@ function closeForm() {
     form.value = blankForm();
     formErrors.value = {};
     correctIndex.value = 0;
+    selectedAudioFile.value = null;
+    clearAudioFileInput();
 }
 
 async function saveQuestion() {
@@ -186,7 +202,7 @@ async function saveQuestion() {
     formErrors.value = {};
 
     try {
-        const payload = questionPayload(form.value);
+        const payload = questionRequestPayload(form.value);
         if (editingQuestion.value) {
             await updateAdminQuestion(editingQuestion.value.id, payload);
             success.value = 'Question updated.';
@@ -273,6 +289,20 @@ function questionPayload(source, selectedCorrectIndex = correctIndex.value) {
     };
 }
 
+function questionRequestPayload(source) {
+    const payload = questionPayload(source);
+
+    if (source.question_type !== 'sound_choice' || !selectedAudioFile.value) {
+        return payload;
+    }
+
+    const formData = new FormData();
+    appendFormValue(formData, '', payload);
+    formData.append('audio_file', selectedAudioFile.value);
+
+    return formData;
+}
+
 function normalizedMetadata(metadata = {}) {
     return {
         map_x: numberOrDefault(metadata?.map_x, 50),
@@ -286,6 +316,7 @@ function normalizedMetadata(metadata = {}) {
         image_alt_mk: metadata?.image_alt_mk || '',
         image_type: metadata?.image_type || 'food',
         image_credit: metadata?.image_credit || '',
+        audio_path: metadata?.audio_path || '',
     };
 }
 
@@ -296,6 +327,10 @@ function metadataPayload(source) {
 
     if (source.question_type === 'picture_choice') {
         return pictureMetadataPayload(source.metadata);
+    }
+
+    if (source.question_type === 'sound_choice') {
+        return soundMetadataPayload(source.metadata);
     }
 
     return null;
@@ -324,6 +359,45 @@ function pictureMetadataPayload(metadata = {}) {
         image_type: imageType,
         image_credit: nullableString(metadata?.image_credit),
     };
+}
+
+function soundMetadataPayload(metadata = {}) {
+    const audioPath = nullableString(metadata?.audio_path);
+
+    return {
+        audio_path: audioPath && !audioPath.startsWith('/') ? `/${audioPath}` : audioPath,
+    };
+}
+
+function onAudioFileChange(event) {
+    selectedAudioFile.value = event.target.files?.[0] || null;
+}
+
+function clearAudioFileInput() {
+    if (audioFileInput.value) {
+        audioFileInput.value.value = '';
+    }
+}
+
+function appendFormValue(formData, key, value) {
+    if (Array.isArray(value)) {
+        value.forEach((item, index) => appendFormValue(formData, `${key}[${index}]`, item));
+        return;
+    }
+
+    if (value && typeof value === 'object') {
+        Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+            const fieldKey = key ? `${key}[${nestedKey}]` : nestedKey;
+            appendFormValue(formData, fieldKey, nestedValue);
+        });
+        return;
+    }
+
+    const normalizedValue = value === null || value === undefined
+        ? ''
+        : (typeof value === 'boolean' ? (value ? '1' : '0') : String(value));
+
+    formData.append(key, normalizedValue);
 }
 
 function normalizeTranslationDirection(value) {
@@ -461,6 +535,13 @@ function formatDate(value) {
                     <AppBadge :variant="selectedQuiz.is_published ? 'green' : 'neutral'">{{ selectedQuiz.is_published ? 'Quiz published' : 'Quiz unpublished' }}</AppBadge>
                     <AppBadge variant="navy">{{ selectedQuiz.published_questions_count }} / {{ selectedQuiz.questions_count }} published questions</AppBadge>
                     <AppBadge variant="gold">{{ selectedQuiz.difficulty }}</AppBadge>
+                    <a
+                        v-if="selectedQuizLessonUrl"
+                        class="rounded-full bg-heritage-navy-soft px-4 py-2 text-xs font-black text-heritage-navy hover:bg-heritage-gold-faint"
+                        :href="selectedQuizLessonUrl"
+                    >
+                        Lesson: {{ selectedQuiz.lesson_title_en }}
+                    </a>
                 </div>
             </section>
 
@@ -512,6 +593,7 @@ function formatDate(value) {
                             <option value="multiple_choice">Multiple choice</option>
                             <option value="map_guess">Map guess</option>
                             <option value="picture_choice">Picture choice</option>
+                            <option value="sound_choice">Sound choice</option>
                         </select>
                         <span v-if="fieldError('question_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('question_type') }}</span>
                     </label>
@@ -630,6 +712,35 @@ function formatDate(value) {
                     </label>
                 </section>
 
+                <section v-if="form.question_type === 'sound_choice'" class="grid gap-5 rounded-[1.5rem] border border-heritage-gold/40 bg-white p-5 shadow-card">
+                    <div>
+                        <h3 class="text-xl font-black text-heritage-ink">Sound metadata</h3>
+                        <p class="mt-1 text-sm font-semibold leading-6 text-heritage-muted">
+                            MP3 uploads are saved with neutral song_### filenames in public/audio/lessons.
+                        </p>
+                        <span v-if="fieldError('metadata')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata') }}</span>
+                    </div>
+                    <div class="grid gap-5 md:grid-cols-[1fr_18rem]">
+                        <label class="block">
+                            <span class="label">Audio path</span>
+                            <input v-model="form.metadata.audio_path" class="field mt-2 bg-white" placeholder="/audio/lessons/song_001.mp3" type="text">
+                            <span v-if="fieldError('metadata.audio_path')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.audio_path') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Upload MP3</span>
+                            <input ref="audioFileInput" class="field mt-2 bg-white" accept=".mp3,audio/mpeg" type="file" @change="onAudioFileChange">
+                            <span v-if="fieldError('audio_file')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('audio_file') }}</span>
+                        </label>
+                    </div>
+                    <div v-if="form.metadata.audio_path" class="rounded-2xl bg-heritage-panel p-4">
+                        <p class="label">Current audio</p>
+                        <audio class="mt-3 w-full" controls preload="metadata" :src="form.metadata.audio_path" />
+                    </div>
+                    <p v-if="selectedAudioFile" class="rounded-2xl bg-heritage-gold-faint px-4 py-3 text-sm font-black text-heritage-gold-deep">
+                        Selected upload: {{ selectedAudioFile.name }}
+                    </p>
+                </section>
+
                 <section class="grid gap-4">
                     <div>
                         <h3 class="text-xl font-black text-heritage-ink">Answer options</h3>
@@ -713,9 +824,13 @@ function formatDate(value) {
                                     <div class="mt-3 flex flex-wrap gap-2">
                                         <AppBadge v-if="question.question_type === 'map_guess'" variant="gold">Map guess</AppBadge>
                                         <AppBadge v-if="question.question_type === 'picture_choice'" variant="gold">Picture choice</AppBadge>
+                                        <AppBadge v-if="question.question_type === 'sound_choice'" variant="gold">Sound choice</AppBadge>
                                         <AppBadge v-if="question.translation_direction" variant="navy">{{ formatTranslationDirection(question.translation_direction) }}</AppBadge>
                                         <AppBadge v-if="question.used_in_attempts" variant="red">Has attempts</AppBadge>
                                     </div>
+                                    <p v-if="question.question_type === 'sound_choice' && question.metadata?.audio_path" class="mt-2 break-all text-xs font-semibold text-heritage-muted">
+                                        {{ question.metadata.audio_path }}
+                                    </p>
                                 </td>
                                 <td class="max-w-[260px] px-6 py-4">
                                     <p class="font-bold text-heritage-ink">{{ question.correct_answer_en || 'No answer marked' }}</p>

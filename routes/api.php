@@ -58,6 +58,7 @@ Route::middleware(['web', 'auth', 'admin'])
         Route::delete('/quizzes/{quiz}', [AdminQuizController::class, 'destroy'])->name('quizzes.destroy');
         Route::get('/questions', [AdminReadController::class, 'questions'])->name('questions');
         Route::get('/questions/{question}', [AdminQuestionController::class, 'show'])->name('questions.show');
+        Route::post('/questions/{question}', [AdminQuestionController::class, 'update'])->name('questions.update.post');
         Route::match(['put', 'patch'], '/questions/{question}', [AdminQuestionController::class, 'update'])->name('questions.update');
         Route::delete('/questions/{question}', [AdminQuestionController::class, 'destroy'])->name('questions.destroy');
         Route::get('/attempts', [AdminReadController::class, 'attempts'])->name('attempts');

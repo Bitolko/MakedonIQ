@@ -29,5 +29,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LessonSeeder::class);
         $this->call(MapChallengeSeeder::class);
         $this->call(ContentExpansionSeeder::class);
+        $this->call(FolkloreMusicSeeder::class);
     }
 }

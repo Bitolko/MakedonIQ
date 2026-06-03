@@ -42,6 +42,7 @@ const relatedLessonTitle = computed(() => localizedText(relatedLesson.value, 'ti
 const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, 'summary', language));
 const isMapChallenge = computed(() => Boolean(resultQuiz.value?.has_map_questions));
 const isPictureQuiz = computed(() => Boolean(resultQuiz.value?.has_picture_questions || reviewAnswers.value.some((answer) => answer.question?.question_type === 'picture_choice')));
+const isSoundQuiz = computed(() => Boolean(resultQuiz.value?.has_sound_questions || reviewAnswers.value.some((answer) => answer.question?.question_type === 'sound_choice')));
 const resultPercentage = computed(() => Number(resultAttempt.value?.percentage || 0));
 const scoreMessage = computed(() => {
     if (!resultAttempt.value) {
@@ -106,6 +107,10 @@ function isPictureQuestion(question) {
     return question?.question_type === 'picture_choice';
 }
 
+function isSoundQuestion(question) {
+    return question?.question_type === 'sound_choice';
+}
+
 onMounted(async () => {
     try {
         if (attemptId) {
@@ -164,7 +169,7 @@ function authHref(path) {
             <template v-else>
             <section class="mx-auto max-w-4xl text-center">
                 <AppBadge :variant="resultAttempt?.passed ? 'green' : 'gold'">
-                    {{ isMapChallenge ? 'Map Challenge result' : (isPictureQuiz ? 'Picture Quiz result' : (hasAttempt ? 'Quiz result' : 'Results preview')) }}
+                    {{ isMapChallenge ? 'Map Challenge result' : (isPictureQuiz ? 'Picture Quiz result' : (isSoundQuiz ? 'Sound Quiz result' : (hasAttempt ? 'Quiz result' : 'Results preview'))) }}
                 </AppBadge>
                 <h1 class="mt-5 text-4xl font-black text-heritage-red md:text-5xl">
                     {{ isMapChallenge && hasAttempt ? 'Map Challenge Complete' : (hasAttempt ? (resultAttempt?.passed ? 'Great Job!' : 'Keep Going!') : 'Complete a Quiz First') }}
@@ -257,6 +262,18 @@ function authHref(path) {
                             :language="language"
                             compact
                         />
+
+                        <div v-if="isSoundQuestion(answer.question)" class="mt-5 rounded-[1.5rem] border border-heritage-gold/40 bg-heritage-gold-faint p-4">
+                            <p class="label">Sound clue</p>
+                            <audio
+                                v-if="answer.question.metadata?.audio_path"
+                                class="mt-3 w-full"
+                                controls
+                                preload="metadata"
+                                :src="answer.question.metadata.audio_path"
+                            />
+                            <p v-else class="mt-3 text-sm font-bold text-heritage-gold-deep">Audio file pending.</p>
+                        </div>
 
                         <div class="mt-5 grid gap-3 md:grid-cols-2">
                             <div :class="['rounded-2xl border p-4', answer.is_correct ? 'border-emerald-200 bg-emerald-50' : 'border-heritage-red/20 bg-heritage-red-faint']">
