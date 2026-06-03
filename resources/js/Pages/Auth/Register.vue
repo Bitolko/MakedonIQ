@@ -6,6 +6,24 @@ const appState = window.MakedonIQ || {};
 const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 const errors = appState.errors || {};
 const old = appState.old || {};
+const benefits = [
+    {
+        title: 'Unlock lessons',
+        text: 'Access the full Macedonian learning path.',
+    },
+    {
+        title: 'Save results',
+        text: 'Keep scores after each quiz attempt.',
+    },
+    {
+        title: 'Track progress',
+        text: 'Review your learning history over time.',
+    },
+    {
+        title: 'Continue anytime',
+        text: 'Return to lessons, quizzes, and map challenges.',
+    },
+];
 </script>
 
 <template>
@@ -69,12 +87,13 @@ const old = appState.old || {};
 
             <aside class="heritage-pattern rounded-[2rem] p-6 text-white shadow-soft">
                 <div class="rounded-[1.5rem] bg-white p-6 text-heritage-ink">
-                    <p class="label">Learning profile</p>
-                    <h2 class="mt-3 text-3xl font-black text-heritage-ink">Built for families, schools, and community groups.</h2>
-                    <div class="mt-6 grid gap-3">
-                        <div class="rounded-2xl bg-heritage-panel p-4 font-bold text-heritage-muted">Bilingual quiz prompts</div>
-                        <div class="rounded-2xl bg-heritage-panel p-4 font-bold text-heritage-muted">Progress and achievements</div>
-                        <div class="rounded-2xl bg-heritage-panel p-4 font-bold text-heritage-muted">Culture-first learning topics</div>
+                    <p class="label">Free account benefits</p>
+                    <h2 class="mt-3 text-3xl font-black text-heritage-ink">Create a free account for the full learning path.</h2>
+                    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                        <div v-for="benefit in benefits" :key="benefit.title" class="rounded-2xl bg-heritage-panel p-4">
+                            <p class="text-sm font-black uppercase text-heritage-red">{{ benefit.title }}</p>
+                            <p class="mt-2 text-sm font-semibold leading-6 text-heritage-muted">{{ benefit.text }}</p>
+                        </div>
                     </div>
                 </div>
             </aside>

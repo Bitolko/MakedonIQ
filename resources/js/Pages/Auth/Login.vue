@@ -6,6 +6,25 @@ const appState = window.MakedonIQ || {};
 const csrfToken = appState.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 const errors = appState.errors || {};
 const old = appState.old || {};
+
+const benefits = [
+    {
+        title: 'Save scores',
+        text: 'Keep quiz results after each attempt.',
+    },
+    {
+        title: 'Track progress',
+        text: 'Review learning history by category.',
+    },
+    {
+        title: 'Continue lessons',
+        text: 'Pick up your Macedonian path anytime.',
+    },
+    {
+        title: 'Practise daily',
+        text: 'Use quizzes and map challenges consistently.',
+    },
+];
 </script>
 
 <template>
@@ -65,13 +84,9 @@ const old = appState.old || {};
                         <p class="text-sm font-black uppercase">Master your heritage</p>
                         <h2 class="mt-4 text-4xl font-black leading-tight">Language, history, culture, and confidence.</h2>
                         <div class="mt-8 grid gap-4 sm:grid-cols-2">
-                            <div class="rounded-2xl bg-white p-5 text-heritage-ink">
-                                <p class="text-3xl font-black text-heritage-red">12</p>
-                                <p class="mt-1 text-sm font-semibold text-heritage-muted">Completed quizzes</p>
-                            </div>
-                            <div class="rounded-2xl bg-white p-5 text-heritage-ink">
-                                <p class="text-3xl font-black text-heritage-gold-deep">5</p>
-                                <p class="mt-1 text-sm font-semibold text-heritage-muted">Day streak</p>
+                            <div v-for="benefit in benefits" :key="benefit.title" class="rounded-2xl bg-white p-5 text-heritage-ink shadow-card">
+                                <p class="text-sm font-black uppercase text-heritage-red">{{ benefit.title }}</p>
+                                <p class="mt-2 text-sm font-semibold leading-6 text-heritage-muted">{{ benefit.text }}</p>
                             </div>
                         </div>
                     </div>
