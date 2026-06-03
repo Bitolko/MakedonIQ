@@ -86,6 +86,17 @@ const panels = {
             { title: 'Shared meals', detail: 'Family language' },
         ],
     },
+    'folklore-songs': {
+        eyebrow: 'Folklore song',
+        title: 'Lyrics, rhythm, memory',
+        intro: 'Learn song titles, safe lyric excerpts, vocabulary, and cultural context before original audio is added.',
+        items: [
+            { title: 'Title phrase', detail: 'Read the Macedonian line aloud' },
+            { title: 'Meaning', detail: 'Connect words with English context' },
+            { title: 'Vocabulary', detail: 'Save useful song words' },
+            { title: 'Listen later', detail: 'Original audio clips coming soon' },
+        ],
+    },
 };
 
 const panel = computed(() => panels[props.categorySlug] || {
@@ -102,6 +113,22 @@ const panel = computed(() => panels[props.categorySlug] || {
 const isGeography = computed(() => props.categorySlug === 'geography');
 const isAlphabet = computed(() => props.categorySlug === 'macedonian-alphabet');
 const isHistory = computed(() => props.categorySlug === 'history-of-macedonia');
+const isSongLesson = computed(() => props.categorySlug === 'folklore-songs' || props.lessonSlug.startsWith('folklore-song-'));
+const panelIcon = computed(() => {
+    if (isSongLesson.value) {
+        return 'FS';
+    }
+
+    if (props.categorySlug === 'food-and-music') {
+        return 'FM';
+    }
+
+    if (props.categorySlug === 'macedonian-alphabet') {
+        return 'А';
+    }
+
+    return props.categorySlug === 'geography' ? 'MAP' : 'IQ';
+});
 </script>
 
 <template>
@@ -114,12 +141,36 @@ const isHistory = computed(() => props.categorySlug === 'history-of-macedonia');
                     <p class="mt-2 text-sm leading-6 text-heritage-muted">{{ panel.intro }}</p>
                 </div>
                 <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-sm font-black text-heritage-red shadow-card">
-                    {{ categorySlug === 'food-and-music' ? 'FM' : categorySlug === 'macedonian-alphabet' ? 'А' : categorySlug === 'geography' ? 'MAP' : 'IQ' }}
+                    {{ panelIcon }}
                 </div>
             </div>
         </div>
 
-        <div v-if="isGeography" class="mt-4 grid gap-4">
+        <div v-if="isSongLesson" class="mt-4 grid gap-4">
+            <div class="rounded-[1.5rem] bg-heritage-navy p-5 text-white shadow-card">
+                <p class="text-xs font-black uppercase text-heritage-gold">Lyric card</p>
+                <h3 class="mt-3 text-2xl font-black">Read first, listen later</h3>
+                <div class="mt-4 grid grid-cols-5 items-end gap-2">
+                    <span class="h-10 rounded-full bg-heritage-red" />
+                    <span class="h-16 rounded-full bg-heritage-gold" />
+                    <span class="h-12 rounded-full bg-white/70" />
+                    <span class="h-20 rounded-full bg-heritage-red" />
+                    <span class="h-14 rounded-full bg-heritage-gold" />
+                </div>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2">
+                <div v-for="item in panel.items" :key="item.title" class="rounded-2xl bg-white p-4 shadow-card">
+                    <p class="text-lg font-black text-heritage-ink">{{ item.title }}</p>
+                    <p class="mt-1 text-sm leading-6 text-heritage-muted">{{ item.detail }}</p>
+                </div>
+            </div>
+            <div class="rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint p-4">
+                <p class="text-sm font-black text-heritage-ink">Audio quiz coming soon</p>
+                <p class="mt-1 text-sm font-bold leading-6 text-heritage-gold-deep">Future clips will use original MakedonIQ recordings.</p>
+            </div>
+        </div>
+
+        <div v-else-if="isGeography" class="mt-4 grid gap-4">
             <div class="rounded-[1.5rem] bg-heritage-navy p-3">
                 <MacedoniaMap :x="52" :y="35.5" target-type="city" variant="compact" />
             </div>

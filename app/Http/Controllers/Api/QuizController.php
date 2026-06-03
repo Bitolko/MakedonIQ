@@ -200,6 +200,9 @@ class QuizController extends Controller
 
         return [
             'audio_path' => $this->nullableMetadataString($metadata['audio_path'] ?? null),
+            'audio_alt_en' => $this->nullableMetadataString($metadata['audio_alt_en'] ?? null),
+            'audio_alt_mk' => $this->nullableMetadataString($metadata['audio_alt_mk'] ?? null),
+            'audio_type' => $this->nullableMetadataString($metadata['audio_type'] ?? null) ?? 'folklore',
         ];
     }
 

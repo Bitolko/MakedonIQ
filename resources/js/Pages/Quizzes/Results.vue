@@ -111,6 +111,16 @@ function isSoundQuestion(question) {
     return question?.question_type === 'sound_choice';
 }
 
+function soundAltText(question) {
+    const metadata = question?.metadata || {};
+
+    if (language === 'mk' && metadata.audio_alt_mk) {
+        return metadata.audio_alt_mk;
+    }
+
+    return metadata.audio_alt_en || 'Folklore audio clue';
+}
+
 onMounted(async () => {
     try {
         if (attemptId) {
@@ -264,15 +274,24 @@ function authHref(path) {
                         />
 
                         <div v-if="isSoundQuestion(answer.question)" class="mt-5 rounded-[1.5rem] border border-heritage-gold/40 bg-heritage-gold-faint p-4">
-                            <p class="label">Sound clue</p>
+                            <div class="flex items-center justify-between gap-3">
+                                <p class="label">Sound clue</p>
+                                <span class="rounded-full bg-white px-3 py-1 text-xs font-black text-heritage-gold-deep">{{ answer.question.metadata?.audio_type || 'folklore' }}</span>
+                            </div>
                             <audio
                                 v-if="answer.question.metadata?.audio_path"
                                 class="mt-3 w-full"
+                                :aria-label="soundAltText(answer.question)"
                                 controls
                                 preload="metadata"
                                 :src="answer.question.metadata.audio_path"
                             />
-                            <p v-else class="mt-3 text-sm font-bold text-heritage-gold-deep">Audio file pending.</p>
+                            <div v-else class="mt-3 rounded-2xl bg-white/70 p-4">
+                                <p class="font-black text-heritage-ink">Audio coming soon</p>
+                                <p class="mt-2 text-sm font-bold leading-6 text-heritage-gold-deep">
+                                    This review will use original MakedonIQ recordings after the clips are prepared.
+                                </p>
+                            </div>
                         </div>
 
                         <div class="mt-5 grid gap-3 md:grid-cols-2">

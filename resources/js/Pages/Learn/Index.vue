@@ -52,6 +52,11 @@ const categoryVisuals = {
         accent: 'text-heritage-navy',
         note: 'Tastes, rhythms, songs, and celebrations.',
     },
+    'folklore-songs': {
+        icon: 'FS',
+        accent: 'text-heritage-red',
+        note: 'Song titles, vocabulary, rhythm, and cultural memory.',
+    },
 };
 
 const categoryCards = computed(() => categories.value.map((category) => ({

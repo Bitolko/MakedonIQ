@@ -23,8 +23,6 @@ const showForm = ref(false);
 const editingQuestion = ref(null);
 const formErrors = ref({});
 const correctIndex = ref(0);
-const audioFileInput = ref(null);
-const selectedAudioFile = ref(null);
 const pictureImageTypes = [
     { value: 'food', label: 'Food' },
     { value: 'city', label: 'City' },
@@ -32,6 +30,12 @@ const pictureImageTypes = [
     { value: 'landmark', label: 'Landmark' },
     { value: 'alphabet', label: 'Alphabet' },
     { value: 'culture', label: 'Culture' },
+    { value: 'music', label: 'Music' },
+    { value: 'other', label: 'Other' },
+];
+const soundAudioTypes = [
+    { value: 'folklore', label: 'Folklore' },
+    { value: 'pronunciation', label: 'Pronunciation' },
     { value: 'music', label: 'Music' },
     { value: 'other', label: 'Other' },
 ];
@@ -66,6 +70,10 @@ const blankForm = () => ({
         image_type: 'food',
         image_credit: '',
         audio_path: '',
+        audio_alt_en: '',
+        audio_alt_mk: '',
+        audio_type: 'folklore',
+        audio_credit: '',
     },
     answers: blankAnswers(),
 });
@@ -144,8 +152,6 @@ async function loadQuestions() {
 function openCreateForm() {
     editingQuestion.value = null;
     correctIndex.value = 0;
-    selectedAudioFile.value = null;
-    clearAudioFileInput();
     form.value = blankForm();
     formErrors.value = {};
     error.value = '';
@@ -159,8 +165,6 @@ function openEditForm(question) {
 
     editingQuestion.value = question;
     correctIndex.value = existingCorrectIndex >= 0 ? existingCorrectIndex : 0;
-    selectedAudioFile.value = null;
-    clearAudioFileInput();
     form.value = {
         question_type: question.question_type || 'multiple_choice',
         translation_direction: question.translation_direction || '',
@@ -186,8 +190,6 @@ function closeForm() {
     form.value = blankForm();
     formErrors.value = {};
     correctIndex.value = 0;
-    selectedAudioFile.value = null;
-    clearAudioFileInput();
 }
 
 async function saveQuestion() {
@@ -202,7 +204,7 @@ async function saveQuestion() {
     formErrors.value = {};
 
     try {
-        const payload = questionRequestPayload(form.value);
+        const payload = questionPayload(form.value);
         if (editingQuestion.value) {
             await updateAdminQuestion(editingQuestion.value.id, payload);
             success.value = 'Question updated.';
@@ -289,20 +291,6 @@ function questionPayload(source, selectedCorrectIndex = correctIndex.value) {
     };
 }
 
-function questionRequestPayload(source) {
-    const payload = questionPayload(source);
-
-    if (source.question_type !== 'sound_choice' || !selectedAudioFile.value) {
-        return payload;
-    }
-
-    const formData = new FormData();
-    appendFormValue(formData, '', payload);
-    formData.append('audio_file', selectedAudioFile.value);
-
-    return formData;
-}
-
 function normalizedMetadata(metadata = {}) {
     return {
         map_x: numberOrDefault(metadata?.map_x, 50),
@@ -317,6 +305,10 @@ function normalizedMetadata(metadata = {}) {
         image_type: metadata?.image_type || 'food',
         image_credit: metadata?.image_credit || '',
         audio_path: metadata?.audio_path || '',
+        audio_alt_en: metadata?.audio_alt_en || '',
+        audio_alt_mk: metadata?.audio_alt_mk || '',
+        audio_type: metadata?.audio_type || 'folklore',
+        audio_credit: metadata?.audio_credit || '',
     };
 }
 
@@ -363,41 +355,17 @@ function pictureMetadataPayload(metadata = {}) {
 
 function soundMetadataPayload(metadata = {}) {
     const audioPath = nullableString(metadata?.audio_path);
+    const audioType = soundAudioTypes.some((type) => type.value === metadata?.audio_type)
+        ? metadata.audio_type
+        : 'folklore';
 
     return {
         audio_path: audioPath && !audioPath.startsWith('/') ? `/${audioPath}` : audioPath,
+        audio_alt_en: nullableString(metadata?.audio_alt_en),
+        audio_alt_mk: nullableString(metadata?.audio_alt_mk),
+        audio_type: audioType,
+        audio_credit: nullableString(metadata?.audio_credit),
     };
-}
-
-function onAudioFileChange(event) {
-    selectedAudioFile.value = event.target.files?.[0] || null;
-}
-
-function clearAudioFileInput() {
-    if (audioFileInput.value) {
-        audioFileInput.value.value = '';
-    }
-}
-
-function appendFormValue(formData, key, value) {
-    if (Array.isArray(value)) {
-        value.forEach((item, index) => appendFormValue(formData, `${key}[${index}]`, item));
-        return;
-    }
-
-    if (value && typeof value === 'object') {
-        Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-            const fieldKey = key ? `${key}[${nestedKey}]` : nestedKey;
-            appendFormValue(formData, fieldKey, nestedValue);
-        });
-        return;
-    }
-
-    const normalizedValue = value === null || value === undefined
-        ? ''
-        : (typeof value === 'boolean' ? (value ? '1' : '0') : String(value));
-
-    formData.append(key, normalizedValue);
 }
 
 function normalizeTranslationDirection(value) {
@@ -716,29 +684,50 @@ function formatDate(value) {
                     <div>
                         <h3 class="text-xl font-black text-heritage-ink">Sound metadata</h3>
                         <p class="mt-1 text-sm font-semibold leading-6 text-heritage-muted">
-                            MP3 uploads are saved with neutral song_### filenames in public/audio/lessons.
+                            Audio path is optional for now. If left blank, users will see an audio placeholder. Use original MakedonIQ recordings, public domain, or properly licensed audio only. Do not use Pesna.org audio or commercial recordings without permission.
                         </p>
                         <span v-if="fieldError('metadata')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata') }}</span>
                     </div>
-                    <div class="grid gap-5 md:grid-cols-[1fr_18rem]">
+                    <div class="grid gap-5 md:grid-cols-[1fr_14rem]">
                         <label class="block">
-                            <span class="label">Audio path</span>
-                            <input v-model="form.metadata.audio_path" class="field mt-2 bg-white" placeholder="/audio/lessons/song_001.mp3" type="text">
+                            <span class="label">Audio path optional</span>
+                            <input v-model="form.metadata.audio_path" class="field mt-2 bg-white" placeholder="/audio/quizzes/song_001.mp3" type="text">
                             <span v-if="fieldError('metadata.audio_path')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.audio_path') }}</span>
                         </label>
                         <label class="block">
-                            <span class="label">Upload MP3</span>
-                            <input ref="audioFileInput" class="field mt-2 bg-white" accept=".mp3,audio/mpeg" type="file" @change="onAudioFileChange">
-                            <span v-if="fieldError('audio_file')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('audio_file') }}</span>
+                            <span class="label">Audio type</span>
+                            <select v-model="form.metadata.audio_type" class="field mt-2 bg-white">
+                                <option v-for="type in soundAudioTypes" :key="type.value" :value="type.value">
+                                    {{ type.label }}
+                                </option>
+                            </select>
+                            <span v-if="fieldError('metadata.audio_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.audio_type') }}</span>
                         </label>
                     </div>
+                    <div class="grid gap-5 md:grid-cols-2">
+                        <label class="block">
+                            <span class="label">Audio alt English</span>
+                            <input v-model="form.metadata.audio_alt_en" class="field mt-2 bg-white" placeholder="Folklore audio clue" type="text">
+                            <span v-if="fieldError('metadata.audio_alt_en')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.audio_alt_en') }}</span>
+                        </label>
+                        <label class="block">
+                            <span class="label">Audio alt Macedonian</span>
+                            <input v-model="form.metadata.audio_alt_mk" class="field mt-2 bg-white" placeholder="Аудио загатка од народна песна" type="text">
+                            <span v-if="fieldError('metadata.audio_alt_mk')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.audio_alt_mk') }}</span>
+                        </label>
+                    </div>
+                    <label class="block">
+                        <span class="label">Audio credit or source note</span>
+                        <textarea v-model="form.metadata.audio_credit" class="field mt-2 min-h-20 bg-white" placeholder="Placeholder. Original MakedonIQ recording to be added later." />
+                        <span v-if="fieldError('metadata.audio_credit')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.audio_credit') }}</span>
+                    </label>
                     <div v-if="form.metadata.audio_path" class="rounded-2xl bg-heritage-panel p-4">
                         <p class="label">Current audio</p>
                         <audio class="mt-3 w-full" controls preload="metadata" :src="form.metadata.audio_path" />
                     </div>
-                    <p v-if="selectedAudioFile" class="rounded-2xl bg-heritage-gold-faint px-4 py-3 text-sm font-black text-heritage-gold-deep">
-                        Selected upload: {{ selectedAudioFile.name }}
-                    </p>
+                    <div v-else class="rounded-2xl bg-heritage-gold-faint p-4 text-sm font-bold leading-6 text-heritage-gold-deep">
+                        Audio coming soon. Learners will see a placeholder until an original recording is added to public/audio/quizzes/.
+                    </div>
                 </section>
 
                 <section class="grid gap-4">
@@ -830,6 +819,9 @@ function formatDate(value) {
                                     </div>
                                     <p v-if="question.question_type === 'sound_choice' && question.metadata?.audio_path" class="mt-2 break-all text-xs font-semibold text-heritage-muted">
                                         {{ question.metadata.audio_path }}
+                                    </p>
+                                    <p v-else-if="question.question_type === 'sound_choice'" class="mt-2 text-xs font-semibold text-heritage-muted">
+                                        Audio placeholder active
                                     </p>
                                 </td>
                                 <td class="max-w-[260px] px-6 py-4">

@@ -140,36 +140,34 @@ class MakedonIQHealthCheck extends Command
             return;
         }
 
-        $missingAudioPaths = $soundQuestions->filter(function (Question $question): bool {
+        $questionsWithAudioPaths = $soundQuestions->filter(function (Question $question): bool {
             $audioPath = $question->metadata['audio_path'] ?? null;
 
-            return ! is_string($audioPath) || trim($audioPath) === '';
+            return is_string($audioPath) && trim($audioPath) !== '';
         });
 
-        if ($missingAudioPaths->isNotEmpty()) {
-            $this->failed($missingAudioPaths->count().' sound_choice question(s) are missing audio_path metadata.');
-
-            return;
+        if ($questionsWithAudioPaths->count() < $soundQuestions->count()) {
+            $this->pass('Sound choice questions may use placeholder audio_path null until original recordings are ready.');
         }
 
-        $wrongDirectory = $soundQuestions->filter(function (Question $question): bool {
-            return ! str_starts_with((string) ($question->metadata['audio_path'] ?? ''), '/audio/lessons/');
+        $wrongDirectory = $questionsWithAudioPaths->filter(function (Question $question): bool {
+            return ! str_starts_with((string) ($question->metadata['audio_path'] ?? ''), '/audio/quizzes/');
         });
 
         if ($wrongDirectory->isEmpty()) {
-            $this->pass('Sound choice questions use /audio/lessons/ audio paths.');
+            $this->pass('Sound choice questions with audio paths use /audio/quizzes/.');
         } else {
-            $this->failed($wrongDirectory->count().' sound_choice question(s) use audio paths outside /audio/lessons/.');
+            $this->failed($wrongDirectory->count().' sound_choice question(s) use audio paths outside /audio/quizzes/.');
         }
 
-        $missingFiles = $soundQuestions->filter(function (Question $question): bool {
+        $missingFiles = $questionsWithAudioPaths->filter(function (Question $question): bool {
             $audioPath = ltrim((string) ($question->metadata['audio_path'] ?? ''), '/');
 
             return $audioPath === '' || ! is_file(public_path($audioPath));
         });
 
         if ($missingFiles->isEmpty()) {
-            $this->pass('Sound choice MP3 files are present in public/audio/lessons.');
+            $this->pass('Referenced sound choice MP3 files are present.');
         } else {
             $this->warning($missingFiles->count().' sound_choice MP3 file(s) are not present yet.');
         }

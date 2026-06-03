@@ -48,17 +48,6 @@ const demoItems = [
         time: '8 min',
         visualClass: 'bg-linear-to-br from-heritage-navy-soft via-white to-heritage-gold-faint',
     },
-    {
-        title: 'Jovano, Jovanke Sound Quiz',
-        detail: 'Listen to a folklore music clue and choose the matching song title.',
-        href: '/quizzes/food-and-music/sound-quiz-jovano-jovanke/start',
-        category: 'Music',
-        visual: 'sound',
-        practise: 'Folklore song titles, melody memory',
-        questions: 1,
-        time: '3 min',
-        visualClass: 'bg-linear-to-br from-heritage-red-faint via-white to-heritage-navy-soft',
-    },
 ];
 
 const accountBenefits = [
@@ -177,8 +166,8 @@ onMounted(async () => {
                                             <span class="h-7 w-3 rounded-full bg-heritage-navy" />
                                         </div>
                                         <div class="mt-4 flex items-center gap-3 rounded-2xl bg-heritage-panel px-4 py-3">
-                                            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white">MP3</span>
-                                            <span class="text-sm font-black text-heritage-ink">song_001</span>
+                                            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white">Soon</span>
+                                            <span class="text-sm font-black text-heritage-ink">original audio</span>
                                         </div>
                                     </div>
 

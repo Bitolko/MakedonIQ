@@ -79,6 +79,14 @@ const categoryModule = computed(() => {
             sideTitle: 'Learning focus',
             facts: ['Traditional dishes', 'Folk music', 'Celebration vocabulary'],
         },
+        'folklore-songs': {
+            badge: 'Folklore songs',
+            title: categoryName.value || 'Folklore Songs',
+            subtitle: 'Learn traditional Macedonian songs through title phrases, meaning, vocabulary, and cultural context.',
+            icon: 'FS',
+            sideTitle: 'Song learning focus',
+            facts: ['Safe lyric excerpts', 'Key song vocabulary', 'Original audio coming later'],
+        },
     };
 
     return modules[slug] || {

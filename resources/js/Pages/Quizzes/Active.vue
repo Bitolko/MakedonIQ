@@ -60,6 +60,13 @@ const pictureMetadata = computed(() => currentQuestion.value?.metadata || {});
 const pictureLanguage = computed(() => language.value.toLowerCase());
 const isSoundQuestion = computed(() => currentQuestion.value?.question_type === 'sound_choice');
 const soundMetadata = computed(() => currentQuestion.value?.metadata || {});
+const soundAltText = computed(() => {
+    if (language.value === 'MK' && soundMetadata.value.audio_alt_mk) {
+        return soundMetadata.value.audio_alt_mk;
+    }
+
+    return soundMetadata.value.audio_alt_en || 'Folklore audio clue';
+});
 const mapPrompt = computed(() => {
     const targetType = mapMetadata.value.target_type || 'place';
 
@@ -268,18 +275,22 @@ function authHref(path) {
                         <div v-if="isSoundQuestion" class="mx-auto mt-8 max-w-xl rounded-[1.5rem] border border-heritage-gold/40 bg-white p-4 shadow-card">
                             <div class="mb-3 flex items-center justify-between gap-3">
                                 <span class="label">Sound clue</span>
-                                <span class="rounded-full bg-heritage-gold-faint px-3 py-1 text-xs font-black text-heritage-gold-deep">MP3</span>
+                                <span class="rounded-full bg-heritage-gold-faint px-3 py-1 text-xs font-black text-heritage-gold-deep">{{ soundMetadata.audio_type || 'folklore' }}</span>
                             </div>
                             <audio
                                 v-if="soundMetadata.audio_path"
                                 :key="currentQuestion.id"
                                 class="w-full"
+                                :aria-label="soundAltText"
                                 controls
                                 preload="metadata"
                                 :src="soundMetadata.audio_path"
                             />
-                            <div v-else class="rounded-2xl bg-heritage-panel p-4 text-sm font-bold text-heritage-muted">
-                                Audio file pending.
+                            <div v-else class="rounded-2xl border border-heritage-gold/40 bg-heritage-gold-faint p-5 text-left">
+                                <p class="text-base font-black text-heritage-ink">Audio coming soon</p>
+                                <p class="mt-2 text-sm font-bold leading-6 text-heritage-gold-deep">
+                                    This quiz will use original MakedonIQ recordings. For now, choose from the song titles and use the linked lesson for review.
+                                </p>
                             </div>
                         </div>
                         <div class="mx-auto mt-8 rounded-[2rem] bg-heritage-panel p-4">

@@ -36,6 +36,9 @@ const relatedLessonSummary = computed(() => localizedText(relatedLesson.value, '
 const isMapChallenge = computed(() => Boolean(quiz.value?.has_map_questions || questions.value.some((question) => question.question_type === 'map_guess')));
 const isPictureQuiz = computed(() => Boolean(quiz.value?.has_picture_questions || questions.value.some((question) => question.question_type === 'picture_choice')));
 const isSoundQuiz = computed(() => Boolean(quiz.value?.has_sound_questions || questions.value.some((question) => question.question_type === 'sound_choice')));
+const soundAudioMissing = computed(() => isSoundQuiz.value && questions.value.some((question) => (
+    question.question_type === 'sound_choice' && !question.metadata?.audio_path
+)));
 const questionCount = computed(() => quiz.value?.questions_count || questions.value.length || 0);
 
 const learnItems = computed(() => {
@@ -58,12 +61,18 @@ const learnItems = computed(() => {
     }
 
     if (isSoundQuiz.value) {
-        return [
+        const items = [
             'Listen to the MP3 sound clue',
             'Choose the matching folklore song title',
             'Use the related lesson lyrics and context for review',
             'Submit normally for secure backend scoring',
         ];
+
+        if (soundAudioMissing.value) {
+            items[0] = 'Audio clips will be added after original recordings are prepared';
+        }
+
+        return items;
     }
 
     if (!questions.value.length) {
@@ -104,7 +113,9 @@ const overviewText = computed(() => {
     }
 
     if (isSoundQuiz.value) {
-        return `A listening quiz with ${questionCount.value} sound clues. Results are scored securely after you submit.`;
+        return soundAudioMissing.value
+            ? `A listening quiz foundation with ${questionCount.value} sound prompts. Audio clips will be added after original recordings are prepared.`
+            : `A listening quiz with ${questionCount.value} sound clues. Results are scored securely after you submit.`;
     }
 
     return 'Questions are short, friendly, and built for bilingual learning. You can review your results after finishing.';
@@ -256,7 +267,7 @@ function authHref(path) {
                         Look at the image or picture clue and choose the correct answer. Some picture clues may use placeholders while images are being prepared.
                     </p>
                     <p v-else-if="isSoundQuiz" class="mt-3 leading-7 text-heritage-muted">
-                        Play the sound clue and choose the folklore song title that matches it.
+                        {{ soundAudioMissing ? 'Audio clips will be added after original recordings are prepared. For now, use the placeholder prompts and choose the folklore song title.' : 'Listen to the audio clue and choose the folklore song title that matches it.' }}
                     </p>
                     <div class="mt-6 grid gap-4">
                         <div v-for="(item, index) in learnItems" :key="item" class="flex gap-3 rounded-2xl bg-heritage-panel p-4">

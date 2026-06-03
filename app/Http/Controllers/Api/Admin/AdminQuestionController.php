@@ -8,7 +8,6 @@ use App\Models\Quiz;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 
 class AdminQuestionController extends Controller
@@ -20,6 +19,13 @@ class AdminQuestionController extends Controller
         'landmark',
         'alphabet',
         'culture',
+        'music',
+        'other',
+    ];
+
+    private const SOUND_AUDIO_TYPES = [
+        'folklore',
+        'pronunciation',
         'music',
         'other',
     ];
@@ -40,7 +46,6 @@ class AdminQuestionController extends Controller
     public function store(Request $request, Quiz $quiz): JsonResponse
     {
         $validated = $this->validatedData($request);
-        $validated = $this->withUploadedAudioPath($request, $validated);
 
         $question = DB::transaction(function () use ($quiz, $validated): Question {
             $question = $quiz->questions()->create($this->questionAttributes($validated));
@@ -64,7 +69,6 @@ class AdminQuestionController extends Controller
     public function update(Request $request, Question $question): JsonResponse
     {
         $validated = $this->validatedData($request);
-        $validated = $this->withUploadedAudioPath($request, $validated);
         $question = $this->questionWithDetails($question);
         $hasAttemptHistory = $this->hasAttemptHistory($question);
 
@@ -123,7 +127,10 @@ class AdminQuestionController extends Controller
             'metadata.image_credit' => ['nullable', 'string', 'max:500'],
             'metadata.image_type' => ['nullable', 'string', 'in:food,city,lake,landmark,alphabet,culture,music,other'],
             'metadata.audio_path' => ['nullable', 'string', 'max:255'],
-            'audio_file' => ['nullable', 'file', 'mimes:mp3', 'max:5120'],
+            'metadata.audio_alt_en' => ['nullable', 'string', 'max:255'],
+            'metadata.audio_alt_mk' => ['nullable', 'string', 'max:255'],
+            'metadata.audio_type' => ['nullable', 'string', 'in:folklore,pronunciation,music,other'],
+            'metadata.audio_credit' => ['nullable', 'string', 'max:255'],
             'question_en' => ['required', 'string'],
             'question_mk' => ['nullable', 'string'],
             'explanation_en' => ['nullable', 'string'],
@@ -162,15 +169,9 @@ class AdminQuestionController extends Controller
             $metadata = $validated['metadata'] ?? [];
             $audioPath = $this->normalizeAudioPath($metadata['audio_path'] ?? null);
 
-            if (! $request->hasFile('audio_file') && ! $audioPath) {
+            if ($audioPath && ! str_starts_with($audioPath, '/audio/quizzes/')) {
                 throw ValidationException::withMessages([
-                    'metadata.audio_path' => 'Sound choice questions need an MP3 upload or an audio path.',
-                ]);
-            }
-
-            if ($audioPath && ! str_starts_with($audioPath, '/audio/lessons/')) {
-                throw ValidationException::withMessages([
-                    'metadata.audio_path' => 'Audio paths must use /audio/lessons/.',
+                    'metadata.audio_path' => 'Audio paths must use /audio/quizzes/.',
                 ]);
             }
         }
@@ -226,6 +227,10 @@ class AdminQuestionController extends Controller
         if ($questionType === 'sound_choice') {
             return [
                 'audio_path' => $this->normalizeAudioPath($metadata['audio_path'] ?? null),
+                'audio_alt_en' => $this->nullableString($metadata['audio_alt_en'] ?? null),
+                'audio_alt_mk' => $this->nullableString($metadata['audio_alt_mk'] ?? null),
+                'audio_type' => $this->soundAudioType($metadata['audio_type'] ?? null),
+                'audio_credit' => $this->nullableString($metadata['audio_credit'] ?? null),
             ];
         }
 
@@ -250,52 +255,11 @@ class AdminQuestionController extends Controller
         return in_array($value, self::PICTURE_IMAGE_TYPES, true) ? $value : 'other';
     }
 
-    private function withUploadedAudioPath(Request $request, array $validated): array
+    private function soundAudioType(?string $value): string
     {
-        if (($validated['question_type'] ?? 'multiple_choice') !== 'sound_choice' || ! $request->hasFile('audio_file')) {
-            return $validated;
-        }
+        $value = $this->nullableString($value);
 
-        $validated['metadata'] ??= [];
-        $validated['metadata']['audio_path'] = $this->storeAudioFile($request->file('audio_file'));
-
-        return $validated;
-    }
-
-    private function storeAudioFile($file): string
-    {
-        $directory = public_path('audio/lessons');
-
-        File::ensureDirectoryExists($directory);
-
-        $filename = $this->nextAudioFilename($directory);
-        $file->move($directory, $filename);
-
-        return "/audio/lessons/{$filename}";
-    }
-
-    private function nextAudioFilename(string $directory): string
-    {
-        $usedIndexes = collect(File::glob($directory.DIRECTORY_SEPARATOR.'song_*.mp3') ?: [])
-            ->map(fn (string $path): int => $this->songIndexFromPath($path));
-
-        Question::query()
-            ->where('question_type', 'sound_choice')
-            ->get(['metadata'])
-            ->each(function (Question $question) use ($usedIndexes): void {
-                $usedIndexes->push($this->songIndexFromPath($question->metadata['audio_path'] ?? ''));
-            });
-
-        $nextIndex = max(0, ...$usedIndexes->filter()->values()->all()) + 1;
-
-        return sprintf('song_%03d.mp3', $nextIndex);
-    }
-
-    private function songIndexFromPath(?string $path): int
-    {
-        preg_match('/song_(\d+)\.mp3$/i', (string) $path, $matches);
-
-        return isset($matches[1]) ? (int) $matches[1] : 0;
+        return in_array($value, self::SOUND_AUDIO_TYPES, true) ? $value : 'folklore';
     }
 
     private function normalizeAudioPath(mixed $value): ?string

@@ -56,6 +56,7 @@ const heroBadge = computed(() => {
         'history-of-macedonia': 'Story path',
         'culture-and-traditions': 'Heritage module',
         'food-and-music': 'Taste and rhythm',
+        'folklore-songs': 'Folklore Music',
     })[resolvedCategorySlug.value] || 'Lesson module';
 });
 
@@ -72,6 +73,15 @@ const keyPoints = computed(() => {
 });
 
 const fallbackVocabulary = computed(() => {
+    if (resolvedCategorySlug.value === 'folklore-songs' || lessonSlug.startsWith('folklore-song-')) {
+        return [
+            { term: 'песна', detail: 'song' },
+            { term: 'ритам', detail: 'rhythm' },
+            { term: 'глас', detail: 'voice' },
+            { term: 'сеќавање', detail: 'memory' },
+        ];
+    }
+
     if (resolvedCategorySlug.value === 'food-and-music') {
         return [
             { term: 'грав', detail: 'beans' },
