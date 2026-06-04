@@ -4,14 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\QuizAttempt;
 use App\Models\User;
+use App\Services\LearnerProgressService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class CategoryController extends Controller
 {
+    public function __construct(private LearnerProgressService $progress) {}
+
     public function index(): JsonResponse
     {
         $categories = Category::query()
@@ -47,7 +48,9 @@ class CategoryController extends Controller
             ->get();
 
         $user = $request->user();
-        $attempts = $this->completedAttemptsFor($user, $quizzes->pluck('id'));
+        $attempts = $user
+            ? $this->progress->completedAttemptsFor($user, $quizzes->pluck('id'), [])
+            : collect();
         $attemptsByQuiz = $attempts->groupBy('quiz_id');
 
         $quizPayloads = $quizzes
@@ -73,7 +76,7 @@ class CategoryController extends Controller
                 'sound_questions_count' => $quiz->sound_questions_count,
                 'has_sound_questions' => (int) $quiz->sound_questions_count > 0,
                 'user_progress' => $user
-                    ? $this->quizUserProgress($attemptsByQuiz->get($quiz->id, collect()))
+                    ? $this->progress->quizUserProgress($attemptsByQuiz->get($quiz->id, collect()))
                     : null,
             ])
             ->values();
@@ -82,7 +85,7 @@ class CategoryController extends Controller
             'data' => [
                 'category' => $this->categoryPayload($category),
                 'quizzes' => $quizPayloads,
-                'user_progress' => $this->categoryUserProgress($user, $quizzes, $attempts),
+                'user_progress' => $this->progress->categoryUserProgress($user, $quizzes, $attempts),
             ],
         ]);
     }
@@ -107,76 +110,8 @@ class CategoryController extends Controller
         ];
     }
 
-    private function completedAttemptsFor(?User $user, Collection $quizIds): Collection
-    {
-        if (! $user || $quizIds->isEmpty()) {
-            return collect();
-        }
-
-        return QuizAttempt::query()
-            ->where('user_id', $user->id)
-            ->whereIn('quiz_id', $quizIds->all())
-            ->whereNotNull('completed_at')
-            ->orderByDesc('completed_at')
-            ->orderByDesc('id')
-            ->get();
-    }
-
-    private function categoryUserProgress(?User $user, Collection $quizzes, Collection $attempts): array
-    {
-        $totalQuizzes = $quizzes->count();
-
-        if (! $user) {
-            return [
-                'is_authenticated' => false,
-                'completed_quizzes' => 0,
-                'total_quizzes' => $totalQuizzes,
-                'progress_percentage' => 0,
-                'message' => 'Log in to track your progress',
-            ];
-        }
-
-        $completedQuizzes = $attempts->pluck('quiz_id')->unique()->count();
-
-        return [
-            'is_authenticated' => true,
-            'completed_quizzes' => $completedQuizzes,
-            'total_quizzes' => $totalQuizzes,
-            'progress_percentage' => $totalQuizzes > 0
-                ? $this->percentageOrZero(($completedQuizzes / $totalQuizzes) * 100)
-                : 0,
-            'total_attempts' => $attempts->count(),
-            'best_percentage' => $attempts->isEmpty()
-                ? null
-                : $this->percentageOrZero($attempts->max(fn (QuizAttempt $attempt): float => (float) $attempt->percentage)),
-            'average_percentage' => $attempts->isEmpty()
-                ? null
-                : $this->percentageOrZero($attempts->avg(fn (QuizAttempt $attempt): float => (float) $attempt->percentage)),
-            'total_points' => $attempts->sum('score'),
-        ];
-    }
-
-    private function quizUserProgress(Collection $attempts): array
-    {
-        $lastAttempt = $attempts->first();
-
-        return [
-            'attempts_count' => $attempts->count(),
-            'best_percentage' => $attempts->isEmpty()
-                ? null
-                : $this->percentageOrZero($attempts->max(fn (QuizAttempt $attempt): float => (float) $attempt->percentage)),
-            'last_attempted_at' => $lastAttempt?->completed_at?->toISOString(),
-            'completed' => $attempts->isNotEmpty(),
-        ];
-    }
-
     private function isQuizLocked($quiz, ?User $user): bool
     {
         return ! $user && ! $quiz->is_demo;
-    }
-
-    private function percentageOrZero(mixed $value): float
-    {
-        return round((float) ($value ?? 0), 1);
     }
 }
