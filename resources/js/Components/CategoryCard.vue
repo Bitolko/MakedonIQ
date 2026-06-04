@@ -17,11 +17,15 @@ const toneClasses = {
 </script>
 
 <template>
-    <article class="soft-card soft-card-hover group flex h-full flex-col overflow-hidden">
-        <div class="h-2 bg-linear-to-r from-heritage-red via-heritage-gold to-heritage-navy" />
+    <article
+        :class="[
+            'soft-card soft-card-hover group flex h-full flex-col overflow-hidden border-t-4 bg-white',
+            category.tone === 'gold' ? 'border-t-heritage-gold' : (category.tone === 'navy' ? 'border-t-heritage-navy/60' : 'border-t-heritage-red')
+        ]"
+    >
         <div class="flex flex-1 flex-col p-6">
             <div class="flex items-start justify-between gap-4">
-                <div :class="['flex h-16 w-16 items-center justify-center rounded-2xl border text-lg font-black shadow-card transition group-hover:scale-105', toneClasses[category.tone] || toneClasses.red]">
+                <div :class="['flex h-16 w-16 items-center justify-center rounded-2xl border-2 text-lg font-black shadow-card transition group-hover:scale-105', toneClasses[category.tone] || toneClasses.red]">
                     {{ category.icon }}
                 </div>
                 <AppBadge :variant="category.tone === 'navy' ? 'navy' : category.tone">{{ category.level }}</AppBadge>

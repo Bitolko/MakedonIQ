@@ -25,11 +25,10 @@ const statusVariant = {
 </script>
 
 <template>
-    <article :class="['soft-card soft-card-hover group flex h-full flex-col overflow-hidden', quiz.isLocked ? 'border-heritage-gold/60 bg-white' : '']">
-        <div :class="['h-2', quiz.isLocked ? 'bg-linear-to-r from-heritage-gold via-heritage-red-faint to-heritage-panel' : 'bg-linear-to-r from-heritage-red via-heritage-gold to-heritage-navy']" />
+    <article :class="['soft-card soft-card-hover group flex h-full flex-col overflow-hidden border-t-4 bg-white', quiz.isLocked ? 'border-heritage-gold/60 border-t-heritage-gold' : 'border-t-heritage-red']">
         <div class="flex flex-1 flex-col p-6">
             <div class="flex items-start justify-between gap-4">
-                <div :class="['flex h-14 w-14 items-center justify-center rounded-2xl border text-base font-black shadow-card', quiz.isLocked ? 'border-heritage-gold/40 bg-heritage-gold-faint text-xs text-heritage-gold-deep' : 'border-heritage-gold/40 bg-heritage-gold-faint text-heritage-gold-deep']">
+                <div :class="['flex h-14 w-14 items-center justify-center rounded-2xl border-2 text-base font-black shadow-card transition group-hover:scale-105', quiz.isLocked ? 'border-heritage-gold/50 bg-heritage-gold-faint text-xs text-heritage-gold-deep' : 'border-heritage-red/20 bg-heritage-gold-faint text-heritage-red']">
                     {{ quiz.isLocked ? 'LOCK' : (quiz.isSoundQuiz ? 'AUD' : (quiz.isPictureQuiz ? 'PIC' : (quiz.isMapChallenge ? 'MAP' : 'Q'))) }}
                 </div>
                 <div class="flex flex-wrap justify-end gap-2">
@@ -46,9 +45,9 @@ const statusVariant = {
             <h3 class="mt-6 text-2xl font-black text-heritage-ink">{{ quiz.title }}</h3>
             <p class="mt-3 flex-1 leading-7 text-heritage-muted">{{ quiz.description }}</p>
             <div class="mt-5 flex flex-wrap gap-2 text-sm font-bold text-heritage-muted">
-                <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.difficulty }}</span>
-                <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.questions }} questions</span>
-                <span class="rounded-full bg-heritage-panel px-3 py-1">{{ quiz.time }}</span>
+                <span class="rounded-full border border-heritage-line/60 bg-heritage-panel px-3 py-1">{{ quiz.difficulty }}</span>
+                <span class="rounded-full border border-heritage-line/60 bg-heritage-panel px-3 py-1">{{ quiz.questions }} questions</span>
+                <span class="rounded-full border border-heritage-line/60 bg-heritage-panel px-3 py-1">{{ quiz.time }}</span>
             </div>
             <div class="mt-6">
                 <ProgressBar :value="quiz.progress" :label="quiz.progressLabel || 'Progress'" />
@@ -58,7 +57,7 @@ const statusVariant = {
                     </span>
                 </div>
             </div>
-            <div v-if="quiz.isLocked" class="mt-6 rounded-[1.25rem] border border-heritage-gold/45 bg-linear-to-br from-heritage-gold-faint via-white to-heritage-red-faint p-4 shadow-card">
+            <div v-if="quiz.isLocked" class="mt-6 rounded-[1.25rem] border border-heritage-gold/45 bg-heritage-gold-faint p-4 shadow-card">
                 <div class="flex items-start gap-3">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-heritage-red text-[0.68rem] font-black text-white shadow-[0_4px_0_0_#760000]">LOCK</span>
                     <div>

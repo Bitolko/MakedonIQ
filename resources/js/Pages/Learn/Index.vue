@@ -3,6 +3,8 @@ import { computed, onMounted, ref } from 'vue';
 import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
+import DemoPreviewSection from '../../Components/DemoPreviewSection.vue';
+import LearnHero from '../../Components/LearnHero.vue';
 import {
     difficultyLabel,
     currentUser,
@@ -89,21 +91,30 @@ const featuredLessons = computed(() => lessons.value.slice(0, 6).map((lesson) =>
 const demoItems = [
     {
         title: 'Basic Macedonian Greetings',
-        detail: 'Try a friendly first lesson and quiz.',
+        description: 'Start with friendly everyday phrases.',
+        practice: 'Practise greetings, meanings, and first phrases.',
         href: '/learn/macedonian-language/basic-macedonian-greetings',
         cta: 'Try demo lesson',
+        type: 'Lesson + Quiz',
+        visual: 'greetings',
     },
     {
         title: 'Cyrillic Alphabet Basics',
-        detail: 'Preview letters, sounds, and first words.',
+        description: 'Preview letters, sounds, and first words.',
+        practice: 'Learn your first Cyrillic letters.',
         href: '/learn/macedonian-alphabet/introduction-to-macedonian-cyrillic-alphabet',
         cta: 'Try demo lesson',
+        type: 'Alphabet',
+        visual: 'alphabet',
     },
     {
         title: 'Macedonia Map Challenge',
-        detail: 'Guess cities, lakes, and landmarks on the map.',
+        description: 'Guess cities, lakes, and landmarks.',
+        practice: 'Explore geography through play.',
         href: '/map-challenge',
         cta: 'Open demo',
+        type: 'Map Challenge',
+        visual: 'map',
     },
 ];
 
@@ -154,39 +165,9 @@ function authHref(path, intendedUrl) {
 <template>
     <PublicLayout>
         <main class="page-shell py-8 md:py-12">
-            <section class="relative overflow-hidden rounded-[2.5rem] border border-heritage-line/40 bg-heritage-panel p-8 shadow-card md:p-14">
-                <div class="pointer-events-none absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 2px 2px, rgba(164,0,0,0.18) 1px, transparent 0); background-size: 32px 32px;" />
-                <div class="relative mx-auto max-w-3xl text-center">
-                    <AppBadge variant="red">Learn</AppBadge>
-                    <h1 class="mt-5 text-4xl font-black leading-tight text-heritage-red md:text-6xl">Learn Macedonian step by step</h1>
-                    <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-heritage-navy/80">
-                        {{ isGuest ? 'Try a few lessons free, then create an account to unlock all lessons, quizzes, progress tracking, and saved results.' : 'Explore lessons, practise with quizzes, and keep building your Macedonian learning path.' }}
-                    </p>
-                    <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                        <PrimaryButton href="#learn-categories" size="lg">Start learning</PrimaryButton>
-                        <PrimaryButton href="/quizzes" variant="gold" size="lg">Take a quiz</PrimaryButton>
-                        <PrimaryButton href="/map-challenge" variant="white" size="lg">Map Challenge</PrimaryButton>
-                    </div>
-                </div>
-                </section>
+            <LearnHero :is-guest="isGuest" />
 
-                <section v-if="isGuest" class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
-                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <AppBadge variant="gold">Try these demos</AppBadge>
-                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Start with a free preview</h2>
-                        </div>
-                        <PrimaryButton href="/register" variant="soft">Create free account</PrimaryButton>
-                    </div>
-                    <div class="mt-6 grid gap-4 md:grid-cols-3">
-                        <article v-for="item in demoItems" :key="item.title" class="rounded-[1.5rem] border border-heritage-line bg-heritage-panel p-5">
-                            <p class="text-xs font-black uppercase text-heritage-red">Demo</p>
-                            <h3 class="mt-2 text-xl font-black text-heritage-ink">{{ item.title }}</h3>
-                            <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
-                            <PrimaryButton :href="item.href" class="mt-4 w-full" size="sm" variant="soft">{{ item.cta }}</PrimaryButton>
-                        </article>
-                    </div>
-                </section>
+                <DemoPreviewSection v-if="isGuest" :items="demoItems" class-name="mt-10" />
 
                 <section v-else class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">

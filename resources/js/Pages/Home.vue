@@ -4,6 +4,7 @@ import CategoryCard from '../Components/CategoryCard.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import AppBadge from '../Components/AppBadge.vue';
 import MacedoniaMap from '../Components/MacedoniaMap.vue';
+import DemoPreviewSection from '../Components/DemoPreviewSection.vue';
 import { categories, historyQuizzes } from '../data/makedoniq';
 import { currentUser } from '../api/makedoniq';
 
@@ -15,24 +16,6 @@ const steps = [
     { title: 'Answer questions', text: 'Practise with short bilingual prompts that feel playful and clear.', icon: '02' },
     { title: 'Earn points', text: 'Celebrate progress with points, streaks, badges, and encouraging feedback.', icon: '03' },
     { title: 'Track progress', text: 'See strengths by category and keep learning at your own pace.', icon: '04' },
-];
-
-const demoItems = [
-    {
-        title: 'Basic Macedonian Greetings',
-        detail: 'Start with friendly everyday phrases.',
-        href: '/quizzes/macedonian-language/basic-macedonian-greetings/start',
-    },
-    {
-        title: 'Cyrillic Alphabet Basics',
-        detail: 'Preview letters, sounds, and first words.',
-        href: '/quizzes/macedonian-alphabet/cyrillic-alphabet-basics/start',
-    },
-    {
-        title: 'Macedonia Map Challenge',
-        detail: 'Guess cities, lakes, and landmarks.',
-        href: '/map-challenge',
-    },
 ];
 
 const homeActions = [
@@ -157,25 +140,9 @@ const homeActions = [
                 </div>
             </section>
 
-            <section v-if="isGuest" class="page-shell pb-6">
-                <div class="rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
-                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <AppBadge variant="gold">Try these demos</AppBadge>
-                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Free previews to start with</h2>
-                        </div>
-                        <PrimaryButton :href="user ? '/dashboard' : '/register'" variant="soft">{{ user ? 'Open dashboard' : 'Create free account' }}</PrimaryButton>
-                    </div>
-                    <div class="mt-6 grid gap-4 md:grid-cols-3">
-                        <article v-for="item in demoItems" :key="item.title" class="rounded-[1.5rem] border border-heritage-line bg-heritage-panel p-5">
-                            <p class="text-xs font-black uppercase text-heritage-red">Demo</p>
-                            <h3 class="mt-2 text-xl font-black text-heritage-ink">{{ item.title }}</h3>
-                            <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
-                            <PrimaryButton :href="item.href" class="mt-4 w-full" size="sm" variant="soft">Try demo</PrimaryButton>
-                        </article>
-                    </div>
-                </div>
-            </section>
+            <div v-if="isGuest" class="page-shell pb-6">
+                <DemoPreviewSection />
+            </div>
 
             <section v-else class="page-shell pb-6">
                 <div class="rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
