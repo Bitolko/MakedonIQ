@@ -8,6 +8,33 @@ defineProps({
         default: true,
     },
 });
+
+const heroVisuals = [
+    {
+        label: 'Greetings',
+        tag: 'Phrases',
+        image: '/images/demo/demo-greetings.png',
+        alt: 'Greetings visual',
+    },
+    {
+        label: 'Alphabet',
+        tag: 'Letters',
+        image: '/images/demo/demo-alphabet.png',
+        alt: 'Cyrillic alphabet visual',
+    },
+    {
+        label: 'Map',
+        tag: 'Places',
+        image: '/images/demo/demo-map.png',
+        alt: 'Macedonia map challenge visual',
+    },
+    {
+        label: 'Songs',
+        tag: 'Sound',
+        image: '/images/demo/demo-sound.png',
+        alt: 'Sound quiz visual',
+    },
+];
 </script>
 
 <template>
@@ -57,65 +84,29 @@ defineProps({
                     <div class="pointer-events-none absolute inset-0 bg-linear-to-br from-white/10 via-transparent to-heritage-red/25" />
                     <div class="pointer-events-none absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.22) 1px, transparent 0); background-size: 26px 26px;" />
 
-                    <div class="relative grid gap-4">
-                        <div class="grid gap-4 sm:grid-cols-[1.1fr_0.9fr]">
-                            <div class="rounded-[1.5rem] border border-white/15 bg-white p-5 text-heritage-ink shadow-card">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="rounded-full bg-heritage-red-faint px-3 py-1 text-xs font-black uppercase text-heritage-red">Phrase</span>
-                                    <span class="rounded-full bg-heritage-navy px-3 py-1 text-xs font-black uppercase text-white">MK -> EN</span>
-                                </div>
-                                <p class="mt-5 text-3xl font-black text-heritage-red">Добро утро</p>
-                                <p class="mt-2 text-lg font-black text-heritage-navy">Good morning</p>
-                                <div class="mt-5 flex items-center gap-2">
-                                    <span class="h-2 flex-1 rounded-full bg-heritage-red/25" />
-                                    <span class="h-2 flex-1 rounded-full bg-heritage-gold" />
-                                    <span class="h-2 flex-1 rounded-full bg-heritage-navy/20" />
-                                </div>
+                    <div class="relative grid gap-4 sm:grid-cols-2">
+                        <article
+                            v-for="visual in heroVisuals"
+                            :key="visual.label"
+                            class="group overflow-hidden rounded-[1.5rem] border border-white/15 bg-white text-heritage-ink shadow-card transition hover:-translate-y-1 hover:shadow-soft"
+                        >
+                            <div class="relative h-36 overflow-hidden bg-heritage-panel sm:h-40 lg:h-44">
+                                <div class="absolute inset-0 bg-linear-to-br from-white via-heritage-gold-faint to-heritage-red-faint/70" />
+                                <img
+                                    :src="visual.image"
+                                    :alt="visual.alt"
+                                    class="relative h-full w-full object-contain p-2 transition duration-300 group-hover:scale-[1.03]"
+                                    loading="eager"
+                                    decoding="async"
+                                    width="900"
+                                    height="900"
+                                >
                             </div>
-
-                            <div class="rounded-[1.5rem] border border-white/15 bg-heritage-gold-faint p-5 text-heritage-ink shadow-card">
-                                <span class="rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-heritage-gold-deep shadow-card">Alphabet</span>
-                                <div class="mt-5 grid grid-cols-3 gap-2">
-                                    <span class="flex aspect-square items-center justify-center rounded-2xl bg-white text-3xl font-black text-heritage-red shadow-card">А</span>
-                                    <span class="flex aspect-square items-center justify-center rounded-2xl bg-heritage-gold text-3xl font-black text-heritage-navy shadow-card">Б</span>
-                                    <span class="flex aspect-square items-center justify-center rounded-2xl bg-heritage-red text-3xl font-black text-white shadow-card">В</span>
-                                </div>
-                                <p class="mt-4 text-sm font-black text-heritage-muted">Cyrillic basics</p>
+                            <div class="flex items-center justify-between gap-3 px-4 py-3">
+                                <span class="text-sm font-black text-heritage-ink">{{ visual.label }}</span>
+                                <span class="rounded-full border border-heritage-gold/35 bg-heritage-gold-faint px-3 py-1 text-[0.68rem] font-black uppercase text-heritage-gold-deep">{{ visual.tag }}</span>
                             </div>
-                        </div>
-
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <div class="relative min-h-44 overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/95 p-5 text-heritage-ink shadow-card">
-                                <span class="relative z-10 rounded-full bg-heritage-navy px-3 py-1 text-xs font-black uppercase text-white">Map Challenge</span>
-                                <div class="absolute left-7 top-20 h-9 w-14 rounded-[50%] bg-sky-200" />
-                                <div class="absolute bottom-7 right-8 h-9 w-20 rounded-[50%] bg-sky-200" />
-                                <div class="absolute bottom-7 left-7 h-0 w-0 border-x-[30px] border-b-[54px] border-x-transparent border-b-heritage-navy/20" />
-                                <div class="absolute left-16 right-16 top-24 h-1 rotate-[-9deg] rounded-full bg-heritage-gold" />
-                                <div class="absolute right-12 top-14 flex h-14 w-14 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white shadow-[0_4px_0_0_#760000] ring-4 ring-heritage-gold/35">PIN</div>
-                            </div>
-
-                            <div class="rounded-[1.5rem] border border-white/15 bg-white p-5 text-heritage-ink shadow-card">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="rounded-full bg-heritage-red-faint px-3 py-1 text-xs font-black uppercase text-heritage-red">Folklore songs</span>
-                                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-heritage-gold text-lg font-black text-heritage-navy">♪</span>
-                                </div>
-                                <div class="mt-6 flex h-20 items-center gap-2">
-                                    <span class="h-8 w-3 rounded-full bg-heritage-red" />
-                                    <span class="h-14 w-3 rounded-full bg-heritage-gold" />
-                                    <span class="h-10 w-3 rounded-full bg-heritage-navy" />
-                                    <span class="h-20 w-3 rounded-full bg-heritage-red" />
-                                    <span class="h-12 w-3 rounded-full bg-heritage-gold" />
-                                    <span class="h-7 w-3 rounded-full bg-heritage-navy" />
-                                </div>
-                                <p class="mt-2 text-sm font-black text-heritage-muted">Listen, recognise, remember</p>
-                            </div>
-                        </div>
-
-                        <div class="grid gap-3 rounded-[1.5rem] border border-white/15 bg-white/10 p-4 sm:grid-cols-3">
-                            <div class="rounded-2xl bg-white/90 px-4 py-3 text-sm font-black text-heritage-ink">Learn</div>
-                            <div class="rounded-2xl bg-heritage-gold px-4 py-3 text-sm font-black text-heritage-navy">Practise</div>
-                            <div class="rounded-2xl bg-heritage-red px-4 py-3 text-sm font-black text-white">Track</div>
-                        </div>
+                        </article>
                     </div>
                 </div>
             </div>
