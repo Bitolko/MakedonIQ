@@ -41,6 +41,8 @@ Route::middleware(['auth', 'admin'])->group(function (): void {
     Route::get('/admin/lessons', [PageController::class, 'show'])->defaults('page', 'Admin.Lessons')->name('admin.lessons');
     Route::get('/admin/quizzes', [PageController::class, 'show'])->defaults('page', 'Admin.Quizzes')->name('admin.quizzes');
     Route::get('/admin/questions', [PageController::class, 'show'])->defaults('page', 'Admin.Questions')->name('admin.questions');
+    Route::get('/admin/attempts', [PageController::class, 'show'])->defaults('page', 'Admin.Attempts')->name('admin.attempts');
+    Route::get('/admin/attempts/{attempt}', [PageController::class, 'show'])->defaults('page', 'Admin.AttemptResult')->name('admin.attempts.show');
 });
 
 Route::fallback([PageController::class, 'fallback']);

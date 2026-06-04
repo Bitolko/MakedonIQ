@@ -67,7 +67,10 @@ function formatDate(value) {
                 <h1 class="text-4xl font-black text-heritage-ink">Dashboard Overview</h1>
                 <p class="mt-2 text-heritage-muted">Live read-only reporting from learners, quizzes, questions, and saved attempts.</p>
             </div>
-            <PrimaryButton variant="soft" disabled>Add quiz coming soon</PrimaryButton>
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <PrimaryButton href="/admin/attempts" variant="soft">View Attempts</PrimaryButton>
+                <PrimaryButton variant="soft" disabled>Add quiz coming soon</PrimaryButton>
+            </div>
         </section>
 
         <article v-if="loading" class="section-panel">
@@ -95,7 +98,7 @@ function formatDate(value) {
                         <p class="mt-1 text-sm text-heritage-muted">Latest completed quiz attempts across all learners.</p>
                     </div>
                     <div v-if="recentAttempts.length" class="overflow-x-auto">
-                        <table class="w-full min-w-[760px] text-left">
+                        <table class="w-full min-w-[860px] text-left">
                             <thead class="table-heading">
                                 <tr>
                                     <th class="px-6 py-4 font-black">Learner</th>
@@ -103,6 +106,7 @@ function formatDate(value) {
                                     <th class="px-6 py-4 font-black">Score</th>
                                     <th class="px-6 py-4 font-black">Status</th>
                                     <th class="px-6 py-4 font-black">Completed</th>
+                                    <th class="px-6 py-4 font-black">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -120,6 +124,9 @@ function formatDate(value) {
                                         <AppBadge :variant="attempt.passed ? 'green' : 'red'">{{ attempt.passed ? 'Passed' : 'Review' }}</AppBadge>
                                     </td>
                                     <td class="px-6 py-4 text-heritage-muted">{{ formatDate(attempt.completed_at) }}</td>
+                                    <td class="px-6 py-4">
+                                        <PrimaryButton :href="attempt.admin_result_url" size="sm" variant="soft">View result</PrimaryButton>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

@@ -7,8 +7,11 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\QuizAttemptAnswer;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AdminReadController extends Controller
 {
@@ -189,39 +192,241 @@ class AdminReadController extends Controller
         return response()->json(['data' => $questions]);
     }
 
-    public function attempts(): JsonResponse
+    public function attempts(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:120'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'quiz_id' => ['nullable', 'integer', 'exists:quizzes,id'],
+            'status' => ['nullable', 'in:passed,review'],
+            'per_page' => ['nullable', 'integer', 'min:5', 'max:50'],
+            'page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        $search = trim((string) ($validated['search'] ?? ''));
+        $perPage = (int) ($validated['per_page'] ?? 20);
+
+        $query = $this->completedAttemptsQuery()
+            ->when($search !== '', function (Builder $query) use ($search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query
+                        ->whereHas('user', function (Builder $query) use ($search): void {
+                            $query->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('quiz', function (Builder $query) use ($search): void {
+                            $query->where('title_en', 'like', "%{$search}%")
+                                ->orWhere('title_mk', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('quiz.category', function (Builder $query) use ($search): void {
+                            $query->where('name_en', 'like', "%{$search}%")
+                                ->orWhere('name_mk', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when(
+                isset($validated['category_id']),
+                fn (Builder $query) => $query->whereHas(
+                    'quiz',
+                    fn (Builder $query) => $query->where('category_id', $validated['category_id']),
+                ),
+            )
+            ->when(
+                isset($validated['quiz_id']),
+                fn (Builder $query) => $query->where('quiz_id', $validated['quiz_id']),
+            )
+            ->when(
+                ($validated['status'] ?? null) === 'passed',
+                fn (Builder $query) => $query->where('passed', true),
+            )
+            ->when(
+                ($validated['status'] ?? null) === 'review',
+                fn (Builder $query) => $query->where('passed', false),
+            );
+
+        $paginator = $query->paginate($perPage);
+
         return response()->json([
-            'data' => $this->recentAttempts(50),
+            'data' => collect($paginator->items())
+                ->map(fn (QuizAttempt $attempt): array => $this->attemptListPayload($attempt))
+                ->values(),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+            ],
+            'filters' => $this->attemptFilterOptions(),
+        ]);
+    }
+
+    public function attempt(QuizAttempt $attempt): JsonResponse
+    {
+        abort_if($attempt->completed_at === null, 404);
+
+        $attempt->load([
+            'user',
+            'quiz.category',
+            'answers' => fn ($query) => $query->orderBy('id'),
+            'answers.question.correctAnswer',
+            'answers.selectedAnswer',
+        ]);
+
+        $learnerQuizAttempts = QuizAttempt::query()
+            ->where('user_id', $attempt->user_id)
+            ->where('quiz_id', $attempt->quiz_id)
+            ->whereNotNull('completed_at');
+
+        return response()->json([
+            'data' => [
+                'attempt' => [
+                    'id' => $attempt->id,
+                    'score' => $attempt->score,
+                    'total_questions' => $attempt->total_questions,
+                    'correct_answers' => $attempt->correct_answers,
+                    'percentage' => $this->percentageOrZero($attempt->percentage),
+                    'passed' => $attempt->passed,
+                    'started_at' => $attempt->started_at?->toISOString(),
+                    'completed_at' => $attempt->completed_at?->toISOString(),
+                ],
+                'learner' => [
+                    'id' => $attempt->user->id,
+                    'name' => $attempt->user->name,
+                    'email' => $attempt->user->email,
+                ],
+                'quiz' => [
+                    'id' => $attempt->quiz->id,
+                    'title_en' => $attempt->quiz->title_en,
+                    'title_mk' => $attempt->quiz->title_mk,
+                    'slug' => $attempt->quiz->slug,
+                    'difficulty' => $attempt->quiz->difficulty,
+                    'estimated_minutes' => $attempt->quiz->estimated_minutes,
+                    'points_per_question' => $attempt->quiz->points_per_question,
+                    'admin_url' => "/admin/quizzes?quiz={$attempt->quiz->id}",
+                ],
+                'category' => [
+                    'id' => $attempt->quiz->category->id,
+                    'name_en' => $attempt->quiz->category->name_en,
+                    'name_mk' => $attempt->quiz->category->name_mk,
+                    'slug' => $attempt->quiz->category->slug,
+                    'icon' => $attempt->quiz->category->icon,
+                ],
+                'learner_quiz_stats' => [
+                    'total_attempts' => (clone $learnerQuizAttempts)->count(),
+                    'best_percentage' => $this->percentageOrZero((clone $learnerQuizAttempts)->max('percentage')),
+                    'best_points' => (int) (clone $learnerQuizAttempts)->max('score'),
+                ],
+                'answers' => $attempt->answers
+                    ->map(fn (QuizAttemptAnswer $answer, int $index): array => $this->attemptAnswerPayload($answer, $index))
+                    ->values(),
+            ],
         ]);
     }
 
     private function recentAttempts(int $limit): array
     {
+        return $this->completedAttemptsQuery()
+            ->limit($limit)
+            ->get()
+            ->map(fn (QuizAttempt $attempt): array => $this->attemptListPayload($attempt))
+            ->values()
+            ->all();
+    }
+
+    private function completedAttemptsQuery(): Builder
+    {
         return QuizAttempt::query()
             ->whereNotNull('completed_at')
             ->with(['user', 'quiz.category'])
             ->orderByDesc('completed_at')
-            ->orderByDesc('id')
-            ->limit($limit)
-            ->get()
-            ->map(fn (QuizAttempt $attempt): array => [
-                'id' => $attempt->id,
-                'user_name' => $attempt->user->name,
-                'user_email' => $attempt->user->email,
-                'quiz_title_en' => $attempt->quiz->title_en,
-                'quiz_slug' => $attempt->quiz->slug,
-                'category_name_en' => $attempt->quiz->category->name_en,
-                'category_slug' => $attempt->quiz->category->slug,
-                'score' => $attempt->score,
-                'total_questions' => $attempt->total_questions,
-                'correct_answers' => $attempt->correct_answers,
-                'percentage' => $this->percentageOrZero($attempt->percentage),
-                'passed' => $attempt->passed,
-                'completed_at' => $attempt->completed_at?->toISOString(),
-            ])
-            ->values()
-            ->all();
+            ->orderByDesc('id');
+    }
+
+    private function attemptListPayload(QuizAttempt $attempt): array
+    {
+        return [
+            'id' => $attempt->id,
+            'user_name' => $attempt->user->name,
+            'user_email' => $attempt->user->email,
+            'quiz_title_en' => $attempt->quiz->title_en,
+            'quiz_slug' => $attempt->quiz->slug,
+            'category_name_en' => $attempt->quiz->category->name_en,
+            'category_slug' => $attempt->quiz->category->slug,
+            'score' => $attempt->score,
+            'total_questions' => $attempt->total_questions,
+            'correct_answers' => $attempt->correct_answers,
+            'percentage' => $this->percentageOrZero($attempt->percentage),
+            'passed' => $attempt->passed,
+            'completed_at' => $attempt->completed_at?->toISOString(),
+            'admin_result_url' => "/admin/attempts/{$attempt->id}",
+        ];
+    }
+
+    private function attemptAnswerPayload(QuizAttemptAnswer $attemptAnswer, int $index): array
+    {
+        $question = $attemptAnswer->question;
+        $selectedAnswer = $attemptAnswer->selectedAnswer;
+        $correctAnswer = $question?->correctAnswer;
+
+        return [
+            'id' => $attemptAnswer->id,
+            'number' => $index + 1,
+            'is_correct' => $attemptAnswer->is_correct,
+            'points_awarded' => $attemptAnswer->points_awarded,
+            'question_points' => $attemptAnswer->question_points_snapshot ?? $question?->points,
+            'question' => [
+                'id' => $question?->id,
+                'question_type' => $attemptAnswer->question_type_snapshot ?? $question?->question_type,
+                'translation_direction' => $attemptAnswer->translation_direction_snapshot ?? $question?->translation_direction,
+                'metadata' => $attemptAnswer->question_metadata_snapshot ?? $question?->metadata ?? [],
+                'question_en' => $attemptAnswer->question_en_snapshot ?? $question?->question_en,
+                'question_mk' => $attemptAnswer->question_mk_snapshot ?? $question?->question_mk,
+                'explanation_en' => $attemptAnswer->explanation_en_snapshot ?? $question?->explanation_en,
+                'explanation_mk' => $attemptAnswer->explanation_mk_snapshot ?? $question?->explanation_mk,
+            ],
+            'selected_answer' => [
+                'id' => $selectedAnswer?->id,
+                'answer_en' => $attemptAnswer->selected_answer_en_snapshot ?? $selectedAnswer?->answer_en,
+                'answer_mk' => $attemptAnswer->selected_answer_mk_snapshot ?? $selectedAnswer?->answer_mk,
+            ],
+            'correct_answer' => [
+                'id' => $correctAnswer?->id,
+                'answer_en' => $attemptAnswer->correct_answer_en_snapshot ?? $correctAnswer?->answer_en,
+                'answer_mk' => $attemptAnswer->correct_answer_mk_snapshot ?? $correctAnswer?->answer_mk,
+            ],
+        ];
+    }
+
+    private function attemptFilterOptions(): array
+    {
+        return [
+            'categories' => Category::query()
+                ->ordered()
+                ->get(['id', 'name_en', 'slug'])
+                ->map(fn (Category $category): array => [
+                    'id' => $category->id,
+                    'name_en' => $category->name_en,
+                    'slug' => $category->slug,
+                ])
+                ->values(),
+            'quizzes' => Quiz::query()
+                ->select('quizzes.id', 'quizzes.title_en', 'quizzes.slug', 'quizzes.category_id')
+                ->join('categories', 'categories.id', '=', 'quizzes.category_id')
+                ->orderBy('categories.sort_order')
+                ->orderBy('categories.name_en')
+                ->orderBy('quizzes.sort_order')
+                ->orderBy('quizzes.title_en')
+                ->get()
+                ->map(fn (Quiz $quiz): array => [
+                    'id' => $quiz->id,
+                    'category_id' => $quiz->category_id,
+                    'title_en' => $quiz->title_en,
+                    'slug' => $quiz->slug,
+                ])
+                ->values(),
+        ];
     }
 
     private function popularQuizzes(): array

@@ -22,6 +22,8 @@ import AdminCategories from './Pages/Admin/Categories.vue';
 import AdminLessons from './Pages/Admin/Lessons.vue';
 import AdminQuizzes from './Pages/Admin/Quizzes.vue';
 import AdminQuestions from './Pages/Admin/Questions.vue';
+import AdminAttempts from './Pages/Admin/Attempts.vue';
+import AdminAttemptResult from './Pages/Admin/AttemptResult.vue';
 
 const props = defineProps({
     initialPage: {
@@ -53,6 +55,8 @@ const pages = {
     'Admin.Lessons': { component: AdminLessons, title: 'Admin Lessons | MakedonIQ' },
     'Admin.Quizzes': { component: AdminQuizzes, title: 'Admin Quizzes | MakedonIQ' },
     'Admin.Questions': { component: AdminQuestions, title: 'Admin Questions | MakedonIQ' },
+    'Admin.Attempts': { component: AdminAttempts, title: 'Admin Attempts | MakedonIQ' },
+    'Admin.AttemptResult': { component: AdminAttemptResult, title: 'Admin Attempt Result | MakedonIQ' },
 };
 
 const page = computed(() => pages[props.initialPage] || pages.Home);

@@ -18,6 +18,18 @@ class QuizAttemptAnswer extends Model
         'answer_id',
         'is_correct',
         'points_awarded',
+        'question_type_snapshot',
+        'translation_direction_snapshot',
+        'question_metadata_snapshot',
+        'question_en_snapshot',
+        'question_mk_snapshot',
+        'explanation_en_snapshot',
+        'explanation_mk_snapshot',
+        'selected_answer_en_snapshot',
+        'selected_answer_mk_snapshot',
+        'correct_answer_en_snapshot',
+        'correct_answer_mk_snapshot',
+        'question_points_snapshot',
     ];
 
     protected function casts(): array
@@ -28,6 +40,8 @@ class QuizAttemptAnswer extends Model
             'answer_id' => 'integer',
             'is_correct' => 'boolean',
             'points_awarded' => 'integer',
+            'question_metadata_snapshot' => 'array',
+            'question_points_snapshot' => 'integer',
         ];
     }
 

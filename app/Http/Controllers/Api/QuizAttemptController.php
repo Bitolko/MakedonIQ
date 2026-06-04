@@ -62,6 +62,7 @@ class QuizAttemptController extends Controller
             foreach ($questions as $question) {
                 $answerId = (int) $submittedByQuestion->get($question->id)['answer_id'];
                 $selectedAnswer = $question->answers->firstWhere('id', $answerId);
+                $correctAnswer = $question->answers->firstWhere('is_correct', true);
 
                 if (! $selectedAnswer) {
                     throw ValidationException::withMessages([
@@ -83,6 +84,18 @@ class QuizAttemptController extends Controller
                     'answer_id' => $selectedAnswer->id,
                     'is_correct' => $isCorrect,
                     'points_awarded' => $pointsAwarded,
+                    'question_type_snapshot' => $question->question_type,
+                    'translation_direction_snapshot' => $question->translation_direction,
+                    'question_metadata_snapshot' => $question->metadata,
+                    'question_en_snapshot' => $question->question_en,
+                    'question_mk_snapshot' => $question->question_mk,
+                    'explanation_en_snapshot' => $question->explanation_en,
+                    'explanation_mk_snapshot' => $question->explanation_mk,
+                    'selected_answer_en_snapshot' => $selectedAnswer->answer_en,
+                    'selected_answer_mk_snapshot' => $selectedAnswer->answer_mk,
+                    'correct_answer_en_snapshot' => $correctAnswer?->answer_en,
+                    'correct_answer_mk_snapshot' => $correctAnswer?->answer_mk,
+                    'question_points_snapshot' => $points,
                     'created_at' => $completedAt,
                     'updated_at' => $completedAt,
                 ];
@@ -211,32 +224,34 @@ class QuizAttemptController extends Controller
     {
         $question = $attemptAnswer->question;
         $selectedAnswer = $attemptAnswer->selectedAnswer;
-        $correctAnswer = $question->correctAnswer;
+        $correctAnswer = $question?->correctAnswer;
+        $questionType = $attemptAnswer->question_type_snapshot ?? $question?->question_type;
+        $metadata = $attemptAnswer->question_metadata_snapshot ?? $question?->metadata ?? [];
 
         return [
             'id' => $attemptAnswer->id,
             'is_correct' => $attemptAnswer->is_correct,
             'points_awarded' => $attemptAnswer->points_awarded,
             'question' => [
-                'id' => $question->id,
-                'question_type' => $question->question_type,
-                'translation_direction' => $question->translation_direction,
-                'metadata' => $this->publicQuestionMetadata($question->metadata ?? [], $question->question_type),
-                'question_en' => $question->question_en,
-                'question_mk' => $question->question_mk,
-                'explanation_en' => $question->explanation_en,
-                'explanation_mk' => $question->explanation_mk,
-                'sort_order' => $question->sort_order,
+                'id' => $question?->id,
+                'question_type' => $questionType,
+                'translation_direction' => $attemptAnswer->translation_direction_snapshot ?? $question?->translation_direction,
+                'metadata' => $this->publicQuestionMetadata($metadata, $questionType),
+                'question_en' => $attemptAnswer->question_en_snapshot ?? $question?->question_en,
+                'question_mk' => $attemptAnswer->question_mk_snapshot ?? $question?->question_mk,
+                'explanation_en' => $attemptAnswer->explanation_en_snapshot ?? $question?->explanation_en,
+                'explanation_mk' => $attemptAnswer->explanation_mk_snapshot ?? $question?->explanation_mk,
+                'sort_order' => $question?->sort_order,
             ],
             'selected_answer' => [
                 'id' => $selectedAnswer?->id,
-                'answer_en' => $selectedAnswer?->answer_en,
-                'answer_mk' => $selectedAnswer?->answer_mk,
+                'answer_en' => $attemptAnswer->selected_answer_en_snapshot ?? $selectedAnswer?->answer_en,
+                'answer_mk' => $attemptAnswer->selected_answer_mk_snapshot ?? $selectedAnswer?->answer_mk,
             ],
             'correct_answer' => [
                 'id' => $correctAnswer?->id,
-                'answer_en' => $correctAnswer?->answer_en,
-                'answer_mk' => $correctAnswer?->answer_mk,
+                'answer_en' => $attemptAnswer->correct_answer_en_snapshot ?? $correctAnswer?->answer_en,
+                'answer_mk' => $attemptAnswer->correct_answer_mk_snapshot ?? $correctAnswer?->answer_mk,
             ],
         ];
     }

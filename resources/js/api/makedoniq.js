@@ -236,8 +236,28 @@ export async function deleteAdminQuestion(questionId) {
     return deleteJson(`/api/admin/questions/${questionId}`);
 }
 
-export async function getAdminAttempts() {
-    return fetchJson('/api/admin/attempts');
+export async function getAdminAttempts(params = {}) {
+    const query = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== '') {
+            query.set(key, value);
+        }
+    });
+
+    const suffix = query.toString() ? `?${query.toString()}` : '';
+
+    return fetchJson(`/api/admin/attempts${suffix}`);
+}
+
+export async function getAdminAttempt(attemptId) {
+    return fetchJson(`/api/admin/attempts/${attemptId}`);
+}
+
+export function currentAdminAttemptId() {
+    const parts = quizPathParts();
+
+    return parts[0] === 'admin' && parts[1] === 'attempts' ? parts[2] || null : null;
 }
 
 export function quizPathParts() {
