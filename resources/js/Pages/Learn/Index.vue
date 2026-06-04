@@ -4,9 +4,9 @@ import PublicLayout from '../../Components/PublicLayout.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import AppBadge from '../../Components/AppBadge.vue';
 import DemoPreviewSection from '../../Components/DemoPreviewSection.vue';
+import FeaturedLessonCard from '../../Components/FeaturedLessonCard.vue';
 import LearnHero from '../../Components/LearnHero.vue';
 import {
-    difficultyLabel,
     currentUser,
     getLessons,
     learnCategoryUrl,
@@ -248,46 +248,15 @@ function authHref(path, intendedUrl) {
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div>
                             <h2 class="text-3xl font-black text-heritage-ink">Featured lessons</h2>
-                            <p class="mt-2 text-heritage-muted">Short reads designed to prepare you for a related quiz.</p>
+                            <p class="mt-2 max-w-2xl text-heritage-muted">Start with short bilingual lessons, then practise with a related quiz.</p>
                         </div>
-                        <AppBadge variant="navy">{{ lessons.length }} lessons</AppBadge>
+                        <span class="inline-flex w-fit rounded-full border border-heritage-line/60 bg-white px-3 py-1 text-xs font-black uppercase text-heritage-muted shadow-card">
+                            {{ lessons.length }} lessons
+                        </span>
                     </div>
 
-                    <div v-if="featuredLessons.length" class="mt-6 grid gap-5 lg:grid-cols-3">
-                        <article v-for="lesson in featuredLessons" :key="lesson.slug" :class="['soft-card overflow-hidden', lesson.isLocked ? 'border-heritage-gold/50' : '']">
-                            <div :class="['flex h-32 items-end p-5', lesson.isLocked ? 'bg-heritage-gold-faint' : 'bg-heritage-panel']">
-                                <div>
-                                    <p class="text-xs font-black uppercase text-heritage-red">{{ lesson.category }}</p>
-                                    <p :class="['mt-1 text-3xl font-black', lesson.isLocked ? 'text-heritage-gold-deep/25' : 'text-heritage-red/15']">
-                                        {{ lesson.isLocked ? 'LOCK' : lesson.title.slice(0, 2).toUpperCase() }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <AppBadge variant="gold">{{ difficultyLabel(lesson.difficulty) }}</AppBadge>
-                                <AppBadge v-if="lesson.isDemo" variant="gold">Demo</AppBadge>
-                                <AppBadge v-if="lesson.isLocked" variant="neutral">Locked</AppBadge>
-                                <span class="rounded-full bg-heritage-panel px-3 py-1 text-xs font-black text-heritage-muted">
-                                    {{ lesson.estimated_minutes || 'Self-paced' }}<span v-if="lesson.estimated_minutes"> min</span>
-                                </span>
-                            </div>
-                            <h3 class="mt-4 text-2xl font-black text-heritage-ink">{{ lesson.title }}</h3>
-                            <p class="mt-3 leading-7 text-heritage-muted">{{ lesson.summary }}</p>
-                            <p v-if="lesson.isLocked" class="mt-4 rounded-2xl bg-heritage-panel px-4 py-3 text-sm font-bold text-heritage-muted">
-                                Create a free account to unlock.
-                            </p>
-                            <div class="mt-5 flex flex-col gap-3 sm:flex-row">
-                                <PrimaryButton v-if="lesson.isLocked" :href="lesson.registerHref" variant="soft">Unlock free</PrimaryButton>
-                                <a v-if="lesson.isLocked" :href="lesson.loginHref" class="inline-flex items-center justify-center rounded-2xl px-3 py-2 text-center text-xs font-black text-heritage-red hover:text-heritage-red-dark">
-                                    Already have an account? Log in
-                                </a>
-                                <PrimaryButton v-if="!lesson.isLocked" :href="lesson.href" variant="soft">{{ lesson.actionLabel }}</PrimaryButton>
-                                <PrimaryButton v-if="!lesson.isLocked && lesson.related_quiz && !lesson.relatedQuizLocked" :href="lesson.related_quiz.start_url" variant="soft">Take quiz</PrimaryButton>
-                                <PrimaryButton v-else-if="!lesson.isLocked && lesson.relatedQuizLocked" :href="lesson.relatedQuizRegisterHref" variant="soft">Unlock quiz</PrimaryButton>
-                            </div>
-                            </div>
-                        </article>
+                    <div v-if="featuredLessons.length" class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                        <FeaturedLessonCard v-for="lesson in featuredLessons" :key="lesson.slug" :lesson="lesson" />
                     </div>
                 </section>
 
