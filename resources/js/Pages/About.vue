@@ -68,6 +68,33 @@ const trustItems = [
     'Folklore lessons focus on respectful cultural learning.',
     'The platform avoids political claims and keeps content beginner-friendly.',
 ];
+
+const heroVisuals = [
+    {
+        label: 'Greetings',
+        tag: 'Language',
+        image: '/images/demo/demo-greetings.png',
+        alt: 'Greetings visual',
+    },
+    {
+        label: 'Alphabet',
+        tag: 'Letters',
+        image: '/images/demo/demo-alphabet.png',
+        alt: 'Cyrillic alphabet visual',
+    },
+    {
+        label: 'Map',
+        tag: 'Places',
+        image: '/images/demo/demo-map.png',
+        alt: 'Macedonia map challenge visual',
+    },
+    {
+        label: 'Songs',
+        tag: 'Culture',
+        image: '/images/demo/demo-sound.png',
+        alt: 'Sound quiz visual',
+    },
+];
 </script>
 
 <template>
@@ -108,46 +135,26 @@ const trustItems = [
                                 </div>
 
                                 <div class="grid gap-4 sm:grid-cols-2">
-                                    <article class="rounded-[1.5rem] border border-white/15 bg-white p-5 text-heritage-ink shadow-card">
-                                        <div class="flex items-start justify-between gap-3">
-                                            <span class="rounded-full bg-heritage-red-faint px-3 py-1 text-xs font-black uppercase text-heritage-red">Language</span>
-                                            <span class="rounded-full bg-heritage-navy px-3 py-1 text-xs font-black uppercase text-white">MK</span>
+                                    <article
+                                        v-for="visual in heroVisuals"
+                                        :key="visual.label"
+                                        class="group overflow-hidden rounded-[1.5rem] border border-white/15 bg-white text-heritage-ink shadow-card transition hover:-translate-y-1 hover:shadow-soft"
+                                    >
+                                        <div class="relative h-40 overflow-hidden bg-heritage-panel sm:h-44 lg:h-48">
+                                            <div class="absolute inset-0 bg-linear-to-br from-white via-heritage-gold-faint to-heritage-red-faint/70" />
+                                            <img
+                                                :src="visual.image"
+                                                :alt="visual.alt"
+                                                class="relative h-full w-full object-contain p-2 transition duration-300 group-hover:scale-[1.03]"
+                                                loading="eager"
+                                                decoding="async"
+                                                width="900"
+                                                height="900"
+                                            >
                                         </div>
-                                        <p class="mt-5 text-4xl font-black text-heritage-red">&#1047;&#1076;&#1088;&#1072;&#1074;&#1086;</p>
-                                        <p class="mt-2 text-sm font-black text-heritage-muted">Hello, family, everyday words</p>
-                                    </article>
-
-                                    <article class="rounded-[1.5rem] border border-white/15 bg-heritage-gold-faint p-5 text-heritage-ink shadow-card">
-                                        <span class="rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-heritage-gold-deep shadow-card">Alphabet</span>
-                                        <div class="mt-5 grid grid-cols-3 gap-2">
-                                            <span class="flex aspect-square items-center justify-center rounded-2xl bg-white text-3xl font-black text-heritage-red shadow-card">&#1040;</span>
-                                            <span class="flex aspect-square items-center justify-center rounded-2xl bg-heritage-gold text-3xl font-black text-heritage-navy shadow-card">&#1041;</span>
-                                            <span class="flex aspect-square items-center justify-center rounded-2xl bg-heritage-red text-3xl font-black text-white shadow-card">&#1042;</span>
-                                        </div>
-                                    </article>
-                                </div>
-
-                                <div class="grid gap-4 sm:grid-cols-[1.05fr_0.95fr]">
-                                    <article class="relative min-h-44 overflow-hidden rounded-[1.5rem] border border-white/15 bg-white p-5 text-heritage-ink shadow-card">
-                                        <span class="relative z-10 rounded-full bg-heritage-navy px-3 py-1 text-xs font-black uppercase text-white">Map</span>
-                                        <div class="absolute left-7 top-20 h-9 w-14 rounded-[50%] bg-sky-200" />
-                                        <div class="absolute bottom-7 right-8 h-9 w-20 rounded-[50%] bg-sky-200" />
-                                        <div class="absolute bottom-7 left-7 h-0 w-0 border-x-[30px] border-b-[54px] border-x-transparent border-b-heritage-navy/20" />
-                                        <div class="absolute left-16 right-16 top-24 h-1 rotate-[-9deg] rounded-full bg-heritage-gold" />
-                                        <div class="absolute right-12 top-14 flex h-14 w-14 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white shadow-[0_4px_0_0_#760000] ring-4 ring-heritage-gold/35">PIN</div>
-                                    </article>
-
-                                    <article class="rounded-[1.5rem] border border-white/15 bg-white p-5 text-heritage-ink shadow-card">
-                                        <span class="rounded-full bg-heritage-red-faint px-3 py-1 text-xs font-black uppercase text-heritage-red">Culture</span>
-                                        <div class="mt-5 grid grid-cols-2 gap-3">
-                                            <div class="rounded-2xl bg-heritage-panel p-3">
-                                                <p class="text-lg font-black text-heritage-ink">Food</p>
-                                                <p class="mt-1 text-xs font-bold text-heritage-muted">Family table</p>
-                                            </div>
-                                            <div class="rounded-2xl bg-heritage-gold-faint p-3">
-                                                <p class="text-lg font-black text-heritage-gold-deep">Oro</p>
-                                                <p class="mt-1 text-xs font-bold text-heritage-muted">Dance memory</p>
-                                            </div>
+                                        <div class="flex items-center justify-between gap-3 px-4 py-3">
+                                            <span class="text-sm font-black text-heritage-ink">{{ visual.label }}</span>
+                                            <span class="rounded-full border border-heritage-gold/35 bg-heritage-gold-faint px-3 py-1 text-[0.68rem] font-black uppercase text-heritage-gold-deep">{{ visual.tag }}</span>
                                         </div>
                                     </article>
                                 </div>
@@ -221,7 +228,11 @@ const trustItems = [
                                 :key="item"
                                 class="flex items-start gap-3 rounded-2xl border border-heritage-line/60 bg-heritage-panel px-4 py-4"
                             >
-                                <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-heritage-red text-xs font-black text-white shadow-[0_2px_0_0_#760000]">OK</span>
+                                <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-heritage-red text-white shadow-[0_2px_0_0_#760000]">
+                                    <svg aria-hidden="true" class="h-3.5 w-3.5" fill="none" viewBox="0 0 16 16">
+                                        <path d="M3.5 8.3 6.6 11 12.5 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" />
+                                    </svg>
+                                </span>
                                 <span class="text-sm font-black leading-6 text-heritage-ink">{{ item }}</span>
                             </div>
                         </div>
@@ -268,7 +279,11 @@ const trustItems = [
                             :key="item"
                             class="flex gap-3 rounded-2xl border border-heritage-gold/35 bg-white px-4 py-4 shadow-card"
                         >
-                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-heritage-gold text-xs font-black text-heritage-navy">OK</span>
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-heritage-gold text-heritage-navy">
+                                <svg aria-hidden="true" class="h-3.5 w-3.5" fill="none" viewBox="0 0 16 16">
+                                    <path d="M3.5 8.3 6.6 11 12.5 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" />
+                                </svg>
+                            </span>
                             <p class="text-sm font-bold leading-6 text-heritage-muted">{{ item }}</p>
                         </div>
                     </div>

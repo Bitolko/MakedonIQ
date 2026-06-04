@@ -97,14 +97,14 @@ const benefits = [
                     :key="item.title"
                     class="group flex min-h-[28rem] flex-col overflow-hidden rounded-[1.6rem] border border-heritage-line/70 bg-white p-4 shadow-card transition hover:-translate-y-1 hover:border-heritage-gold/70 hover:shadow-soft focus-within:-translate-y-1 focus-within:border-heritage-gold/70 focus-within:shadow-soft"
                 >
-                    <div class="relative overflow-hidden rounded-[1.25rem] border border-heritage-gold/25 bg-heritage-panel p-3 shadow-inner">
+                    <div class="relative flex h-60 flex-col overflow-hidden rounded-[1.25rem] border border-heritage-gold/25 bg-heritage-panel p-3 shadow-inner sm:h-64 xl:h-56">
                         <div class="pointer-events-none absolute inset-0 bg-linear-to-br from-white via-heritage-gold-faint to-heritage-red-faint" />
-                        <div class="relative z-10 flex items-start justify-between gap-2">
-                            <AppBadge :variant="item.isLocked ? 'gold' : 'red'">{{ item.badge || 'Demo' }}</AppBadge>
-                            <span class="rounded-full bg-heritage-navy px-3 py-1 text-[0.68rem] font-black uppercase text-white shadow-card">{{ item.type }}</span>
+                        <div class="relative z-10 flex h-8 shrink-0 items-center justify-between gap-2">
+                            <AppBadge :variant="item.isLocked ? 'gold' : 'red'" class="shrink-0 whitespace-nowrap px-2.5 py-1 text-[0.62rem] leading-none">{{ item.badge || 'Demo' }}</AppBadge>
+                            <span class="shrink-0 whitespace-nowrap rounded-full bg-heritage-navy px-2.5 py-1 text-[0.62rem] font-black uppercase leading-none text-white shadow-card">{{ item.type }}</span>
                         </div>
 
-                        <div class="relative z-10 mt-3 h-44 overflow-hidden rounded-[1rem] border border-white/80 bg-white/90 shadow-card sm:h-48 xl:h-40">
+                        <div class="relative z-10 mt-3 min-h-0 flex-1 overflow-hidden rounded-[1rem] border border-white/80 bg-white/90 shadow-card">
                             <div class="absolute inset-0 bg-heritage-panel" />
                             <img
                                 :src="item.image"
