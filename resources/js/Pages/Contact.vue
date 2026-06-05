@@ -74,6 +74,33 @@ const useCases = [
         icon: 'CHAT',
     },
 ];
+
+const heroTrustChips = [
+    'Families',
+    'Schools',
+    'Feedback',
+];
+
+const heroContactRows = [
+    {
+        title: 'Families',
+        detail: 'Home learning, lessons, and demo questions.',
+        icon: 'home',
+        tone: 'bg-heritage-red-faint text-heritage-red',
+    },
+    {
+        title: 'Schools',
+        detail: 'Classroom ideas and future teacher tools.',
+        icon: 'book',
+        tone: 'bg-heritage-gold-faint text-heritage-gold-deep',
+    },
+    {
+        title: 'Feedback',
+        detail: 'Suggestions for quizzes, maps, songs, and improvements.',
+        icon: 'chat',
+        tone: 'bg-heritage-navy-soft text-heritage-navy',
+    },
+];
 </script>
 
 <template>
@@ -82,9 +109,9 @@ const useCases = [
             <section class="relative bg-heritage-bg py-10 md:py-14 lg:py-16">
                 <div class="pointer-events-none absolute inset-0 opacity-50" style="background-image: radial-gradient(circle at 2px 2px, rgba(164, 0, 0, 0.12) 1px, transparent 0); background-size: 32px 32px;" />
                 <div class="page-shell relative grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-                    <div class="min-w-0">
+                    <div class="min-w-0 py-2">
                         <AppBadge>Contact</AppBadge>
-                        <h1 class="mt-5 max-w-3xl text-4xl font-black leading-tight text-heritage-ink md:text-5xl lg:text-6xl">Talk to MakedonIQ</h1>
+                        <h1 class="mt-5 max-w-3xl text-4xl font-black leading-tight text-heritage-ink md:text-5xl">Talk to MakedonIQ</h1>
                         <p class="mt-5 max-w-2xl text-base font-bold leading-8 text-heritage-muted md:text-lg">
                             Have a question, school idea, community suggestion, or feedback? Send us a message and help shape the future of Macedonian learning.
                         </p>
@@ -92,53 +119,59 @@ const useCases = [
                             <PrimaryButton :href="contactMailto" size="lg">Email MakedonIQ</PrimaryButton>
                             <PrimaryButton href="/learn" variant="gold" size="lg">Explore lessons</PrimaryButton>
                         </div>
+                        <div class="mt-5 flex flex-wrap gap-2">
+                            <span v-for="chip in heroTrustChips" :key="chip" class="rounded-full border border-heritage-gold/35 bg-white/80 px-3 py-1 text-xs font-black uppercase text-heritage-muted">
+                                {{ chip }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="relative min-w-0">
-                        <div class="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-heritage-gold/25 blur-2xl" />
-                        <div class="absolute -bottom-8 -left-5 h-32 w-32 rounded-full bg-heritage-red/15 blur-2xl" />
-                        <div class="relative overflow-hidden rounded-[2rem] border border-heritage-gold/45 bg-heritage-navy p-4 text-white shadow-soft md:p-6">
-                            <div class="pointer-events-none absolute inset-0 bg-linear-to-br from-white/10 via-transparent to-heritage-red/25" />
-                            <div class="pointer-events-none absolute inset-0 opacity-35" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0); background-size: 26px 26px;" />
+                        <div class="relative overflow-hidden rounded-[2rem] border border-heritage-gold/35 bg-white/95 p-6 shadow-soft md:p-8">
+                            <div class="pointer-events-none absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 2px 2px, rgba(164, 0, 0, 0.10) 1px, transparent 0); background-size: 30px 30px;" />
 
-                            <div class="relative grid gap-4">
-                                <div class="rounded-[1.5rem] border border-white/15 bg-white p-5 text-heritage-ink shadow-card">
-                                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
-                                        <div>
-                                            <p class="label text-heritage-red">Community messages</p>
-                                            <h2 class="mt-2 text-2xl font-black leading-tight">Families, schools, feedback, partnerships</h2>
-                                        </div>
-                                        <span class="inline-flex w-fit rounded-full bg-heritage-gold-faint px-4 py-2 text-sm font-black text-heritage-gold-deep shadow-card">EN/MK</span>
-                                    </div>
-                                    <div class="mt-5 grid gap-3">
-                                        <div class="max-w-[18rem] rounded-[1.2rem] rounded-bl-sm bg-heritage-panel px-4 py-3 shadow-card">
-                                            <p class="text-sm font-black text-heritage-ink">Can our family use this at home?</p>
-                                        </div>
-                                        <div class="ml-auto max-w-[19rem] rounded-[1.2rem] rounded-br-sm bg-heritage-gold px-4 py-3 shadow-card">
-                                            <p class="text-sm font-black text-heritage-navy">Yes. Lessons and demos are built for simple practice.</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="relative">
+                                <AppBadge variant="gold">Contact options</AppBadge>
+                                <h2 class="mt-4 text-3xl font-black leading-tight text-heritage-ink">How we can help</h2>
+                                <p class="mt-3 max-w-xl text-sm font-bold leading-7 text-heritage-muted md:text-base">
+                                    Email us about family learning, school use, content ideas, or feedback.
+                                </p>
 
-                                <div class="grid gap-4 sm:grid-cols-2">
-                                    <article class="rounded-[1.5rem] border border-white/15 bg-white/10 p-5">
-                                        <span class="rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-heritage-red">Families</span>
-                                        <p class="mt-4 text-xl font-black">At-home learning questions</p>
-                                        <p class="mt-2 text-sm leading-6 text-white/75">Ask about lessons, demos, and beginner-friendly practice.</p>
+                                <div class="mt-7 divide-y divide-heritage-line/60">
+                                    <article
+                                        v-for="row in heroContactRows"
+                                        :key="row.title"
+                                        class="group flex items-start gap-4 py-4 first:pt-0 last:pb-0"
+                                    >
+                                        <span :class="['flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-inner transition group-hover:scale-105', row.tone]">
+                                            <span v-if="row.icon === 'home'" class="relative h-6 w-6">
+                                                <span class="absolute left-1 top-3 h-3.5 w-4 rounded-b bg-current opacity-70" />
+                                                <span class="absolute left-0 top-2 h-3 w-6 rotate-45 rounded-sm bg-current opacity-35" />
+                                                <span class="absolute left-2.5 top-4 h-2.5 w-1.5 rounded-t bg-white/80" />
+                                            </span>
+                                            <span v-else-if="row.icon === 'book'" class="relative h-6 w-6">
+                                                <span class="absolute left-1 top-1 h-5 w-4 rounded-lg bg-current opacity-35" />
+                                                <span class="absolute right-1 top-1 h-5 w-4 rounded-lg bg-current opacity-65" />
+                                                <span class="absolute left-3 top-2 h-4 w-px bg-white/80" />
+                                            </span>
+                                            <span v-else class="relative h-6 w-6">
+                                                <span class="absolute inset-x-0 top-1 h-4 rounded-2xl bg-current opacity-55" />
+                                                <span class="absolute bottom-0 left-3 h-3 w-3 rotate-45 rounded-sm bg-current opacity-55" />
+                                                <span class="absolute left-2 top-3 h-1 w-2 rounded-full bg-white/80" />
+                                                <span class="absolute right-2 top-3 h-1 w-2 rounded-full bg-white/80" />
+                                            </span>
+                                        </span>
+                                        <div class="min-w-0">
+                                            <h3 class="text-lg font-black text-heritage-ink">{{ row.title }}</h3>
+                                            <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">{{ row.detail }}</p>
+                                        </div>
                                     </article>
-                                    <article class="rounded-[1.5rem] border border-white/15 bg-white/10 p-5">
-                                        <span class="rounded-full bg-heritage-gold px-3 py-1 text-xs font-black uppercase text-heritage-navy">Schools</span>
-                                        <p class="mt-4 text-xl font-black">Community and classroom ideas</p>
-                                        <p class="mt-2 text-sm leading-6 text-white/75">Share ideas for school use, teacher tools, and group learning.</p>
-                                    </article>
                                 </div>
 
-                                <div class="grid gap-3 rounded-[1.5rem] border border-white/15 bg-white/10 p-4 sm:grid-cols-2 lg:grid-cols-4">
-                                    <div class="rounded-2xl bg-white/90 px-4 py-3 text-sm font-black text-heritage-ink">Feedback</div>
-                                    <div class="rounded-2xl bg-heritage-gold px-4 py-3 text-sm font-black text-heritage-navy">Content ideas</div>
-                                    <div class="rounded-2xl bg-heritage-red px-4 py-3 text-sm font-black text-white">School use</div>
-                                    <div class="rounded-2xl bg-white/90 px-4 py-3 text-sm font-black text-heritage-ink">Community</div>
-                                </div>
+                                <p class="mt-7 border-t border-heritage-line/60 pt-4 text-sm font-bold leading-6 text-heritage-muted">
+                                    Ready to share an idea?
+                                    <a :href="contactMailto" class="font-black text-heritage-red transition hover:text-heritage-red-dark">Email MakedonIQ</a>
+                                </p>
                             </div>
                         </div>
                     </div>

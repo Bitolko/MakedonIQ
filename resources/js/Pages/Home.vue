@@ -24,25 +24,29 @@ const homeActions = [
         title: 'Dashboard',
         detail: 'Open your learning overview.',
         href: '/dashboard',
-        badge: 'Stats',
+        icon: 'dashboard',
+        tone: 'bg-heritage-red-faint text-heritage-red',
     },
     {
         title: 'Progress',
         detail: 'Review saved quiz results.',
         href: '/progress',
-        badge: 'Review',
+        icon: 'progress',
+        tone: 'bg-heritage-navy-soft text-heritage-navy',
     },
     {
         title: 'Continue lessons',
         detail: 'Browse the Learn path.',
         href: '/learn',
-        badge: 'Learn',
+        icon: 'lessons',
+        tone: 'bg-heritage-gold-faint text-heritage-gold-deep',
     },
     {
         title: 'Map Challenge',
         detail: 'Practise geography clues.',
         href: '/map-challenge',
-        badge: 'Map',
+        icon: 'map',
+        tone: 'bg-sky-50 text-sky-800',
     },
 ];
 </script>
@@ -80,7 +84,7 @@ const homeActions = [
                     </div>
                 </div>
 
-                <div class="heritage-pattern rounded-[2rem] p-4 shadow-soft">
+                <div :class="isGuest ? 'heritage-pattern rounded-[2rem] p-4 shadow-soft' : 'rounded-[2rem] border border-heritage-gold/35 bg-white p-3 shadow-soft'">
                     <div v-if="isGuest" class="rounded-[1.5rem] bg-white p-5 shadow-card">
                         <div class="flex items-center justify-between gap-4">
                             <div>
@@ -111,13 +115,13 @@ const homeActions = [
                         <PrimaryButton href="/quizzes/macedonian-language/basic-macedonian-greetings/start" class="mt-5 w-full" variant="soft">Try demo quiz</PrimaryButton>
                     </div>
 
-                    <div v-else class="rounded-[1.5rem] bg-white p-5 shadow-card">
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <p class="label">Signed-in learning</p>
-                                <h2 class="mt-1 text-2xl font-black text-heritage-red">Continue your Macedonian journey</h2>
-                            </div>
-                            <AppBadge variant="gold">WELCOME BACK</AppBadge>
+                    <div v-else class="rounded-[1.5rem] bg-heritage-panel/70 p-5 md:p-6">
+                        <div>
+                            <p class="label text-heritage-red">Signed-in learning</p>
+                            <h2 class="mt-2 text-2xl font-black leading-tight text-heritage-ink">Continue your Macedonian journey</h2>
+                            <p class="mt-3 text-sm font-bold leading-6 text-heritage-muted">
+                                Choose your next step: open your dashboard, review progress, continue lessons, or practise the map challenge.
+                            </p>
                         </div>
 
                         <div class="mt-6 grid gap-3 sm:grid-cols-2">
@@ -125,17 +129,40 @@ const homeActions = [
                                 v-for="action in homeActions"
                                 :key="action.title"
                                 :href="action.href"
-                                class="rounded-2xl border border-heritage-line bg-heritage-panel p-4 shadow-card transition hover:-translate-y-0.5 hover:border-heritage-gold hover:bg-white"
+                                class="group flex items-start gap-3 rounded-2xl bg-white/80 p-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-card"
                             >
-                                <span class="rounded-full bg-heritage-gold-faint px-3 py-1 text-xs font-black text-heritage-gold-deep">{{ action.badge }}</span>
-                                <h3 class="mt-3 text-lg font-black text-heritage-ink">{{ action.title }}</h3>
-                                <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">{{ action.detail }}</p>
+                                <span :class="['flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-inner', action.tone]">
+                                    <span v-if="action.icon === 'dashboard'" class="grid h-5 w-5 grid-cols-2 gap-1">
+                                        <span class="rounded bg-current opacity-55" />
+                                        <span class="rounded bg-current opacity-75" />
+                                        <span class="rounded bg-current opacity-75" />
+                                        <span class="rounded bg-current opacity-55" />
+                                    </span>
+                                    <span v-else-if="action.icon === 'progress'" class="grid w-5 gap-1">
+                                        <span class="h-1.5 rounded-full bg-current opacity-75" />
+                                        <span class="h-1.5 w-4/5 rounded-full bg-current opacity-55" />
+                                        <span class="h-1.5 w-3/5 rounded-full bg-current opacity-75" />
+                                    </span>
+                                    <span v-else-if="action.icon === 'lessons'" class="relative h-5 w-5">
+                                        <span class="absolute left-0 top-1 h-4 w-3 rotate-[-7deg] rounded bg-current opacity-35" />
+                                        <span class="absolute right-0 top-0 h-5 w-3 rounded bg-current opacity-65" />
+                                    </span>
+                                    <span v-else class="relative h-5 w-5">
+                                        <span class="absolute inset-x-1 bottom-0 h-3 rounded-[50%] bg-current opacity-25" />
+                                        <span class="absolute left-1.5 top-0 h-4 w-4 rounded-full bg-current opacity-75" />
+                                        <span class="absolute left-[0.55rem] top-1.5 h-1.5 w-1.5 rounded-full bg-white/90" />
+                                    </span>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block font-black leading-6 text-heritage-ink transition group-hover:text-heritage-red">{{ action.title }}</span>
+                                    <span class="mt-1 block text-sm font-bold leading-5 text-heritage-muted">{{ action.detail }}</span>
+                                </span>
                             </a>
                         </div>
 
                         <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+                            <PrimaryButton href="/learn" class="w-full">Continue learning</PrimaryButton>
                             <PrimaryButton href="/dashboard" class="w-full" variant="soft">Go to dashboard</PrimaryButton>
-                            <PrimaryButton href="/learn" class="w-full" variant="gold">Continue learning</PrimaryButton>
                         </div>
                     </div>
                 </div>

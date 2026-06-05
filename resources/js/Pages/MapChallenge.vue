@@ -22,20 +22,49 @@ const error = ref('');
 const language = preferredLanguage();
 const user = currentUser();
 
-const quizTitle = computed(() => localizedText(quiz.value, 'title', language));
-const quizDescription = computed(() => localizedText(quiz.value, 'description', language));
 const categoryName = computed(() => localizedText(quiz.value?.category, 'name', language));
 const mapQuestions = computed(() => questions.value.filter((question) => question.question_type === 'map_guess'));
 const firstMapQuestion = computed(() => mapQuestions.value[0] || null);
 const mapMetadata = computed(() => firstMapQuestion.value?.metadata || {});
 const activeUrl = computed(() => quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : '/quizzes/geography/macedonia-map-challenge/active');
 const startUrl = computed(() => quiz.value ? quizStartUrl(quiz.value.category.slug, quiz.value.slug) : '/quizzes/geography/macedonia-map-challenge/start');
+const mapQuestionCountLabel = computed(() => {
+    const count = mapQuestions.value.length || quiz.value?.questions_count || 0;
+
+    return count > 0 ? `${count} map clues` : 'Beginner map clues';
+});
 
 const featureCards = [
-    { title: 'Cities', detail: 'Skopje, Bitola, Ohrid, Prilep, and regional centres.' },
-    { title: 'Lakes', detail: 'Ohrid, Prespa, Dojran, and blue map clues.' },
-    { title: 'Mountains', detail: 'Highland terrain, national parks, and ridgelines.' },
-    { title: 'Landmarks', detail: 'Canyons, peaks, and places that shape geography.' },
+    {
+        title: 'Cities',
+        detail: 'Skopje, Bitola, Ohrid, Prilep, and regional centres.',
+        visual: 'cities',
+        tone: 'bg-heritage-red-faint text-heritage-red',
+    },
+    {
+        title: 'Lakes',
+        detail: 'Ohrid, Prespa, Dojran, and blue map clues.',
+        visual: 'lakes',
+        tone: 'bg-sky-50 text-sky-800',
+    },
+    {
+        title: 'Mountains',
+        detail: 'Highland terrain, parks, and ridgelines.',
+        visual: 'mountains',
+        tone: 'bg-heritage-gold-faint text-heritage-gold-deep',
+    },
+    {
+        title: 'Landmarks',
+        detail: 'Canyons, old towns, peaks, and cultural places.',
+        visual: 'landmarks',
+        tone: 'bg-heritage-navy-soft text-heritage-navy',
+    },
+];
+
+const challengeSteps = [
+    { step: '01', title: 'Look', detail: 'Study the highlighted marker.' },
+    { step: '02', title: 'Guess', detail: 'Choose the city, lake, or landmark.' },
+    { step: '03', title: 'Score', detail: 'Your answer is checked securely after submission.' },
 ];
 
 onMounted(async () => {
@@ -81,82 +110,114 @@ onMounted(async () => {
             </section>
 
             <template v-else>
-                <section class="grid gap-8 rounded-[2.5rem] border border-heritage-line/50 bg-white p-6 shadow-card md:p-8 lg:grid-cols-[1fr_0.95fr] lg:items-center">
-                    <div class="space-y-5">
-                        <AppBadge variant="red">Interactive geography</AppBadge>
-                        <h1 class="max-w-3xl text-4xl font-black leading-tight text-heritage-ink sm:text-5xl lg:text-6xl">
-                            Macedonia Map Challenge
-                        </h1>
-                        <p class="max-w-2xl text-lg leading-8 text-heritage-muted">
-                            Study the highlighted place and guess the city, lake, or landmark.
-                        </p>
+                <section class="overflow-hidden rounded-[2.5rem] border border-heritage-gold/40 bg-white shadow-card">
+                    <div class="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
+                        <div class="relative overflow-hidden bg-heritage-panel p-6 md:p-8">
+                            <div class="pointer-events-none absolute inset-0 opacity-55" style="background-image: radial-gradient(circle at 2px 2px, rgba(164, 0, 0, 0.12) 1px, transparent 0); background-size: 26px 26px;" />
+                            <div class="relative flex h-full flex-col justify-center">
+                                <div class="flex">
+                                    <AppBadge variant="red">Interactive geography</AppBadge>
+                                </div>
+                                <h1 class="mt-5 max-w-2xl text-4xl font-black leading-tight text-heritage-ink sm:text-5xl">
+                                    Macedonia Map Challenge
+                                </h1>
+                                <p class="mt-4 max-w-xl text-lg leading-8 text-heritage-muted">
+                                    Study the highlighted place and guess the city, lake, or landmark.
+                                </p>
 
-                        <div class="flex flex-wrap gap-2">
-                            <AppBadge>{{ categoryName || 'Geography' }}</AppBadge>
-                            <AppBadge v-if="quiz?.is_demo" variant="gold">Demo</AppBadge>
-                            <AppBadge variant="navy">{{ difficultyLabel(quiz?.difficulty) }}</AppBadge>
-                            <AppBadge variant="red">{{ mapQuestions.length || quiz?.questions_count || 0 }} map questions</AppBadge>
+                                <div class="mt-5 flex flex-wrap gap-2">
+                                    <AppBadge>{{ categoryName || 'Geography' }}</AppBadge>
+                                    <AppBadge variant="navy">{{ difficultyLabel(quiz?.difficulty) }}</AppBadge>
+                                    <AppBadge variant="red">{{ mapQuestionCountLabel }}</AppBadge>
+                                </div>
+
+                                <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                                    <PrimaryButton :href="activeUrl" class="w-full sm:w-auto" size="lg">Start Map Challenge</PrimaryButton>
+                                    <PrimaryButton :href="startUrl" class="w-full sm:w-auto" variant="gold" size="lg">View quiz intro</PrimaryButton>
+                                    <PrimaryButton href="/learn/geography" class="w-full sm:w-auto" variant="ghost" size="lg">Read Geography lessons</PrimaryButton>
+                                </div>
+
+                                <p v-if="!user" class="mt-5 rounded-2xl bg-heritage-gold-faint px-4 py-3 text-sm font-bold text-heritage-gold-deep">
+                                    You can try this demo now. Create a free account to save your score and unlock the full quiz path.
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                            <article v-for="item in featureCards" :key="item.title" class="rounded-[1.25rem] bg-heritage-panel p-5">
-                                <p class="text-lg font-black text-heritage-red">{{ item.title }}</p>
-                                <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
-                            </article>
-                        </div>
+                        <div class="p-5 md:p-6 lg:p-8">
+                            <div class="relative rounded-3xl border border-heritage-gold/30 bg-white p-4 shadow-soft md:p-5">
+                                <div class="mb-3 flex">
+                                    <AppBadge variant="gold">Map preview</AppBadge>
+                                </div>
 
-                        <div class="flex flex-col gap-3 sm:flex-row">
-                            <PrimaryButton :href="activeUrl" size="lg">Start Map Challenge</PrimaryButton>
-                            <PrimaryButton :href="startUrl" variant="soft" size="lg">View quiz intro</PrimaryButton>
-                        </div>
+                                <div class="rounded-[1.75rem] bg-heritage-navy p-1.5 shadow-inner">
+                                    <MacedoniaMap
+                                        :x="mapMetadata.map_x || 52"
+                                        :y="mapMetadata.map_y || 28"
+                                        :target-type="mapMetadata.target_type || 'city'"
+                                        variant="wide"
+                                    />
+                                </div>
 
-                        <p v-if="!user" class="mt-4 rounded-2xl bg-heritage-gold-faint px-4 py-3 text-sm font-bold text-heritage-gold-deep">
-                            You can try this demo now. Create a free account to save your score and unlock the full quiz path.
-                        </p>
+                                <div class="mt-4 rounded-[1.5rem] bg-heritage-panel px-4 py-3">
+                                    <div>
+                                        <p class="text-xs font-black uppercase text-heritage-muted">Challenge clue</p>
+                                        <p class="mt-1 text-lg font-black text-heritage-ink">Find the highlighted place</p>
+                                        <p class="mt-1 text-sm font-bold text-heritage-muted">Use the marker as your clue.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="grid gap-4">
-                        <div class="rounded-[2rem] bg-heritage-navy p-4">
-                            <MacedoniaMap
-                                :x="mapMetadata.map_x || 52"
-                                :y="mapMetadata.map_y || 28"
-                                :target-type="mapMetadata.target_type || 'city'"
-                                variant="wide"
-                            />
+                    <div class="grid gap-5 bg-white p-5 md:p-6 lg:grid-cols-[1.05fr_0.95fr] lg:p-8">
+                        <div>
+                            <h2 class="mb-4 text-lg font-black text-heritage-ink">What you'll practise</h2>
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <article v-for="item in featureCards" :key="item.title" class="flex min-h-28 gap-3 rounded-2xl bg-heritage-panel p-4">
+                                    <div :class="['flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-inner', item.tone]">
+                                        <div v-if="item.visual === 'cities'" class="relative h-7 w-7">
+                                            <span class="absolute bottom-0 left-1 h-5 w-2 rounded-t bg-current opacity-45" />
+                                            <span class="absolute bottom-0 left-3 h-7 w-2 rounded-t bg-current opacity-75" />
+                                            <span class="absolute bottom-0 right-1 h-4 w-2 rounded-t bg-current opacity-55" />
+                                        </div>
+                                        <div v-else-if="item.visual === 'lakes'" class="h-6 w-8 rounded-[50%] bg-current opacity-60" />
+                                        <div v-else-if="item.visual === 'mountains'" class="relative h-7 w-8">
+                                            <span class="absolute bottom-0 left-0 h-0 w-0 border-x-[13px] border-b-[24px] border-x-transparent border-b-current opacity-55" />
+                                            <span class="absolute bottom-0 right-0 h-0 w-0 border-x-[12px] border-b-[19px] border-x-transparent border-b-current opacity-80" />
+                                        </div>
+                                        <div v-else class="relative h-7 w-7">
+                                            <span class="absolute inset-x-2 top-0 h-7 rounded-full bg-current opacity-70" />
+                                            <span class="absolute bottom-1 left-1 h-2 w-5 rounded-full bg-current opacity-35" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-black text-heritage-ink">{{ item.title }}</h3>
+                                        <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
+                                    </div>
+                                </article>
+                            </div>
                         </div>
-                        <div class="rounded-[2rem] bg-heritage-navy p-6 text-white shadow-card">
-                            <p class="label text-heritage-gold">How it works</p>
-                            <h2 class="mt-2 text-2xl font-black">{{ quizTitle || 'Guess the highlighted place' }}</h2>
-                            <p class="mt-3 leading-7 text-white/80">
-                                The marker gives you the geography clue. Your answer is still scored securely by MakedonIQ after you submit.
-                            </p>
+
+                        <div class="rounded-3xl bg-heritage-panel p-5">
+                            <p class="text-xs font-black uppercase text-heritage-red">How it works</p>
+                            <div class="mt-4 grid gap-3">
+                                <article v-for="step in challengeSteps" :key="step.title" class="flex gap-3 rounded-2xl bg-white/85 p-3">
+                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-heritage-red-faint text-xs font-black text-heritage-red">{{ step.step }}</span>
+                                    <div>
+                                        <h3 class="font-black text-heritage-ink">{{ step.title }}</h3>
+                                        <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">{{ step.detail }}</p>
+                                    </div>
+                                </article>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <section class="mt-12 rounded-[2rem] bg-white p-6 shadow-card md:p-8">
-                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <AppBadge variant="navy">Challenge preview</AppBadge>
-                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Places you will practise</h2>
-                        </div>
-                        <PrimaryButton href="/learn/geography" variant="soft">Read Geography lessons</PrimaryButton>
-                    </div>
-
-                    <div v-if="mapQuestions.length" class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                        <article v-for="(question, index) in mapQuestions.slice(0, 8)" :key="question.id" class="rounded-2xl border border-heritage-line bg-heritage-panel p-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-card">
-                            <p class="text-sm font-black uppercase text-heritage-red">Map clue {{ index + 1 }}</p>
-                            <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">
-                                {{ localizedText(question, 'question', language) }}
-                            </p>
-                        </article>
-                    </div>
-                    <div v-else class="mt-6 rounded-2xl border border-heritage-line bg-heritage-panel p-5 text-center">
-                        <h3 class="text-xl font-black text-heritage-ink">No map clues yet</h3>
-                        <p class="mt-2 text-sm font-semibold leading-6 text-heritage-muted">
-                            The challenge quiz exists, but it does not have map questions published yet.
-                        </p>
-                    </div>
+                <section v-if="!mapQuestions.length" class="mt-6 rounded-3xl bg-heritage-panel p-6 text-center">
+                    <h3 class="text-xl font-black text-heritage-ink">No map clues yet</h3>
+                    <p class="mt-2 text-sm font-semibold leading-6 text-heritage-muted">
+                        The challenge quiz exists, but it does not have map questions published yet.
+                    </p>
                 </section>
             </template>
         </main>
