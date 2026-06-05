@@ -6,6 +6,7 @@ import AppBadge from '../../Components/AppBadge.vue';
 import DemoPreviewSection from '../../Components/DemoPreviewSection.vue';
 import FeaturedLessonCard from '../../Components/FeaturedLessonCard.vue';
 import LearnHero from '../../Components/LearnHero.vue';
+import ContinueLearningSection from '../../Components/ContinueLearningSection.vue';
 import {
     currentUser,
     getLessons,
@@ -140,33 +141,6 @@ const demoItems = [
     },
 ];
 
-const continueItems = [
-    {
-        title: 'Browse all lessons',
-        detail: 'Return to the full Learn path and choose your next topic.',
-        href: '/learn',
-        accent: 'bg-heritage-red text-white',
-    },
-    {
-        title: 'Take a quiz',
-        detail: 'Practise what you remember with category quizzes.',
-        href: '/quizzes',
-        accent: 'bg-heritage-gold text-heritage-navy',
-    },
-    {
-        title: 'View progress',
-        detail: 'Review saved attempts, scores, and learning history.',
-        href: '/progress',
-        accent: 'bg-heritage-navy text-white',
-    },
-    {
-        title: 'Try Map Challenge',
-        detail: 'Guess Macedonian cities, lakes, and landmarks from map clues.',
-        href: '/map-challenge',
-        accent: 'bg-heritage-red text-white',
-    },
-];
-
 onMounted(async () => {
     try {
         const response = await getLessons();
@@ -189,30 +163,8 @@ function authHref(path, intendedUrl) {
         <main class="page-shell py-8 md:py-12">
             <LearnHero :is-guest="isGuest" />
 
-                <DemoPreviewSection v-if="isGuest" :items="demoItems" class-name="mt-10" />
-
-                <section v-else class="mt-10 rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
-                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <AppBadge variant="gold">CONTINUE</AppBadge>
-                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Continue your learning journey</h2>
-                            <p class="mt-2 max-w-2xl text-heritage-muted">Pick up a lesson, practise with quizzes, or review your progress.</p>
-                        </div>
-                        <PrimaryButton href="/dashboard" variant="soft">Open dashboard</PrimaryButton>
-                    </div>
-                    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        <a
-                            v-for="item in continueItems"
-                            :key="item.title"
-                            :href="item.href"
-                            class="group rounded-[1.5rem] border border-heritage-line bg-heritage-panel p-5 shadow-card transition hover:-translate-y-1 hover:border-heritage-red/30 hover:bg-white hover:shadow-soft"
-                        >
-                            <span :class="['flex h-11 w-11 items-center justify-center rounded-2xl text-xs font-black shadow-card', item.accent]">GO</span>
-                            <h3 class="mt-4 text-xl font-black text-heritage-ink group-hover:text-heritage-red">{{ item.title }}</h3>
-                            <p class="mt-2 text-sm font-bold leading-6 text-heritage-muted">{{ item.detail }}</p>
-                        </a>
-                    </div>
-                </section>
+            <DemoPreviewSection v-if="isGuest" :items="demoItems" class-name="mt-10" />
+            <ContinueLearningSection v-else />
 
             <section v-if="isLoading" class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <div v-for="index in 6" :key="index" class="soft-card min-h-60 animate-pulse p-6">

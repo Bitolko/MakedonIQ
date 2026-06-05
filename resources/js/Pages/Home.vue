@@ -5,6 +5,7 @@ import PrimaryButton from '../Components/PrimaryButton.vue';
 import AppBadge from '../Components/AppBadge.vue';
 import MacedoniaMap from '../Components/MacedoniaMap.vue';
 import DemoPreviewSection from '../Components/DemoPreviewSection.vue';
+import WelcomeBackSection from '../Components/WelcomeBackSection.vue';
 import { categories, historyQuizzes } from '../data/makedoniq';
 import { currentUser } from '../api/makedoniq';
 
@@ -144,22 +145,7 @@ const homeActions = [
                 <DemoPreviewSection />
             </div>
 
-            <section v-else class="page-shell pb-6">
-                <div class="rounded-[2rem] border border-heritage-gold/40 bg-white p-6 shadow-card md:p-8">
-                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <AppBadge variant="gold">Welcome back</AppBadge>
-                            <h2 class="mt-3 text-3xl font-black text-heritage-ink">Keep building your Macedonian path</h2>
-                        </div>
-                        <PrimaryButton href="/dashboard" variant="soft">Dashboard</PrimaryButton>
-                    </div>
-                    <div class="mt-6 grid gap-4 md:grid-cols-3">
-                        <PrimaryButton href="/learn" class="w-full" variant="soft">Continue learning</PrimaryButton>
-                        <PrimaryButton href="/progress" class="w-full" variant="soft">View progress</PrimaryButton>
-                        <PrimaryButton href="/map-challenge" class="w-full" variant="soft">Map Challenge</PrimaryButton>
-                    </div>
-                </div>
-            </section>
+            <WelcomeBackSection v-else />
 
             <section class="bg-white py-16">
                 <div class="page-shell">
