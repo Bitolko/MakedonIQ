@@ -5,10 +5,10 @@ MakedonIQ is a bilingual Macedonian learning quiz platform for families, student
 ## Features Completed
 
 - Manual Laravel authentication: register, login, logout.
-- Public Learn section with short bilingual lessons.
+- Public Learn section with rich structured bilingual lessons.
 - Lessons connected to quiz themes so learners can read before taking a quiz.
 - Expanded original lesson and quiz content across language, alphabet, geography, history, culture, food, and music.
-- Macedonia Map Challenge, a lightweight geography quiz mode with a custom local 3D Macedonia map and dynamic quiz markers.
+- Macedonia Map Challenge, a lightweight geography quiz mode with four small Geography map quizzes, a custom local 3D Macedonia map, and dynamic quiz markers.
 - Picture quizzes using `question_type = picture_choice`, optional image metadata, and polished placeholders while final images are prepared.
 - Folklore song lessons with placeholder-friendly `sound_choice` quizzes and future original-audio metadata.
 - Bilingual public quiz categories, quizzes, questions, and answers.
@@ -107,7 +107,7 @@ Admins can toggle `is_demo` in Admin Lessons and Admin Quizzes. The seeded demo 
 Demo quizzes:
 - Basic Macedonian Greetings
 - Cyrillic Alphabet Basics
-- Macedonia Map Challenge
+- Macedonia Map Challenge Demo
 - Jovano, Jovanke Sound Quiz
 
 Demo lessons:
@@ -118,6 +118,14 @@ Demo lessons:
 ```
 
 Guest users can preview one demo `sound_choice` quiz per session. Logged-in users can access all published sound quizzes.
+
+## Lesson Content
+
+The seeded lesson library uses original MakedonIQ-written bilingual content with clear plain-text sections: introduction, learning goals, main explanation, key vocabulary or facts, examples, practice, remember notes, and related quiz connection. The current library balances language, alphabet, geography, history, culture, food, and music so each category has multiple beginner-friendly lessons.
+
+Demo access stays intentionally limited to a few preview lessons for guests. All other published lessons remain available after login, and future lesson text can be reviewed or updated through Admin Lessons.
+
+Do not seed copied textbook passages, copyrighted school-book text, copyrighted song lyrics, or unlicensed images/audio. Future audio should use original recordings or properly licensed short clips.
 
 ## Making a User Admin
 
@@ -252,7 +260,9 @@ public/audio/lessons/
 
 For now, `audio_path` can be null and the quiz UI shows an “Audio coming soon” placeholder instead of a broken player. Future original audio files should go in `public/audio/quizzes/` and use neutral MP3 filenames such as `song_001.mp3`, `song_002.mp3`, and `song_003.mp3`. Keep recordings short and optimized for web playback, around 10-20 seconds each. Public quiz-taking responses expose safe sound metadata such as `audio_path`, alt text, and audio type; they do not expose `is_correct`, `correct_answer`, or admin-only answer-key data.
 
-Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. The frontend renders a custom 3D Macedonia map asset from `public/images` and overlays the pin dynamically from `map_x` and `map_y`. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys and labels are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
+Geography includes four small map quizzes with five `map_guess` questions each. The first quiz, `Macedonia Map Challenge Demo`, is the only demo map quiz for guests. The other map quizzes require a free account for logged-out visitors and are available to logged-in users.
+
+Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. The frontend renders a custom 3D Macedonia map asset from `public/images` and overlays the pin dynamically from `map_x` and `map_y`. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys, target labels, answer keys, and correct-answer flags are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
 
 Picture quiz questions use `question_type = picture_choice` with optional `questions.metadata`:
 
@@ -297,17 +307,26 @@ categories
 quizzes.lesson_id
 ```
 
-The Macedonia Map Challenge is seeded as a published Geography quiz at:
+The map challenge demo is seeded as a published Geography quiz at:
 
 ```text
 /map-challenge
-/quizzes/geography/macedonia-map-challenge/start
-/quizzes/geography/macedonia-map-challenge/active
+/quizzes/geography/macedonia-map-challenge-demo/start
+/quizzes/geography/macedonia-map-challenge-demo/active
 ```
 
-It uses the normal authenticated quiz attempt endpoint for saved scoring, so backend scoring remains the source of truth.
+The full Geography map quiz set is:
 
-The map challenge includes city, lake, and landmark prompts for places such as Skopje, Ohrid, Bitola, Prilep, Tetovo, Kumanovo, Strumica, Veles, Stip, Gostivar, Struga, Kicevo, Kavadarci, Gevgelija, Kocani, Lake Ohrid, Lake Prespa, Matka Canyon, Vodno, Mavrovo, and Pelister.
+```text
+Macedonia Map Challenge Demo: 5 questions, demo
+Cities of Macedonia Map Quiz: 5 questions, account required for guests
+Lakes and Nature Map Quiz: 5 questions, account required for guests
+Landmarks and Regions Map Quiz: 5 questions, account required for guests
+```
+
+Legacy public quiz API reads for `macedonia-map-challenge` resolve to the new demo quiz. The map quizzes use the normal authenticated quiz attempt endpoint for saved scoring, so backend scoring remains the source of truth.
+
+The map challenge includes city, lake, nature, landmark, and region prompts for places such as Skopje, Ohrid, Bitola, Tetovo, Prilep, Kumanovo, Strumica, Veles, Stip, Gostivar, Lake Ohrid, Lake Prespa, Lake Dojran, Pelister, Mavrovo, Matka Canyon, Krusevo, Heraclea Lyncestis, Kokino, and Old Bazaar Skopje.
 
 Admin APIs require session auth plus `admin` middleware:
 
@@ -409,7 +428,7 @@ Public:
 8. Category page loads.
 9. Quiz start loads and shows related lesson when available.
 10. Active quiz loads.
-11. Macedonia Map Challenge loads and shows a marker without revealing the answer.
+11. Macedonia Map Challenge loads the five-question demo and shows a marker without revealing the answer.
 12. Public questions endpoint hides is_correct.
 13. Public map metadata does not expose answer-revealing target labels.
 14. Picture quizzes show an image when available or a placeholder when `image_path` is blank.
@@ -573,8 +592,8 @@ Map Challenge:
 
 ```text
 1. Open /map-challenge.
-2. Start the Macedonia Map Challenge.
-3. Complete the map quiz.
+2. Start the Macedonia Map Challenge Demo.
+3. Confirm the other Geography map quizzes are visible but locked for guests.
 4. View results.
 ```
 

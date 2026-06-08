@@ -19,16 +19,18 @@ class MapChallengeSeeder extends Seeder
 
         $lesson = Lesson::where('slug', 'macedonian-geography-basics')->first();
 
+        $this->renameLegacyDemoQuiz();
+
         $quiz = $category->quizzes()->updateOrCreate(
-            ['slug' => 'macedonia-map-challenge'],
+            ['slug' => 'macedonia-map-challenge-demo'],
             [
                 'lesson_id' => $lesson?->id,
-                'title_en' => 'Macedonia Map Challenge',
-                'title_mk' => 'Македонски мапа предизвик',
-                'description_en' => 'Test your knowledge of Macedonian cities, lakes, and landmarks by guessing the highlighted place on the map.',
-                'description_mk' => 'Провери го твоето знаење за македонски градови, езера и места преку погодок на означеното место на мапата.',
+                'title_en' => 'Macedonia Map Challenge Demo',
+                'title_mk' => 'Демо: Карта на Македонија',
+                'description_en' => 'Try a short demo map challenge with beginner-friendly places.',
+                'description_mk' => 'Пробај краток демо предизвик со почетни места на картата.',
                 'difficulty' => 'beginner',
-                'estimated_minutes' => 10,
+                'estimated_minutes' => 5,
                 'points_per_question' => 10,
                 'is_published' => true,
                 'is_demo' => true,
@@ -66,9 +68,24 @@ class MapChallengeSeeder extends Seeder
         }
     }
 
+    private function renameLegacyDemoQuiz(): void
+    {
+        $legacyQuiz = Quiz::where('slug', 'macedonia-map-challenge')->first();
+
+        if (! $legacyQuiz) {
+            return;
+        }
+
+        if (Quiz::where('slug', 'macedonia-map-challenge-demo')->whereKeyNot($legacyQuiz->id)->exists()) {
+            return;
+        }
+
+        $legacyQuiz->update(['slug' => 'macedonia-map-challenge-demo']);
+    }
+
     private function questions(): array
     {
-        return [
+        return array_slice([
             $this->mapQuestion(
                 'Which city is highlighted on the map?',
                 'Кој град е означен на мапата?',
@@ -197,7 +214,7 @@ class MapChallengeSeeder extends Seeder
                     ['Gostivar', 'Гостивар', false],
                 ],
             ),
-        ];
+        ], 0, 5);
     }
 
     private function mapQuestion(

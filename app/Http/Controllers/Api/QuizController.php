@@ -13,6 +13,10 @@ class QuizController extends Controller
     private const LOCKED_QUIZ_MESSAGE = 'Create a free account to unlock this quiz.';
     private const LOCKED_SOUND_DEMO_MESSAGE = 'Create a free account to unlock more sound quizzes.';
     private const SOUND_DEMO_SESSION_KEY = 'makedoniq.sound_demo_quiz_slug';
+    private const QUIZ_SLUG_ALIASES = [
+        'macedonia-map-challenge' => 'macedonia-map-challenge-demo',
+        'macedonia-map-challenge-extended' => 'cities-of-macedonia-map-quiz',
+    ];
 
     public function show(Request $request, string $slug): JsonResponse
     {
@@ -81,9 +85,14 @@ class QuizController extends Controller
     {
         return Quiz::query()
             ->published()
-            ->where('slug', $slug)
+            ->where('slug', $this->canonicalQuizSlug($slug))
             ->whereHas('category', fn ($query) => $query->published())
             ->with(['category', 'lesson.category']);
+    }
+
+    private function canonicalQuizSlug(string $slug): string
+    {
+        return self::QUIZ_SLUG_ALIASES[$slug] ?? $slug;
     }
 
     private function ensureQuizAccessible(Quiz $quiz, Request $request): void

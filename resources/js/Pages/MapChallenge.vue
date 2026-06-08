@@ -18,6 +18,7 @@ const quiz = ref(null);
 const questions = ref([]);
 const isLoading = ref(true);
 const error = ref('');
+const demoMapQuizSlug = 'macedonia-map-challenge-demo';
 
 const language = preferredLanguage();
 const user = currentUser();
@@ -26,8 +27,8 @@ const categoryName = computed(() => localizedText(quiz.value?.category, 'name', 
 const mapQuestions = computed(() => questions.value.filter((question) => question.question_type === 'map_guess'));
 const firstMapQuestion = computed(() => mapQuestions.value[0] || null);
 const mapMetadata = computed(() => firstMapQuestion.value?.metadata || {});
-const activeUrl = computed(() => quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : '/quizzes/geography/macedonia-map-challenge/active');
-const startUrl = computed(() => quiz.value ? quizStartUrl(quiz.value.category.slug, quiz.value.slug) : '/quizzes/geography/macedonia-map-challenge/start');
+const activeUrl = computed(() => quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : `/quizzes/geography/${demoMapQuizSlug}/active`);
+const startUrl = computed(() => quiz.value ? quizStartUrl(quiz.value.category.slug, quiz.value.slug) : `/quizzes/geography/${demoMapQuizSlug}/start`);
 const mapQuestionCountLabel = computed(() => {
     const count = mapQuestions.value.length || quiz.value?.questions_count || 0;
 
@@ -70,8 +71,8 @@ const challengeSteps = [
 onMounted(async () => {
     try {
         const [quizResponse, questionsResponse] = await Promise.all([
-            fetchJson('/api/quizzes/macedonia-map-challenge'),
-            fetchJson('/api/quizzes/macedonia-map-challenge/questions'),
+            fetchJson(`/api/quizzes/${demoMapQuizSlug}`),
+            fetchJson(`/api/quizzes/${demoMapQuizSlug}/questions`),
         ]);
 
         quiz.value = quizResponse.data;

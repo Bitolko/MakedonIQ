@@ -11,7 +11,7 @@ class MakedonIQSeeder extends Seeder
     private const DEMO_QUIZ_SLUGS = [
         'basic-macedonian-greetings',
         'cyrillic-alphabet-basics',
-        'macedonia-map-challenge',
+        'macedonia-map-challenge-demo',
     ];
 
     public function run(): void

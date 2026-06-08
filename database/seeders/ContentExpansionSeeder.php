@@ -9,31 +9,41 @@ use Illuminate\Database\Seeder;
 
 class ContentExpansionSeeder extends Seeder
 {
-    private const BEGINNER_MAP_KEYS = [
+    private const LEGACY_MAP_QUIZ_SLUGS = [
+        'macedonia-map-challenge' => 'macedonia-map-challenge-demo',
+        'macedonia-map-challenge-extended' => 'cities-of-macedonia-map-quiz',
+    ];
+
+    private const DEMO_MAP_KEYS = [
         'skopje',
         'ohrid',
         'bitola',
         'tetovo',
         'prilep',
-        'kumanovo',
-        'strumica',
-        'lake-ohrid',
-        'lake-prespa',
-        'stip',
     ];
 
-    private const EXTENDED_MAP_KEYS = [
+    private const CITIES_MAP_KEYS = [
+        'kumanovo',
+        'strumica',
         'veles',
+        'stip',
         'gostivar',
-        'struga',
-        'kicevo',
-        'kavadarci',
-        'gevgelija',
-        'kocani',
-        'matka-canyon',
-        'vodno',
-        'mavrovo',
+    ];
+
+    private const NATURE_MAP_KEYS = [
+        'lake-ohrid',
+        'lake-prespa',
+        'lake-dojran',
         'pelister',
+        'mavrovo',
+    ];
+
+    private const LANDMARK_MAP_KEYS = [
+        'matka-canyon',
+        'krusevo',
+        'heraclea-lyncestis',
+        'kokino',
+        'old-bazaar-skopje',
     ];
 
     private const DEMO_LESSON_SLUGS = [
@@ -45,7 +55,7 @@ class ContentExpansionSeeder extends Seeder
     private const DEMO_QUIZ_SLUGS = [
         'basic-macedonian-greetings',
         'cyrillic-alphabet-basics',
-        'macedonia-map-challenge',
+        'macedonia-map-challenge-demo',
     ];
 
     public function run(): void
@@ -135,16 +145,18 @@ class ContentExpansionSeeder extends Seeder
         $lesson = Lesson::where('slug', 'macedonian-geography-basics')->first();
         $questionsByKey = collect($this->mapQuestions())->keyBy('map_key');
 
+        $this->retireLegacyMapQuizSlugs();
+
         $mainQuiz = $category->quizzes()->updateOrCreate(
-            ['slug' => 'macedonia-map-challenge'],
+            ['slug' => 'macedonia-map-challenge-demo'],
             [
                 'lesson_id' => $lesson?->id,
-                'title_en' => 'Macedonia Map Challenge',
-                'title_mk' => 'Мапа предизвик за Македонија',
-                'description_en' => 'Look at the highlighted point on the map and choose the correct city, lake, or landmark.',
-                'description_mk' => 'Погледни ја означената точка на мапата и избери го точниот град, езеро или место.',
+                'title_en' => 'Macedonia Map Challenge Demo',
+                'title_mk' => 'Демо: Карта на Македонија',
+                'description_en' => 'Try a short demo map challenge with beginner-friendly places.',
+                'description_mk' => 'Пробај краток демо предизвик со почетни места на картата.',
                 'difficulty' => 'beginner',
-                'estimated_minutes' => 8,
+                'estimated_minutes' => 5,
                 'points_per_question' => 10,
                 'is_published' => true,
                 'is_demo' => true,
@@ -153,15 +165,15 @@ class ContentExpansionSeeder extends Seeder
         );
 
         $extendedQuiz = $category->quizzes()->updateOrCreate(
-            ['slug' => 'macedonia-map-challenge-extended'],
+            ['slug' => 'cities-of-macedonia-map-quiz'],
             [
                 'lesson_id' => $lesson?->id,
-                'title_en' => 'Macedonia Map Challenge: Extended',
-                'title_mk' => 'Мапа предизвик за Македонија: проширено',
-                'description_en' => 'Practise more Macedonian cities and landmarks after the beginner map challenge.',
-                'description_mk' => 'Вежбај повеќе македонски градови и места по почетниот предизвик со мапа.',
+                'title_en' => 'Cities of Macedonia Map Quiz',
+                'title_mk' => 'Квиз: Градови на Македонија',
+                'description_en' => 'Practise recognising important Macedonian cities from map clues.',
+                'description_mk' => 'Вежбај препознавање важни македонски градови преку мапа.',
                 'difficulty' => 'beginner',
-                'estimated_minutes' => 10,
+                'estimated_minutes' => 5,
                 'points_per_question' => 10,
                 'is_published' => true,
                 'is_demo' => false,
@@ -169,9 +181,43 @@ class ContentExpansionSeeder extends Seeder
             ],
         );
 
+        $natureQuiz = $category->quizzes()->updateOrCreate(
+            ['slug' => 'lakes-and-nature-map-quiz'],
+            [
+                'lesson_id' => $lesson?->id,
+                'title_en' => 'Lakes and Nature Map Quiz',
+                'title_mk' => 'Квиз: Езера и природа',
+                'description_en' => 'Practise lakes, mountains, parks, and natural places.',
+                'description_mk' => 'Вежбај езера, планини, паркови и природни места.',
+                'difficulty' => 'intermediate',
+                'estimated_minutes' => 5,
+                'points_per_question' => 10,
+                'is_published' => true,
+                'is_demo' => false,
+                'sort_order' => 4,
+            ],
+        );
+
+        $landmarksQuiz = $category->quizzes()->updateOrCreate(
+            ['slug' => 'landmarks-and-regions-map-quiz'],
+            [
+                'lesson_id' => $lesson?->id,
+                'title_en' => 'Landmarks and Regions Map Quiz',
+                'title_mk' => 'Квиз: Знаменитости и региони',
+                'description_en' => 'Explore landmarks, regions, old towns, and cultural places.',
+                'description_mk' => 'Истражи знаменитости, региони, стари градови и културни места.',
+                'difficulty' => 'intermediate',
+                'estimated_minutes' => 5,
+                'points_per_question' => 10,
+                'is_published' => true,
+                'is_demo' => false,
+                'sort_order' => 5,
+            ],
+        );
+
         $this->syncMapQuizQuestions(
             $mainQuiz,
-            collect(self::BEGINNER_MAP_KEYS)
+            collect(self::DEMO_MAP_KEYS)
                 ->map(fn (string $key) => $questionsByKey->get($key))
                 ->filter()
                 ->values()
@@ -180,12 +226,52 @@ class ContentExpansionSeeder extends Seeder
 
         $this->syncMapQuizQuestions(
             $extendedQuiz,
-            collect(self::EXTENDED_MAP_KEYS)
+            collect(self::CITIES_MAP_KEYS)
                 ->map(fn (string $key) => $questionsByKey->get($key))
                 ->filter()
                 ->values()
                 ->all(),
         );
+
+        $this->syncMapQuizQuestions(
+            $natureQuiz,
+            collect(self::NATURE_MAP_KEYS)
+                ->map(fn (string $key) => $questionsByKey->get($key))
+                ->filter()
+                ->values()
+                ->all(),
+        );
+
+        $this->syncMapQuizQuestions(
+            $landmarksQuiz,
+            collect(self::LANDMARK_MAP_KEYS)
+                ->map(fn (string $key) => $questionsByKey->get($key))
+                ->filter()
+                ->values()
+                ->all(),
+        );
+    }
+
+    private function retireLegacyMapQuizSlugs(): void
+    {
+        foreach (self::LEGACY_MAP_QUIZ_SLUGS as $legacySlug => $newSlug) {
+            $legacyQuiz = Quiz::where('slug', $legacySlug)->first();
+
+            if (! $legacyQuiz) {
+                continue;
+            }
+
+            if (! Quiz::where('slug', $newSlug)->whereKeyNot($legacyQuiz->id)->exists()) {
+                $legacyQuiz->update(['slug' => $newSlug]);
+
+                continue;
+            }
+
+            $legacyQuiz->update([
+                'is_published' => false,
+                'is_demo' => false,
+            ]);
+        }
     }
 
     private function syncMapQuizQuestions(Quiz $quiz, array $questions): void
@@ -303,36 +389,46 @@ class ContentExpansionSeeder extends Seeder
             $this->lesson('macedonian-language', 'family-words', 'family-words-quiz', 'Family Words', 'Семејни зборови', 'Practise names for close family members and respectful everyday speech.', 'Вежбај имиња за блиски членови на семејството и љубезен говор.', 6, ['мајка = mother', 'татко = father', 'брат = brother', 'сестра = sister', 'баба = grandmother'], ['мајка = mother', 'татко = father', 'брат = brother', 'сестра = sister', 'баба = grandmother'], ['Мојата мајка means my mother.', 'Мојот брат means my brother.'], ['Мојата мајка значи my mother.', 'Мојот брат значи my brother.'], 'Name three family members in Macedonian.', 'Именувај три членови на семејството на македонски.'),
             $this->lesson('macedonian-language', 'days-months-and-time', null, 'Days, Months, and Time', 'Денови, месеци и време', 'Use simple words for today, tomorrow, days, months, and time.', 'Користи едноставни зборови за денес, утре, денови, месеци и време.', 7, ['денес = today', 'утре = tomorrow', 'понеделник = Monday', 'јануари = January', 'час = hour'], ['денес = today', 'утре = tomorrow', 'понеделник = Monday', 'јануари = January', 'час = hour'], ['Денес е понеделник means today is Monday.', 'Утре учиме means tomorrow we study.'], ['Денес е понеделник значи today is Monday.', 'Утре учиме значи tomorrow we study.'], 'Say today and tomorrow in Macedonian.', 'Кажи денес и утре на македонски.'),
             $this->lesson('macedonian-language', 'common-classroom-words', null, 'Common Classroom Words', 'Чести зборови во училница', 'Learn useful classroom words for reading, writing, and asking questions.', 'Научи корисни зборови од училница за читање, пишување и прашување.', 6, ['книга = book', 'молив = pencil', 'учител = teacher', 'прашање = question', 'одговор = answer'], ['книга = book', 'молив = pencil', 'учител = teacher', 'прашање = question', 'одговор = answer'], ['Имам книга means I have a book.', 'Одговор means answer.'], ['Имам книга значи I have a book.', 'Одговор значи answer.'], 'Point to a book and pencil and say the Macedonian words.', 'Покажи книга и молив и кажи ги зборовите.'),
+            $this->lesson('macedonian-language', 'common-everyday-questions', null, 'Common Everyday Questions', 'Чести секојдневни прашања', 'Ask and answer simple Macedonian questions used at home, school, and community events.', 'Поставувај и одговарај едноставни македонски прашања дома, на училиште и во заедница.', 8, ['како си? = how are you?', 'каде си? = where are you?', 'што е ова? = what is this?', 'колку години имаш? = how old are you?', 'дали сакаш? = do you want?'], ['како си? = how are you?', 'каде си? = where are you?', 'што е ова? = what is this?', 'колку години имаш? = how old are you?', 'дали сакаш? = do you want?'], ['Како си? Добро сум means How are you? I am well.', 'Што е ова? Ова е книга means What is this? This is a book.', 'Каде си? Дома сум means Where are you? I am home.'], ['Како си? Добро сум значи How are you? I am well.', 'Што е ова? Ова е книга значи What is this? This is a book.', 'Каде си? Дома сум значи Where are you? I am home.'], 'Ask one family member two simple questions in Macedonian.', 'Прашај член од семејството две едноставни прашања на македонски.'),
+            $this->lesson('macedonian-language', 'basic-grammar-i-am-you-are-he-is', null, 'Basic Grammar: I Am, You Are, He Is', 'Основна граматика: јас сум, ти си, тој е', 'Build first Macedonian sentences with simple forms of to be.', 'Гради први македонски реченици со едноставни форми на сум.', 8, ['јас сум = I am', 'ти си = you are', 'тој е = he is', 'таа е = she is', 'ние сме = we are'], ['јас сум = I am', 'ти си = you are', 'тој е = he is', 'таа е = she is', 'ние сме = we are'], ['Јас сум дома means I am at home.', 'Ти си ученик means you are a student.', 'Таа е сестра means she is a sister.'], ['Јас сум дома значи I am at home.', 'Ти си ученик значи you are a student.', 'Таа е сестра значи she is a sister.'], 'Make three short sentences using јас сум, ти си, and тој е.', 'Направи три кратки реченици со јас сум, ти си и тој е.'),
 
             $this->lesson('macedonian-alphabet', 'introduction-to-macedonian-cyrillic-alphabet', 'cyrillic-alphabet-basics', 'Macedonian Cyrillic Alphabet Basics', 'Основи на македонската кирилична азбука', 'Meet the Cyrillic script and the 31 letters of modern Macedonian.', 'Запознај ја кирилицата и 31 буква во современиот македонски јазик.', 7, ['азбука = alphabet', 'буква = letter', 'звук = sound', 'збор = word'], ['азбука = alphabet', 'буква = letter', 'звук = sound', 'збор = word'], ['The letter М makes the m sound.', 'Македонија starts with М.'], ['Буквата М го дава звукот m.', 'Македонија почнува со М.'], 'Find three Macedonian letters you recognise.', 'Најди три македонски букви што ги препознаваш.'),
             $this->lesson('macedonian-alphabet', 'vowels-and-consonants', 'letter-recognition-quiz', 'Vowels and Consonants', 'Самогласки и согласки', 'Notice how vowel and consonant sounds build Macedonian words.', 'Забележи како самогласките и согласките градат македонски зборови.', 6, ['А = a', 'Е = e', 'И = i', 'О = o', 'У = u'], ['А = a', 'Е = e', 'И = i', 'О = o', 'У = u'], ['Мама uses the vowel А.', 'Ден uses Е.'], ['Мама ја користи самогласката А.', 'Ден ја користи Е.'], 'Say the five vowel sounds aloud.', 'Кажи ги петте самогласки на глас.'),
             $this->lesson('macedonian-alphabet', 'letters-that-look-familiar', null, 'Letters That Look Familiar', 'Букви што изгледаат познато', 'Compare letters that look familiar and letters that sound different.', 'Спореди букви што изгледаат познато и букви што звучат различно.', 6, ['А looks like A', 'М looks like M', 'Р sounds like r', 'В sounds like v'], ['А изгледа како A', 'М изгледа како M', 'Р звучи како r', 'В звучи како v'], ['The letter Р is not the English P sound.', 'В is closer to the English v sound.'], ['Буквата Р не е англиско P.', 'В е поблиску до англискиот звук v.'], 'Circle familiar-looking letters in a Macedonian word.', 'Заокружи познати букви во македонски збор.'),
             $this->lesson('macedonian-alphabet', 'reading-simple-macedonian-words', 'simple-word-reading-quiz', 'Reading Simple Macedonian Words', 'Читање едноставни македонски зборови', 'Blend letters slowly to read short Macedonian words.', 'Спојувај букви полека за да читаш кратки македонски зборови.', 7, ['мама = mum', 'дом = home', 'вода = water', 'ден = day'], ['мама = mum', 'дом = home', 'вода = water', 'ден = day'], ['Read мама as ма-ма.', 'Read вода as во-да.'], ['Читај мама како ма-ма.', 'Читај вода како во-да.'], 'Read one short word aloud three times.', 'Прочитај еден краток збор три пати.'),
             $this->lesson('macedonian-alphabet', 'writing-your-first-macedonian-words', null, 'Writing Your First Macedonian Words', 'Пишување на првите македонски зборови', 'Practise writing short words with careful letter shapes.', 'Вежбај пишување кратки зборови со внимателни форми на буквите.', 7, ['мама', 'дом', 'ден', 'вода'], ['мама', 'дом', 'ден', 'вода'], ['Write slowly and leave space between letters.', 'Say each sound while writing.'], ['Пиши полека и остави простор меѓу буквите.', 'Кажи го секој звук додека пишуваш.'], 'Copy the word мама three times.', 'Препиши го зборот мама три пати.'),
+            $this->lesson('macedonian-alphabet', 'reading-names-and-places', null, 'Reading Names and Places', 'Читање имиња и места', 'Practise reading Macedonian names, family words, and place names you may see often.', 'Вежбај читање македонски имиња, семејни зборови и имиња на места што често се гледаат.', 8, ['Скопје = Skopje', 'Охрид = Ohrid', 'Битола = Bitola', 'Марко = Marko', 'Елена = Elena'], ['Скопје = Skopje', 'Охрид = Ohrid', 'Битола = Bitola', 'Марко = Marko', 'Елена = Elena'], ['Read Скопје slowly as Ско-пје.', 'Find the letter О in Охрид.', 'Notice that place names help alphabet practice feel real.'], ['Читај Скопје полека како Ско-пје.', 'Најди ја буквата О во Охрид.', 'Имињата на места помагаат азбуката да биде вистинска.'], 'Choose three Macedonian place names and read them one syllable at a time.', 'Избери три македонски имиња на места и читај ги по слогови.'),
 
             $this->lesson('geography', 'macedonian-geography-basics', 'macedonian-geography-basics', 'Cities, Lakes, and Mountains', 'Градови, езера и планини', 'Learn the places and landscapes that shape everyday life.', 'Научи за местата и пејзажите што го обликуваат секојдневието.', 7, ['Скопје = capital city', 'Охрид = lake city', 'планина = mountain', 'езеро = lake'], ['Скопје = capital city', 'Охрид = lake city', 'планина = mountain', 'езеро = lake'], ['Skopje is the capital.', 'Ohrid is famous for its lake.'], ['Скопје е главен град.', 'Охрид е познат по езерото.'], 'Find Skopje and Ohrid on a map.', 'Најди ги Скопје и Охрид на мапа.'),
             $this->lesson('geography', 'skopje-ohrid-and-bitola', 'cities-of-macedonia-quiz', 'Skopje, Ohrid, and Bitola', 'Скопје, Охрид и Битола', 'Meet three important cities and what learners often remember about them.', 'Запознај три важни града и што најчесто се памети за нив.', 7, ['Скопје = capital', 'Охрид = lake and old town', 'Битола = southern city', 'град = city'], ['Скопје = capital', 'Охрид = lake and old town', 'Битола = southern city', 'град = city'], ['Skopje is a busy centre.', 'Bitola is known for city history and culture.'], ['Скопје е жив центар.', 'Битола е позната по градска историја и култура.'], 'Say one fact about each city.', 'Кажи по еден факт за секој град.'),
             $this->lesson('geography', 'lake-ohrid-and-lake-prespa', 'lakes-and-mountains-quiz', 'Lake Ohrid and Lake Prespa', 'Охридско Езеро и Преспанско Езеро', 'Learn why lakes are important for geography, travel, and memory.', 'Научи зошто езерата се важни за географија, патување и сеќавање.', 6, ['езеро = lake', 'Охридско Езеро', 'Преспанско Езеро', 'брег = shore'], ['езеро = lake', 'Охридско Езеро', 'Преспанско Езеро', 'брег = shore'], ['Lake Ohrid is very well known.', 'Lake Prespa is another important lake.'], ['Охридското Езеро е многу познато.', 'Преспанското Езеро е уште едно важно езеро.'], 'Name two lakes in Macedonian.', 'Именувај две езера на македонски.'),
             $this->lesson('geography', 'mountains-and-national-parks', null, 'Mountains and National Parks', 'Планини и национални паркови', 'Discover mountain places such as Mavrovo, Pelister, and Vodno.', 'Откриј планински места како Маврово, Пелистер и Водно.', 7, ['планина = mountain', 'парк = park', 'Маврово', 'Пелистер', 'Водно'], ['планина = mountain', 'парк = park', 'Маврово', 'Пелистер', 'Водно'], ['Vodno is near Skopje.', 'Pelister is associated with mountain nature.'], ['Водно е близу Скопје.', 'Пелистер е поврзан со планинска природа.'], 'Choose one mountain place to remember.', 'Избери едно планинско место за паметење.'),
             $this->lesson('geography', 'macedonian-regions-and-travel', null, 'Macedonian Regions and Travel', 'Македонски региони и патување', 'Use simple geography words to talk about travel and regions.', 'Користи едноставни географски зборови за патување и региони.', 7, ['регион = region', 'патување = travel', 'север = north', 'југ = south'], ['регион = region', 'патување = travel', 'север = north', 'југ = south'], ['Some cities are north, south, east, or west.', 'Travel helps connect places with family stories.'], ['Некои градови се на север, југ, исток или запад.', 'Патувањето ги поврзува местата со семејни приказни.'], 'Describe a trip using north, south, east, or west.', 'Опиши патување со север, југ, исток или запад.'),
+            $this->lesson('geography', 'regions-and-neighbouring-countries', null, 'Regions and Neighbouring Countries', 'Региони и соседни земји', 'Learn simple direction words and how Macedonia connects with surrounding countries and regions.', 'Научи едноставни зборови за насоки и како Македонија се поврзува со соседни земји и региони.', 9, ['сосед = neighbour', 'граница = border', 'север = north', 'југ = south', 'исток = east', 'запад = west'], ['сосед = neighbour', 'граница = border', 'север = north', 'југ = south', 'исток = east', 'запад = west'], ['A border is where one country meets another.', 'Direction words help describe where cities and lakes are.', 'Neighbouring countries can be discussed with neutral map language.'], ['Граница е место каде една земја се среќава со друга.', 'Зборовите за насока помагаат да се опишат градови и езера.', 'Соседните земји се учат со неутрален јазик на мапа.'], 'Look at a map and describe one place as north, south, east, or west.', 'Погледни мапа и опиши едно место како север, југ, исток или запад.'),
 
             $this->lesson('history-of-macedonia', 'macedonia-history-basics', 'macedonia-history-basics', 'Learning Macedonian History', 'Учење македонска историја', 'Learn history through places, stories, family memory, and respectful questions.', 'Учи историја преку места, приказни, семејно сеќавање и внимателни прашања.', 7, ['историја = history', 'приказна = story', 'музеј = museum', 'семејство = family'], ['историја = history', 'приказна = story', 'музеј = museum', 'семејство = family'], ['History includes stories and places.', 'Families preserve memory in many ways.'], ['Историјата вклучува приказни и места.', 'Семејствата чуваат сеќавања на многу начини.'], 'Ask an older family member about one memory.', 'Прашај постар член од семејството за едно сеќавање.'),
             $this->lesson('history-of-macedonia', 'ohrid-as-a-cultural-centre', 'ohrid-and-skopje-quiz', 'Ohrid as a Cultural Centre', 'Охрид како културен центар', 'Learn why Ohrid is remembered for learning, churches, lake life, and culture.', 'Научи зошто Охрид се памети по учење, цркви, езеро и култура.', 7, ['Охрид', 'езеро = lake', 'култура = culture', 'учење = learning'], ['Охрид', 'езеро = lake', 'култура = culture', 'учење = learning'], ['Ohrid is linked with learning traditions.', 'The lake is part of the city identity.'], ['Охрид е поврзан со традиции на учење.', 'Езерото е дел од идентитетот на градот.'], 'Name one reason Ohrid is important.', 'Кажи една причина зошто Охрид е важен.'),
             $this->lesson('history-of-macedonia', 'skopje-through-time', null, 'Skopje Through Time', 'Скопје низ времето', 'See Skopje as a place where old and new stories meet.', 'Запознај го Скопје како место каде се среќаваат стари и нови приказни.', 7, ['Скопје', 'главен град = capital city', 'мост = bridge', 'пазар = market'], ['Скопје', 'главен град = capital city', 'мост = bridge', 'пазар = market'], ['Skopje is the capital city today.', 'A city can hold many layers of memory.'], ['Скопје денес е главен град.', 'Еден град може да има многу слоеви на сеќавање.'], 'Think of one old place and one new place in a city.', 'Помисли на едно старо и едно ново место во град.'),
             $this->lesson('history-of-macedonia', 'how-families-preserve-history', 'family-history-and-traditions-quiz', 'How Families Preserve History', 'Како семејствата ја чуваат историјата', 'Explore photos, recipes, songs, names, and stories as family history.', 'Истражи фотографии, рецепти, песни, имиња и приказни како семејна историја.', 6, ['фотографија = photograph', 'рецепт = recipe', 'песна = song', 'име = name'], ['фотографија = photograph', 'рецепт = recipe', 'песна = song', 'име = name'], ['A recipe can carry memory.', 'A song can remind families of a place.'], ['Рецепт може да носи сеќавање.', 'Песна може да потсети на место.'], 'Choose one family object and tell its story.', 'Избери еден семеен предмет и раскажи ја приказната.'),
             $this->lesson('history-of-macedonia', 'macedonian-migration-and-community-life-in-australia', null, 'Macedonian Migration and Community Life in Australia', 'Македонска миграција и живот во заедница во Австралија', 'Learn how language, food, sport, churches, and clubs help communities stay connected.', 'Научи како јазикот, храната, спортот, црквите и клубовите ги поврзуваат заедниците.', 8, ['Австралија', 'заедница = community', 'јазик = language', 'клуб = club'], ['Австралија', 'заедница = community', 'јазик = language', 'клуб = club'], ['Community events help families meet.', 'Language keeps generations connected.'], ['Настаните во заедницата им помагаат на семејствата да се сретнат.', 'Јазикот ги поврзува генерациите.'], 'Name one way families keep culture alive in Australia.', 'Кажи еден начин како семејствата ја чуваат културата во Австралија.'),
+            $this->lesson('history-of-macedonia', 'simple-timeline-of-macedonia', null, 'Simple Timeline of Macedonia', 'Едноставна временска линија за Македонија', 'Build a careful beginner timeline using broad periods, places, and cultural memory.', 'Изгради внимателна почетничка временска линија со периоди, места и културно сеќавање.', 10, ['временска линија = timeline', 'период = period', 'античко = ancient', 'средновековно = medieval', 'современо = modern'], ['временска линија = timeline', 'период = period', 'античко = ancient', 'средновековно = medieval', 'современо = modern'], ['A timeline can move from ancient places to medieval learning centres, later empires, modern statehood, migration, and community memory.', 'Beginners can learn broad periods before learning detailed dates.', 'Respectful history asks what a source says and why a place is remembered.'], ['Временска линија може да оди од антички места до средновековни центри, понови периоди, современост, преселба и семејно сеќавање.', 'Почетници прво учат широки периоди, а потоа детали.', 'Внимателната историја прашува што кажува изворот и зошто место се памети.'], 'Draw a five-part timeline with one place or memory for each part.', 'Нацртај петделна временска линија со едно место или сеќавање за секој дел.'),
+            $this->lesson('history-of-macedonia', 'important-places-in-macedonian-history', null, 'Important Places in Macedonian History', 'Важни места во македонската историја', 'Learn how places such as Ohrid, Skopje, Bitola, Krusevo, and old sites can support respectful history learning.', 'Научи како места како Охрид, Скопје, Битола, Крушево и стари локалитети помагаат за внимателно учење историја.', 10, ['место = place', 'локалитет = site', 'град = city', 'музеј = museum', 'спомен = memory'], ['место = place', 'локалитет = site', 'град = city', 'музеј = museum', 'спомен = memory'], ['Ohrid can be studied through lake life, old town memory, and learning traditions.', 'Skopje can be studied through old and new city layers.', 'Bitola and Krusevo can introduce local history, architecture, and family stories.'], ['Охрид може да се учи преку езерото, стариот град и традиции на учење.', 'Скопје може да се учи преку стари и нови градски слоеви.', 'Битола и Крушево воведуваат локална историја, архитектура и семејни приказни.'], 'Choose one place and write three respectful questions about it.', 'Избери едно место и напиши три внимателни прашања за него.'),
 
             $this->lesson('culture-and-traditions', 'macedonian-culture-basics', 'macedonian-culture-basics', 'Family, Oro, and Celebrations', 'Семејство, оро и прослави', 'Learn how family gatherings, dancing, and shared meals connect people.', 'Научи како семејните собири, оро и заеднички оброци ги поврзуваат луѓето.', 6, ['семејство = family', 'оро = circle dance', 'прослава = celebration', 'гости = guests'], ['семејство = family', 'оро = circle dance', 'прослава = celebration', 'гости = guests'], ['Oro brings people together.', 'Celebrations often include food and music.'], ['Оро ги зближува луѓето.', 'Прославите често имаат храна и музика.'], 'Ask someone when they last saw oro.', 'Прашај некого кога последен пат видел оро.'),
             $this->lesson('culture-and-traditions', 'macedonian-weddings', 'oro-and-weddings-quiz', 'Macedonian Weddings', 'Македонски свадби', 'Meet simple wedding words connected to music, dancing, family, and guests.', 'Запознај едноставни свадбени зборови поврзани со музика, оро, семејство и гости.', 6, ['свадба = wedding', 'невеста = bride', 'младоженец = groom', 'музика = music'], ['свадба = wedding', 'невеста = bride', 'младоженец = groom', 'музика = music'], ['Weddings often include music and dancing.', 'Guests celebrate with the family.'], ['Свадбите често имаат музика и оро.', 'Гостите слават со семејството.'], 'Learn the words свадба and гости.', 'Научи ги зборовите свадба и гости.'),
             $this->lesson('culture-and-traditions', 'holidays-and-family-gatherings', 'traditions-and-celebrations-quiz', 'Holidays and Family Gatherings', 'Празници и семејни собири', 'Use simple words for holidays, visits, guests, and shared meals.', 'Користи едноставни зборови за празници, посети, гости и заеднички оброци.', 6, ['празник = holiday', 'гости = guests', 'ручек = lunch', 'посета = visit'], ['празник = holiday', 'гости = guests', 'ручек = lunch', 'посета = visit'], ['A holiday can bring relatives together.', 'Food is often shared at gatherings.'], ['Празник може да ги собере роднините.', 'Храната често се споделува на собири.'], 'Describe one family gathering in two words.', 'Опиши еден семеен собир со два збора.'),
             $this->lesson('culture-and-traditions', 'traditional-clothing-and-symbols', null, 'Traditional Clothing and Symbols', 'Традиционална облека и симболи', 'Notice colours, patterns, clothing, and symbols in respectful cultural learning.', 'Забележи бои, шари, облека и симболи во внимателно културно учење.', 6, ['облека = clothing', 'шара = pattern', 'боја = colour', 'симбол = symbol'], ['облека = clothing', 'шара = pattern', 'боја = colour', 'симбол = symbol'], ['Patterns can tell a local story.', 'Symbols should be learned with respect.'], ['Шарите можат да раскажат локална приказна.', 'Симболите треба да се учат со почит.'], 'Notice one colour or pattern at a community event.', 'Забележи една боја или шара на настан.'),
             $this->lesson('culture-and-traditions', 'macedonian-community-life-in-australia', 'macedonian-community-quiz', 'Macedonian Community Life in Australia', 'Македонски заеднички живот во Австралија', 'Learn how language schools, clubs, churches, and events support connection.', 'Научи како јазични училишта, клубови, цркви и настани ја поддржуваат поврзаноста.', 7, ['заедница = community', 'училиште = school', 'клуб = club', 'настан = event'], ['заедница = community', 'училиште = school', 'клуб = club', 'настан = event'], ['A community event can help children hear Macedonian.', 'Clubs and schools support belonging.'], ['Настан во заедницата им помага на децата да слушнат македонски.', 'Клубовите и училиштата помагаат за припадност.'], 'Name one place where Macedonian can be heard in Australia.', 'Именувај едно место каде може да се слушне македонски во Австралија.'),
+            $this->lesson('culture-and-traditions', 'oro-and-traditional-dance', null, 'Oro and Traditional Dance', 'Оро и традиционален танц', 'Learn how oro, rhythm, steps, and shared circles connect people at celebrations.', 'Научи како орото, ритамот, чекорите и заедничкиот круг ги поврзуваат луѓето на прослави.', 10, ['оро = circle dance', 'чекор = step', 'ритам = rhythm', 'круг = circle', 'музика = music'], ['оро = circle dance', 'чекор = step', 'ритам = rhythm', 'круг = circle', 'музика = music'], ['Oro can be danced in a circle or line depending on the setting.', 'Learners can join by watching the rhythm and stepping carefully.', 'Dance can teach language because repeated words and calls are remembered through movement.'], ['Оро може да се игра во круг или линија според настанот.', 'Учениците можат да се приклучат со гледање ритам и внимателни чекори.', 'Танцот помага за јазик бидејќи зборови и повици се паметат со движење.'], 'Watch a short oro clip or family dance and clap the rhythm without copying any song lyrics.', 'Гледај кратко оро или семеен танц и плесни го ритамот без препишување текст од песна.'),
+            $this->lesson('culture-and-traditions', 'family-traditions-and-hospitality', null, 'Family Traditions and Hospitality', 'Семејни традиции и гостопримство', 'Explore welcoming guests, shared tables, visits, and respectful family customs.', 'Истражи добредојде за гости, заедничка трпеза, посети и семејни обичаи со почит.', 10, ['гостопримство = hospitality', 'добредојде = welcome', 'трпеза = table', 'гости = guests', 'роднини = relatives'], ['гостопримство = hospitality', 'добредојде = welcome', 'трпеза = table', 'гости = guests', 'роднини = relatives'], ['Hospitality can mean welcoming someone with food, conversation, and care.', 'Every family has its own way of showing respect to guests.', 'Learning polite words makes cultural participation easier.'], ['Гостопримство може да значи добредојде со храна, разговор и грижа.', 'Секое семејство има свој начин да покаже почит кон гости.', 'Љубезните зборови го олеснуваат учеството во културата.'], 'Ask a family member what makes a guest feel welcome in your home.', 'Прашај член од семејството што прави гостин да се чувствува добредојден дома.'),
 
             $this->lesson('food-and-music', 'macedonian-food-and-music-basics', 'macedonian-food-and-music-basics', 'Macedonian Food and Music', 'Македонска храна и музика', 'Explore how dishes and songs bring people together.', 'Истражи како јадењата и песните ги зближуваат луѓето.', 6, ['храна = food', 'музика = music', 'песна = song', 'трпеза = table meal'], ['храна = food', 'музика = music', 'песна = song', 'трпеза = table meal'], ['Food and music are part of celebrations.', 'A song can carry memory.'], ['Храната и музиката се дел од прослави.', 'Песна може да носи сеќавање.'], 'Name one food and one song style you know.', 'Именувај една храна и еден стил на песна што го знаеш.'),
             $this->lesson('food-and-music', 'tavce-gravce', 'ajvar-and-tavce-gravce-quiz', 'Tavče Gravče', 'Тавче гравче', 'Learn about a warm baked bean dish often shared at home.', 'Научи за топло јадење со грав што често се споделува дома.', 5, ['грав = beans', 'тавче = small baking dish', 'ручек = lunch', 'топло = warm'], ['грав = beans', 'тавче = small baking dish', 'ручек = lunch', 'топло = warm'], ['Tavče gravče is baked beans.', 'It is often served warm.'], ['Тавче гравче е печен грав.', 'Често се служи топло.'], 'Say грав and тавче aloud.', 'Кажи грав и тавче на глас.'),
             $this->lesson('food-and-music', 'ajvar-and-peppers', null, 'Ajvar and Peppers', 'Ајвар и пиперки', 'Learn simple words for peppers, roasting, bread, and shared meals.', 'Научи едноставни зборови за пиперки, печење, леб и заеднички оброци.', 5, ['ајвар = pepper spread', 'пиперка = pepper', 'леб = bread', 'печено = roasted'], ['ајвар = pepper spread', 'пиперка = pepper', 'леб = bread', 'печено = roasted'], ['Ajvar is often made with roasted peppers.', 'It can be eaten with bread.'], ['Ајвар често се прави со печени пиперки.', 'Може да се јаде со леб.'], 'Point to red peppers and say пиперки.', 'Покажи црвени пиперки и кажи пиперки.'),
             $this->lesson('food-and-music', 'shopska-salad-and-shared-meals', 'food-basics-quiz', 'Shopska Salad and Shared Meals', 'Шопска салата и заеднички оброци', 'Use food words for vegetables, cheese, table, and sharing.', 'Користи зборови за зеленчук, сирење, трпеза и споделување.', 5, ['домат = tomato', 'краставица = cucumber', 'сирење = cheese', 'салата = salad'], ['домат = tomato', 'краставица = cucumber', 'сирење = cheese', 'салата = salad'], ['Shopska salad often has tomato, cucumber, and cheese.', 'Shared meals help families talk.'], ['Шопска салата често има домат, краставица и сирење.', 'Заеднички оброци им помагаат на семејствата да разговараат.'], 'Name two salad ingredients.', 'Именувај две состојки за салата.'),
             $this->lesson('food-and-music', 'folk-music-and-celebrations', 'music-and-celebrations-quiz', 'Folk Music and Celebrations', 'Народна музика и прослави', 'Hear how rhythm, songs, and instruments support dancing and memory.', 'Слушни како ритамот, песните и инструментите го поддржуваат орото и сеќавањето.', 6, ['песна = song', 'ритам = rhythm', 'оро = dance', 'хармоника = accordion'], ['песна = song', 'ритам = rhythm', 'оро = dance', 'хармоника = accordion'], ['Music can guide dancing.', 'An accordion may be heard at celebrations.'], ['Музиката може да го води орото.', 'Хармоника може да се слушне на прослави.'], 'Clap a simple rhythm and say оро.', 'Плесни едноставен ритам и кажи оро.'),
+            $this->lesson('food-and-music', 'traditional-macedonian-dishes', null, 'Traditional Macedonian Dishes', 'Традиционални македонски јадења', 'Learn food vocabulary through common dishes, shared meals, ingredients, and family memories.', 'Учи зборови за храна преку познати јадења, заеднички оброци, состојки и семејни сеќавања.', 10, ['јадење = dish', 'состојка = ingredient', 'грав = beans', 'пиперка = pepper', 'леб = bread', 'сирење = cheese'], ['јадење = dish', 'состојка = ingredient', 'грав = beans', 'пиперка = pepper', 'леб = bread', 'сирење = cheese'], ['Tavče gravče, ajvar, shopska salad, bread, cheese, and shared plates can teach many everyday words.', 'Families may cook dishes differently, so learn vocabulary without treating one recipe as the only correct version.', 'Food words are easiest when learners can point, smell, taste, and say the word.'], ['Тавче гравче, ајвар, шопска салата, леб, сирење и заеднички чинии учат секојдневни зборови.', 'Семејствата можат да готват различно, затоа учи зборови без да мислиш дека има само еден правилен рецепт.', 'Зборовите за храна се полесни кога можеш да покажеш, мириснеш, вкусиш и кажеш.'], 'Choose one dish and name three ingredients or table words in Macedonian.', 'Избери едно јадење и именувај три состојки или зборови за трпеза на македонски.'),
+            $this->lesson('food-and-music', 'instruments-and-traditional-music', null, 'Instruments and Traditional Music', 'Инструменти и традиционална музика', 'Notice instruments, rhythm, dancing, and listening habits without copying copyrighted lyrics.', 'Забележи инструменти, ритам, оро и слушање без препишување заштитени текстови.', 10, ['инструмент = instrument', 'хармоника = accordion', 'тапан = drum', 'ритам = rhythm', 'мелодија = melody', 'слуша = listens'], ['инструмент = instrument', 'хармоника = accordion', 'тапан = drum', 'ритам = rhythm', 'мелодија = melody', 'слуша = listens'], ['Traditional music may include accordion, drums, voice, rhythm, and dance depending on the event.', 'Learners can practise by naming sounds and instruments instead of copying full lyrics.', 'Sound quizzes can later use original or properly licensed short audio clips.'], ['Традиционалната музика може да има хармоника, тапан, глас, ритам и оро според настанот.', 'Учениците можат да именуваат звуци и инструменти наместо да препишуваат цели текстови.', 'Звучни квизови подоцна можат да користат оригинални или правилно лиценцирани кратки аудио снимки.'], 'Listen for one instrument at a celebration or recording and name it in Macedonian.', 'Слушни еден инструмент на прослава или снимка и именувај го на македонски.'),
         ];
     }
 
@@ -493,7 +589,12 @@ class ContentExpansionSeeder extends Seeder
             $this->mapQuestion('kocani', 'Kočani', 'Кочани', 'city', 'Kočani is in the east.', 'Кочани е на исток.', [['Kočani', 'Кочани', true], ['Bitola', 'Битола', false], ['Prilep', 'Прилеп', false], ['Struga', 'Струга', false]]),
             $this->mapQuestion('lake-ohrid', 'Lake Ohrid', 'Охридско Езеро', 'lake', 'Lake Ohrid is one of the best-known lakes in the region.', 'Охридското Езеро е едно од најпознатите езера во регионот.', [['Lake Ohrid', 'Охридско Езеро', true], ['Lake Prespa', 'Преспанско Езеро', false], ['Matka Canyon', 'Кањон Матка', false], ['Mavrovo', 'Маврово', false]]),
             $this->mapQuestion('lake-prespa', 'Lake Prespa', 'Преспанско Езеро', 'lake', 'Lake Prespa is another important lake in the south-west.', 'Преспанското Езеро е уште едно важно езеро на југозапад.', [['Lake Prespa', 'Преспанско Езеро', true], ['Lake Ohrid', 'Охридско Езеро', false], ['Vodno', 'Водно', false], ['Pelister', 'Пелистер', false]]),
+            $this->mapQuestion('lake-dojran', 'Lake Dojran', 'Дојранско Езеро', 'lake', 'Lake Dojran is in the south-east near the border.', 'Дојранското Езеро е на југоисток близу границата.', [['Lake Dojran', 'Дојранско Езеро', true], ['Lake Ohrid', 'Охридско Езеро', false], ['Lake Prespa', 'Преспанско Езеро', false], ['Mavrovo', 'Маврово', false]]),
             $this->mapQuestion('matka-canyon', 'Matka Canyon', 'Кањон Матка', 'landmark', 'Matka Canyon is near Skopje.', 'Кањонот Матка е близу Скопје.', [['Matka Canyon', 'Кањон Матка', true], ['Lake Ohrid', 'Охридско Езеро', false], ['Pelister', 'Пелистер', false], ['Gevgelija', 'Гевгелија', false]]),
+            $this->mapQuestion('krusevo', 'Kruševo', 'Крушево', 'landmark', 'Kruševo is a mountain town with important cultural history.', 'Крушево е планински град со важна културна историја.', [['Kruševo', 'Крушево', true], ['Kumanovo', 'Куманово', false], ['Lake Prespa', 'Преспанско Езеро', false], ['Old Bazaar Skopje', 'Стара скопска чаршија', false]]),
+            $this->mapQuestion('heraclea-lyncestis', 'Heraclea Lyncestis', 'Хераклеја Линкестис', 'landmark', 'Heraclea Lyncestis is an ancient site near Bitola.', 'Хераклеја Линкестис е античко место близу Битола.', [['Heraclea Lyncestis', 'Хераклеја Линкестис', true], ['Matka Canyon', 'Кањон Матка', false], ['Kokino', 'Кокино', false], ['Lake Dojran', 'Дојранско Езеро', false]]),
+            $this->mapQuestion('kokino', 'Kokino', 'Кокино', 'landmark', 'Kokino is an archaeological site in the north-east.', 'Кокино е археолошко место на североисток.', [['Kokino', 'Кокино', true], ['Kruševo', 'Крушево', false], ['Lake Ohrid', 'Охридско Езеро', false], ['Vodno', 'Водно', false]]),
+            $this->mapQuestion('old-bazaar-skopje', 'Old Bazaar Skopje', 'Стара скопска чаршија', 'landmark', 'The Old Bazaar is a cultural place in Skopje.', 'Старата скопска чаршија е културно место во Скопје.', [['Old Bazaar Skopje', 'Стара скопска чаршија', true], ['Heraclea Lyncestis', 'Хераклеја Линкестис', false], ['Lake Prespa', 'Преспанско Езеро', false], ['Gevgelija', 'Гевгелија', false]]),
             $this->mapQuestion('vodno', 'Vodno', 'Водно', 'landmark', 'Vodno is a mountain area near Skopje.', 'Водно е планинско место близу Скопје.', [['Vodno', 'Водно', true], ['Mavrovo', 'Маврово', false], ['Lake Prespa', 'Преспанско Езеро', false], ['Štip', 'Штип', false]]),
             $this->mapQuestion('mavrovo', 'Mavrovo', 'Маврово', 'landmark', 'Mavrovo is known for mountain nature.', 'Маврово е познато по планинска природа.', [['Mavrovo', 'Маврово', true], ['Vodno', 'Водно', false], ['Kavadarci', 'Кавадарци', false], ['Kumanovo', 'Куманово', false]]),
             $this->mapQuestion('pelister', 'Pelister', 'Пелистер', 'landmark', 'Pelister is associated with mountain nature near Bitola.', 'Пелистер е поврзан со планинска природа кај Битола.', [['Pelister', 'Пелистер', true], ['Matka Canyon', 'Кањон Матка', false], ['Lake Ohrid', 'Охридско Езеро', false], ['Tetovo', 'Тетово', false]]),
@@ -509,7 +610,7 @@ class ContentExpansionSeeder extends Seeder
             'title_mk' => $titleMk,
             'summary_en' => $summaryEn,
             'summary_mk' => $summaryMk,
-            'estimated_minutes' => $estimatedMinutes,
+            'estimated_minutes' => max($estimatedMinutes, $this->minimumEstimatedMinutes($categorySlug)),
             'vocab_en' => $vocabEn,
             'vocab_mk' => $vocabMk,
             'examples_en' => $examplesEn,
@@ -522,35 +623,228 @@ class ContentExpansionSeeder extends Seeder
     private function lessonContentEn(array $lesson): string
     {
         $examples = array_merge($lesson['examples_en'], $this->extraExamplesEn($lesson));
-        $facts = array_merge($lesson['vocab_en'], $this->extraFactsEn($lesson));
+        $facts = array_merge($lesson['vocab_en'], $this->supportVocabularyEn($lesson), $this->extraFactsEn($lesson));
         $practice = array_merge([$lesson['practice_en']], $this->practicePromptsEn($lesson));
 
         return implode("\n\n", [
             "Introduction:\n{$lesson['summary_en']} {$this->introBridgeEn($lesson)}",
             "What you will learn:\n- ".implode("\n- ", $this->learningGoalsEn($lesson)),
-            "Main explanation:\n{$this->categoryContextEn($lesson['category_slug'])}\n{$this->topicContextEn($lesson)}\n{$this->studyContextEn($lesson)}",
+            "Main explanation:\n{$this->categoryContextEn($lesson['category_slug'])}\n{$this->topicContextEn($lesson)}\n{$this->detailContextEn($lesson)}\n{$this->studyContextEn($lesson)}",
             "Examples:\n- ".implode("\n- ", $examples),
             "Key vocabulary / key facts:\n- ".implode("\n- ", $facts),
+            "Learning tips:\n- ".implode("\n- ", $this->learningTipsEn($lesson)),
             "Practice:\n- ".implode("\n- ", $practice),
-            "Remember:\n{$this->rememberEn($lesson)}",
+            "Remember:\n- ".implode("\n- ", $this->rememberPointsEn($lesson)),
+            "Related quiz connection:\n{$this->quizConnectionEn($lesson)}",
         ]);
     }
 
     private function lessonContentMk(array $lesson): string
     {
         $examples = array_merge($lesson['examples_mk'], $this->extraExamplesMk($lesson));
-        $facts = array_merge($lesson['vocab_mk'], $this->extraFactsMk($lesson));
+        $facts = array_merge($lesson['vocab_mk'], $this->supportVocabularyMk($lesson), $this->extraFactsMk($lesson));
         $practice = array_merge([$lesson['practice_mk']], $this->practicePromptsMk($lesson));
 
         return implode("\n\n", [
             "Вовед:\n{$lesson['summary_mk']} {$this->introBridgeMk($lesson)}",
             "Што ќе научиш:\n- ".implode("\n- ", $this->learningGoalsMk($lesson)),
-            "Објаснување:\n{$this->categoryContextMk($lesson['category_slug'])}\n{$this->topicContextMk($lesson)}\n{$this->studyContextMk($lesson)}",
+            "Објаснување:\n{$this->categoryContextMk($lesson['category_slug'])}\n{$this->topicContextMk($lesson)}\n{$this->detailContextMk($lesson)}\n{$this->studyContextMk($lesson)}",
             "Примери:\n- ".implode("\n- ", $examples),
             "Клучни зборови / клучни факти:\n- ".implode("\n- ", $facts),
+            "Совети за учење:\n- ".implode("\n- ", $this->learningTipsMk($lesson)),
             "Вежбање:\n- ".implode("\n- ", $practice),
-            "Запомни:\n{$this->rememberMk($lesson)}",
+            "Запомни:\n- ".implode("\n- ", $this->rememberPointsMk($lesson)),
+            "Врска со квиз:\n{$this->quizConnectionMk($lesson)}",
         ]);
+    }
+
+    private function minimumEstimatedMinutes(string $categorySlug): int
+    {
+        return [
+            'history-of-macedonia' => 10,
+            'culture-and-traditions' => 10,
+            'food-and-music' => 9,
+        ][$categorySlug] ?? 8;
+    }
+
+    private function supportVocabularyEn(array $lesson): array
+    {
+        return [
+            'macedonian-language' => [
+                'реченица = sentence',
+                'разговор = conversation',
+                'слушај = listen',
+                'кажи = say',
+            ],
+            'macedonian-alphabet' => [
+                'кирилица = Cyrillic script',
+                'самогласка = vowel',
+                'согласка = consonant',
+                'читање = reading',
+            ],
+            'geography' => [
+                'мапа = map',
+                'север = north',
+                'југ = south',
+                'место = place',
+            ],
+            'history-of-macedonia' => [
+                'минато = past',
+                'сеќавање = memory',
+                'место = place',
+                'прашање = question',
+            ],
+            'culture-and-traditions' => [
+                'обичај = custom',
+                'трпеза = shared table',
+                'роднини = relatives',
+                'заедница = community',
+            ],
+            'food-and-music' => [
+                'вкус = taste',
+                'ритам = rhythm',
+                'состојка = ingredient',
+                'прослава = celebration',
+            ],
+        ][$lesson['category_slug']] ?? [
+            'учење = learning',
+            'пример = example',
+            'вежбање = practice',
+            'запомни = remember',
+        ];
+    }
+
+    private function supportVocabularyMk(array $lesson): array
+    {
+        return [
+            'macedonian-language' => [
+                'реченица = sentence',
+                'разговор = conversation',
+                'слушај = listen',
+                'кажи = say',
+            ],
+            'macedonian-alphabet' => [
+                'кирилица = Cyrillic script',
+                'самогласка = vowel',
+                'согласка = consonant',
+                'читање = reading',
+            ],
+            'geography' => [
+                'мапа = map',
+                'север = north',
+                'југ = south',
+                'место = place',
+            ],
+            'history-of-macedonia' => [
+                'минато = past',
+                'сеќавање = memory',
+                'место = place',
+                'прашање = question',
+            ],
+            'culture-and-traditions' => [
+                'обичај = custom',
+                'трпеза = shared table',
+                'роднини = relatives',
+                'заедница = community',
+            ],
+            'food-and-music' => [
+                'вкус = taste',
+                'ритам = rhythm',
+                'состојка = ingredient',
+                'прослава = celebration',
+            ],
+        ][$lesson['category_slug']] ?? [
+            'учење = learning',
+            'пример = example',
+            'вежбање = practice',
+            'запомни = remember',
+        ];
+    }
+
+    private function detailContextEn(array $lesson): string
+    {
+        return [
+            'macedonian-language' => 'A useful language lesson should move from recognition to real speech. First recognise the word when you see it. Then say it slowly. Then place it in a tiny sentence, even if the sentence is simple. Beginners can use English support while still practising the Macedonian word. Families can make this natural by using one word at breakfast, in the car, during homework, or when greeting relatives.',
+            'macedonian-alphabet' => 'Alphabet study works best in short cycles. Look at the letter shape, say the sound, find the letter inside a word, then write or trace it once. Some learners will recognise letters quickly but need more practice with sound. Others can say sounds but need help spotting them on the page. Both are normal. Keep the task small and repeat it often.',
+            'geography' => 'When preparing for map work, do not try to memorise every place at once. Start with anchor points: Skopje in the north-central area, Ohrid and Prespa in the south-west, eastern cities such as Stip and Strumica, and mountain or lake places around them. Then connect each place to one simple clue: capital, lake, mountain, old town, border, region, or family memory.',
+            'history-of-macedonia' => 'For history lessons, careful wording matters. A beginner can learn broad periods such as ancient, medieval, Ottoman-era, modern, migration, and community memory without turning the lesson into a debate. The best classroom habit is to ask what a source is, who remembers the story, where the place is, and how language, food, music, and family memory keep the past alive.',
+            'culture-and-traditions' => 'Culture lessons should invite learners to observe and ask, not to assume every family celebrates the same way. A family may keep traditions through food, music, language, holidays, dance, church, clubs, sport, or visits. The important beginner skill is naming what you see and asking respectful questions: What is this called? Who taught it to you? When do we use it?',
+            'food-and-music' => 'Food and music lessons become stronger when learners connect vocabulary to senses. Say the food word while looking at the dish. Clap the rhythm while saying a music word. Ask who cooks, who sings, who dances, and what memory the dish or song brings. This makes the lesson practical without copying recipes or lyrics.',
+        ][$lesson['category_slug']] ?? 'Move slowly from reading to doing. Notice the topic, say one key word aloud, connect it to a real person or place, and use the practice task before opening a quiz.';
+    }
+
+    private function detailContextMk(array $lesson): string
+    {
+        return [
+            'macedonian-language' => 'Јазичната лекција е најкорисна кога зборот се препознава, се кажува и се употребува. Кажи го зборот полека, па стави го во кратка реченица. Можеш да користиш англиска поддршка, но македонскиот збор кажи го на глас.',
+            'macedonian-alphabet' => 'Азбуката се учи во мали чекори: погледни ја буквата, кажи го звукот, најди ја во збор и напиши ја еднаш. Некои ученици прво ги препознаваат формите, а други прво ги паметат звуците. И двете се нормални.',
+            'geography' => 'За мапа почни со главни точки: Скопје, Охрид, Преспа, источни градови, планини и езера. Поврзи секое место со еден знак: главен град, езеро, планина, стар град, граница, регион или семејно сеќавање.',
+            'history-of-macedonia' => 'Историјата треба да се учи внимателно. Почетник може да научи за периоди, места, музеи, семејни приказни и културно сеќавање без тешки расправи. Прашај кој ја раскажува приказната и кое место или збор помага да се памети.',
+            'culture-and-traditions' => 'Културата се учи со набљудување и прашања. Не секое семејство слави исто. Именувај што гледаш и прашај: Како се вика ова? Кој те научи? Кога го користиме?',
+            'food-and-music' => 'Храната и музиката се паметат со сетила. Кажи го зборот додека го гледаш јадењето. Плесни ритам додека учиш музички збор. Прашај кој готви, кој пее и какво сеќавање носи јадењето или песната.',
+        ][$lesson['category_slug']] ?? 'Оди полека од читање кон вежбање. Забележи ја темата, кажи еден збор на глас и поврзи го со вистински човек, место или настан.';
+    }
+
+    private function learningTipsEn(array $lesson): array
+    {
+        return [
+            'Read the lesson once for meaning, then read the vocabulary cards again aloud.',
+            'Choose three words or facts and connect each one to a person, place, object, or memory.',
+            'Do not worry about perfect pronunciation or complete detail at first; clear recognition comes before speed.',
+            $lesson['quiz_slug']
+                ? 'Before the quiz, cover the examples and try to explain the topic from memory.'
+                : 'A related quiz can be added later, so use the practice task as your self-check for now.',
+        ];
+    }
+
+    private function learningTipsMk(array $lesson): array
+    {
+        return [
+            'Прочитај ја лекцијата еднаш за значење, потоа повтори ги зборовите на глас.',
+            'Избери три зборови или факти и поврзи ги со човек, место, предмет или сеќавање.',
+            'Не мора веднаш да биде совршено; прво е важно да препознаеш и да разбереш.',
+            $lesson['quiz_slug']
+                ? 'Пред квизот, покриј ги примерите и обиди се да ја објасниш темата од паметење.'
+                : 'Квиз може да се додаде подоцна; засега користи ја задачата за самопроверка.',
+        ];
+    }
+
+    private function rememberPointsEn(array $lesson): array
+    {
+        return [
+            "{$lesson['title_en']} is easier when it is connected to real life.",
+            'Learn a small group of words or facts first, then add examples and details.',
+            'Speaking aloud, pointing to a map, or explaining to someone at home makes memory stronger.',
+            'Return to the lesson after the quiz to review anything that still feels unfamiliar.',
+        ];
+    }
+
+    private function rememberPointsMk(array $lesson): array
+    {
+        return [
+            "{$lesson['title_mk']} е полесно кога се поврзува со вистински живот.",
+            'Научи мала група зборови или факти, па потоа додај примери и детали.',
+            'Кажување на глас, покажување на мапа или објаснување дома помага за паметење.',
+            'Врати се на лекцијата по квизот за да повториш што уште е ново.',
+        ];
+    }
+
+    private function quizConnectionEn(array $lesson): string
+    {
+        if (! $lesson['quiz_slug']) {
+            return 'A related quiz can be added later. For now, use the practice task as a short self-check before moving to another lesson.';
+        }
+
+        return "The related quiz for this lesson uses the normal secure quiz flow. It helps you practise the same words, places, facts, or ideas from {$lesson['title_en']} without exposing answer keys during quiz taking.";
+    }
+
+    private function quizConnectionMk(array $lesson): string
+    {
+        if (! $lesson['quiz_slug']) {
+            return 'Поврзан квиз може да се додаде подоцна. Засега користи ја задачата како кратка самопроверка пред следната лекција.';
+        }
+
+        return "Поврзаниот квиз ја користи нормалната безбедна проверка. Ќе ги вежбаш истите зборови, места, факти или идеи од {$lesson['title_mk']} без јавно откривање точни одговори.";
     }
 
     private function introBridgeEn(array $lesson): string
@@ -616,31 +910,41 @@ class ContentExpansionSeeder extends Seeder
             'family-words' => 'Family words matter because many learners first hear Macedonian through parents, grandparents, aunties, uncles, cousins, and family friends. Start with мајка, татко, брат, сестра, баба, and дедо. Then add тетка, чичко or вујко, братучед, and братучетка. Simple sentences are powerful: Ова е мојата мајка. Имам една сестра. Мојот брат е дома. For diaspora families, these words carry identity because they help children speak about the people who keep language and memory alive.',
             'days-months-and-time' => 'Time words help learners talk about school, sport, birthdays, visits, and family plans. The days are понеделник, вторник, среда, четврток, петок, сабота, недела. Useful month names include јануари, февруари, март, април, мај, јуни, јули, август, септември, октомври, ноември, декември. Денес means today, утре means tomorrow, and вчера means yesterday. You can also use утро, ден, вечер, and ноќ for morning, day, evening, and night. Try: Денес е понеделник. Утре одам на училиште.',
             'common-classroom-words' => 'Classroom words make Macedonian useful during study time. Learn книга, молив, тетратка, училиште, наставник, ученик, маса, стол, чита, and пишува. These words can be practised at a desk, kitchen table, or community language school. Say Имам книга when holding a book, Ова е молив when pointing to a pencil, and Јас пишувам when writing. Labelling real objects is a strong beginner strategy because learners see, touch, say, and remember the word at the same time.',
+            'common-everyday-questions' => 'Questions turn vocabulary into conversation. A learner who knows како си, каде си, што е ова, колку години имаш, and дали сакаш can start small exchanges at home or school. Keep answers short at first: добро сум, дома сум, ова е книга, имам десет години, да, сакам. The goal is not a perfect interview. The goal is to hear a question, recognise its purpose, and answer with one useful phrase.',
+            'basic-grammar-i-am-you-are-he-is' => 'The forms јас сум, ти си, тој е, таа е, and ние сме help beginners build real sentences. They can describe identity, place, family roles, and feelings: Јас сум дома. Ти си ученик. Таа е сестра. Ние сме семејство. Macedonian often drops pronouns in fluent speech, but beginners may keep them at first because they make the pattern visible. Learn the pattern, then listen for how speakers use it naturally.',
             'introduction-to-macedonian-cyrillic-alphabet' => 'Modern Macedonian uses a Cyrillic alphabet with 31 letters. Learning the letters helps you read family names, place names, signs, song titles, recipes, and simple messages. Begin by recognising common letters such as А, Б, В, Г, Д, Е, Ж, З, И, Ј, К, Л, М, Н, О, П, Р, С, and Т. Try familiar words: Македонија, мајка, татко, добро, книга. Do not worry about writing every letter perfectly today. First, train your eyes to notice the letter shapes and your mouth to say the sounds.',
             'vowels-and-consonants' => 'Macedonian vowels are А, Е, И, О, and У. A vowel is an open sound that helps a syllable speak clearly. Consonants such as М, Т, Д, Б, К, Н, and Р work with vowels to build syllables. Practise slowly: ма-ма, та-то, до-бро. When learners can hear vowels, reading becomes less mysterious because words are no longer long strings of letters. They become small sound groups. Clap once for each syllable and say the word again.',
             'letters-that-look-familiar' => 'Some Cyrillic letters look familiar to learners who know the Latin alphabet. А, Е, К, М, О, and Т look similar and can feel friendly at the start. But other letters can trick the eye. Р looks like English P but sounds like r. В looks like B but sounds closer to v. С looks like C but sounds like s. The lesson is simple: use familiar shapes as helpers, but always read with Macedonian Cyrillic sounds.',
             'reading-simple-macedonian-words' => 'Reading begins with short words. Start with дом, мама, тато, вода, книга, ден, брат, and сестра. Point to the first letter, say the sound, then blend the next sound. Do not guess from the shape of the whole word. Read мама as ма-ма, вода as во-да, and добро as до-бро. If a word feels hard, cover part of it with your finger and read one syllable at a time. Small wins build reading confidence.',
             'writing-your-first-macedonian-words' => 'Writing helps the hand remember what the eyes and ears are learning. Begin by tracing letters, then copying short words, then writing from memory. Use family words such as мама, тато, баба, дедо, брат, and сестра, or write your own name if you know its Macedonian spelling. Neat handwriting is not about speed. Sit comfortably, leave space between letters, say the sound as you write, and check whether each letter faces the correct direction.',
+            'reading-names-and-places' => 'Names and places make reading meaningful because learners may see them on maps, invitations, family messages, community signs, and quiz cards. Start with names such as Марко and Елена, then read places such as Скопје, Охрид, Битола, Прилеп, and Тетово. Place names help alphabet practice because they are real words with memory attached. Read slowly, syllable by syllable, and avoid guessing from the English spelling.',
             'macedonian-geography-basics' => 'Macedonia has cities, lakes, mountains, valleys, roads, and villages that connect to culture and family stories. Skopje is the capital. Ohrid is a lake city. Bitola, Tetovo, and Prilep are important cities with different local identities. Lake Ohrid and Lake Prespa are major natural places. Mountains and valleys shape travel, weather, food, and where people live. This lesson also prepares learners for the Map Challenge, where a highlighted point on the map becomes a clue.',
             'skopje-ohrid-and-bitola' => 'Skopje, Ohrid, and Bitola are useful anchor cities for beginners. Skopje is the capital and a busy centre for transport, schools, museums, markets, and modern city life. Ohrid is known for Lake Ohrid, older architecture, cultural memory, and the feeling of a lake city. Bitola is an important historic city in the south-west, near Pelister, with streets and places that many families remember. Learn one simple fact about each city first, then add detail later.',
             'lake-ohrid-and-lake-prespa' => 'Lakes are important natural places because they shape climate, travel, tourism, nature, family trips, and memory. Lake Ohrid is closely connected with the city of Ohrid and is one of the best-known lakes in the region. Lake Prespa is also in the south-west and is important for nature and quiet landscapes. When learning lakes, notice the words lake, shore, water, town, mountain, and trip. Many families remember lakes through summer visits, photos, food, and stories.',
             'mountains-and-national-parks' => 'Mountains are common in Macedonia, so learners should know a few names and simple terms. Pelister is associated with Bitola and mountain nature. Mavrovo is known for national park landscapes, snow, forests, and outdoor trips. Shar Mountain is a major mountain area in the north-west. Vodno is near Skopje and is often connected with views over the city. Mountain vocabulary includes планина, врв, долина, парк, снег, патека, and поглед.',
             'macedonian-regions-and-travel' => 'Regions and travel can be taught without making the topic complicated. Learners can describe places by city, village, lake, mountain, road, north, south, east, west, near, and far. People often describe where they are from by naming a town, village, or area connected to family. Roads connect cities, valleys, lakes, and mountains. A simple map skill is to find Skopje first, then describe another place by direction: Ohrid is to the south-west, and Kumanovo is north-east of Skopje.',
+            'regions-and-neighbouring-countries' => 'Neighbouring countries and regions should be learned with neutral map language. A border is where one country meets another. Direction words such as north, south, east, and west help learners describe location without needing advanced politics. Learners can say that a place is near a border, in the west, in the south-east, or close to a lake or mountain. This builds safe map literacy for travel, family stories, and geography quizzes.',
             'macedonia-history-basics' => 'Learning Macedonian history begins with respectful curiosity. History can be found in stories, places, museums, traditions, language, songs, family memory, and old photographs. It matters because it helps learners understand identity, belonging, and why families value certain places or customs. Beginners do not need to solve every difficult question. They can start by asking: Who told this story? Where did it happen? What place, song, food, or word helps us remember it?',
             'ohrid-as-a-cultural-centre' => 'Ohrid is an important cultural and historical place because it brings together lake life, old architecture, churches, learning traditions, and family memories. A beginner does not need advanced history to appreciate Ohrid. Start with the lake, the old town feeling, the idea of learning through places, and the way families speak about visits. Respectful learning means noticing beauty and memory without making exaggerated claims. Places can teach when we observe carefully.',
             'skopje-through-time' => 'Skopje is the capital today and a major city where old and modern parts sit close together. Learners might notice bridges, markets, neighbourhoods, museums, transport, schools, and public buildings. A city changes over time, so Skopje can be understood as layers: older streets and markets, newer buildings and roads, family memories, and daily life. Ask what changed, what stayed, and what people remember when they talk about the city.',
             'how-families-preserve-history' => 'Families preserve history in ordinary ways: stories told at dinner, names repeated across generations, photos in albums, recipes cooked on holidays, songs heard at weddings, and memories of migration. A child might learn more from one grandparent story than from a long list of dates. The goal is not to turn every family memory into a perfect record. The goal is to listen, ask kind questions, and notice how language, food, music, and objects carry identity.',
             'macedonian-migration-and-community-life-in-australia' => 'Many Macedonian families in Australia keep culture alive through community schools, churches, clubs, sport, music groups, family gatherings, weddings, food, language lessons, and local events. Migration stories can include hard work, change, memory, and pride. Use respectful general wording because every family story is different. For learners, the key idea is connection: Macedonian can be heard and practised in homes, community centres, celebrations, and friendships across generations.',
+            'simple-timeline-of-macedonia' => 'A beginner timeline should be broad and careful. It can include ancient places, medieval learning and religious centres, later imperial periods, modern statehood, migration, and community memory. The timeline is not a place for oversimplified claims. It is a learning tool that helps students organise questions: What period are we discussing? What place connects to it? What evidence or memory helps us understand it?',
+            'important-places-in-macedonian-history' => 'Important places help learners approach history through observation. Ohrid can connect to lake life, learning, and old town memory. Skopje can show old and modern city layers. Bitola, Krusevo, archaeological sites, museums, markets, and family villages can all open careful questions. A place is not only a dot on a map. It can hold architecture, language, photos, stories, and respectful disagreement.',
             'macedonian-culture-basics' => 'Family, oro, music, food, and celebrations are common ways people experience Macedonian culture. Oro is a circle dance that can bring young and old together. At gatherings, people may share food, greet relatives, hear familiar songs, and tell stories. Traditions keep people connected because they give families repeated moments of belonging. They also change as families live in Australia, so learners should ask how their own family celebrates and what each custom means to them.',
             'macedonian-weddings' => 'Macedonian weddings can include music, dancing, food, guests, family roles, photos, speeches, and joyful noise. Traditions may vary by region, religion, and family preference, so this lesson uses general language. Useful words include свадба, невеста, младоженец, гости, музика, оро, семејство, and прослава. A wedding is more than one event; it can be a place where children hear language, see relatives, learn dance steps, and connect celebration with identity.',
             'holidays-and-family-gatherings' => 'Holidays and family gatherings often include visiting relatives, preparing food, setting a table, sharing songs or stories, and remembering people who are far away. Some families gather for religious holidays, name days, birthdays, community events, or simple Sunday meals. What matters for learners is the language of welcome: guests, lunch, visit, table, bread, thank you, and goodbye. Gatherings make vocabulary easier because the words happen in real life.',
             'traditional-clothing-and-symbols' => 'Traditional clothing and symbols should be learned with respect and care. Clothing can vary by region and occasion, and details such as embroidery, colours, patterns, aprons, belts, shirts, and head coverings may carry local meaning. Symbols can connect people to heritage, but learners should avoid overclaiming that one pattern represents every Macedonian family. A good beginner habit is to describe what you see first: colour, shape, pattern, material, and when it is worn.',
             'macedonian-community-life-in-australia' => 'Macedonian community life in Australia can include language schools, community events, sport, music, dance, churches, clubs, festivals, fundraisers, and family networks. These spaces help children hear Macedonian outside the home and help adults reconnect with culture. Community also gives learners a reason to use words: greeting someone, ordering food, joining a dance, asking about a song, or recognising a place name from family stories.',
+            'oro-and-traditional-dance' => 'Oro is often learned by watching, listening, and joining carefully. It may appear in circles, lines, weddings, festivals, and community events. Learners should notice rhythm, steps, hand position, and the way older and younger people share space. The lesson is not about copying one exact version for every family. It is about understanding dance as movement, memory, language, and togetherness.',
+            'family-traditions-and-hospitality' => 'Hospitality can be a powerful part of family culture. It may include welcoming guests, offering food, making space at the table, asking about family, and using polite words. Families vary, but the learner can notice shared ideas: respect, welcome, care, conversation, and memory. Hospitality vocabulary helps children participate instead of only watching adults speak.',
             'macedonian-food-and-music-basics' => 'Food and music often appear together at Macedonian gatherings. Tavče gravče, ajvar, shopska salad, bread, cheese, grilled foods, and shared plates can sit beside folk songs, dancing, and family conversation. Music helps with rhythm and memory, while food gives language a place at the table. Learners can ask: What is this dish called? Who made it? What song is playing? What word do I hear again and again?',
             'tavce-gravce' => 'Tavče gravče is a traditional baked bean dish often connected with home cooking and shared meals. The name points to beans and a baking dish. Families may prepare it differently, but common ideas include beans, onion, pepper, paprika, oil, warmth, and a slow cooked feeling. For learners, the dish is useful because it teaches food words and cultural meaning at the same time. It is not just a recipe; it is a memory of lunch, guests, and home.',
             'ajvar-and-peppers' => 'Ajvar is a pepper spread often connected with autumn preparation, roasted peppers, family work, jars, bread, cheese, and shared meals. Families may make it mild or hot, smooth or chunky, and every household can have its own preference. The beginner words are ајвар, пиперка, леб, сирење, печено, тегла, and есен. Ajvar is a good culture lesson because it shows how food preparation can become a family event, not only something bought from a shop.',
             'shopska-salad-and-shared-meals' => 'Shopska salad is often made with tomatoes, cucumber, peppers, onion, and white cheese. It is simple, colourful, and easy to connect with beginner vocabulary: домат, краставица, пиперка, кромид, сирење, салата, чинија, and трпеза. Shared meals matter because people talk, pass food, tell stories, and teach children polite phrases. A table can become a small classroom when learners name ingredients and ask for food in Macedonian.',
             'folk-music-and-celebrations' => 'Folk music is often heard at weddings, parties, dances, festivals, and community events. Instruments can vary, and families may know different songs, but the shared idea is rhythm, memory, and movement. Music helps language because repeated words, choruses, and dance calls stay in the mind. Learners can clap a rhythm, notice whether people dance oro, listen for familiar words, and ask older relatives what song they remember from celebrations.',
+            'traditional-macedonian-dishes' => 'Traditional dishes teach more than food names. They teach table words, ingredients, family labour, seasons, memory, and hospitality. A beginner can learn јадење, грав, пиперка, леб, сирење, салата, чинија, and трпеза without needing a full recipe. Families may prepare dishes differently, so the respectful approach is to ask who makes it, when it is served, and what words are used at the table.',
+            'instruments-and-traditional-music' => 'Instrument lessons should focus on listening habits and safe vocabulary. Learners can notice accordion, drum, voice, melody, rhythm, and dance without copying lyrics. They can ask what instrument they hear, whether people dance, and what mood the music creates. Future sound quizzes can use original recordings or properly licensed short clips, while this lesson prepares learners through vocabulary and listening attention.',
         ][$lesson['slug']] ?? 'This topic becomes easier when learners connect the words to real life. Read the vocabulary, notice the examples, and ask how the idea appears at home, in school, on a map, at a celebration, or in the community.';
     }
 
@@ -652,31 +956,41 @@ class ContentExpansionSeeder extends Seeder
             'family-words' => 'Семејните зборови се важни за деца во дијаспората. Научи мајка, татко, брат, сестра, баба, дедо, тетка, чичко, вујко, братучед и братучетка. Кажи: Ова е мојата мајка. Имам една сестра.',
             'days-months-and-time' => 'Зборовите за време помагаат за календар, училиште и планови. Вежбај денес, утре, вчера, утро, ден, вечер, ноќ, понеделник, вторник, среда, четврток, петок, сабота, недела и месеците од јануари до декември.',
             'common-classroom-words' => 'Училишните зборови можат да се вежбаат со вистински предмети: книга, молив, тетратка, училиште, наставник, ученик, маса, стол, чита и пишува. Покажи предмет и кажи го зборот.',
+            'common-everyday-questions' => 'Прашањата ги претвораат зборовите во разговор. Вежбај како си, каде си, што е ова, колку години имаш и дали сакаш. Одговорите можат да бидат кратки: добро сум, дома сум, ова е книга, да, сакам.',
+            'basic-grammar-i-am-you-are-he-is' => 'Формите јас сум, ти си, тој е, таа е и ние сме помагаат да се градат први реченици. Кажи: Јас сум дома. Ти си ученик. Таа е сестра. Ние сме семејство.',
             'introduction-to-macedonian-cyrillic-alphabet' => 'Македонскиот јазик користи кирилична азбука со 31 буква. Почни со препознавање букви како А, Б, В, Г, Д, Е, Ж, З, И, Ј, К, Л, М, Н, О, П, Р, С и Т.',
             'vowels-and-consonants' => 'Самогласките се А, Е, И, О и У. Тие помагаат зборот да се чита јасно. Спој ги со согласки: ма-ма, та-то, до-бро.',
             'letters-that-look-familiar' => 'Некои букви изгледаат познато: А, Е, К, М, О и Т. Но Р не е англиско P, туку звучи како r. В звучи поблиску до v.',
             'reading-simple-macedonian-words' => 'Почни со кратки зборови: дом, мама, тато, вода, книга, ден, брат и сестра. Читај полека по слогови: ма-ма, во-да, до-бро.',
             'writing-your-first-macedonian-words' => 'Пишувањето помага да се запаметат буквите. Препишувај мама, тато, баба, дедо, брат, сестра или своето име ако го знаеш на македонски.',
+            'reading-names-and-places' => 'Имињата и местата го прават читањето вистинско. Вежбај Марко, Елена, Скопје, Охрид, Битола, Прилеп и Тетово. Читај полека по слогови и не погодувај според англискиот правопис.',
             'macedonian-geography-basics' => 'Македонија има градови, езера, планини, долини, патишта и села. Скопје е главен град, Охрид е град покрај езеро, а Битола, Тетово и Прилеп се важни градови.',
             'skopje-ohrid-and-bitola' => 'Скопје е главен град. Охрид е познат по езерото и старата градска атмосфера. Битола е важен историски град на југозапад, близу Пелистер.',
             'lake-ohrid-and-lake-prespa' => 'Охридското Езеро и Преспанското Езеро се важни природни места. Езерата се поврзани со природа, патувања, летни спомени и семејни фотографии.',
             'mountains-and-national-parks' => 'Планините се важен дел од географијата. Вежбај имиња како Пелистер, Маврово, Шар Планина и Водно. Зборови: планина, врв, долина, парк, снег и поглед.',
             'macedonian-regions-and-travel' => 'За региони и патување користи зборови како град, село, езеро, планина, пат, север, југ, исток, запад, близу и далеку.',
+            'regions-and-neighbouring-countries' => 'Соседни земји и региони се учат со неутрален јазик на мапа. Граница е место каде една земја се среќава со друга. Насоките север, југ, исток и запад помагаат за опис.',
             'macedonia-history-basics' => 'Историјата се учи преку приказни, места, музеи, традиции, јазик, песни и семејно сеќавање. Почни со внимателни прашања.',
             'ohrid-as-a-cultural-centre' => 'Охрид е важно културно и историско место. Езерото, старата архитектура, црквите, учењето и семејните посети го прават посебен.',
             'skopje-through-time' => 'Скопје е главен град и место каде се среќаваат старо и ново. Може да видиш мостови, пазари, населби, музеи и модерни делови.',
             'how-families-preserve-history' => 'Семејствата ја чуваат историјата со приказни, фотографии, рецепти, песни, имиња и спомени од преселба. Слушај и поставувај добри прашања.',
             'macedonian-migration-and-community-life-in-australia' => 'Во Австралија многу семејства ја чуваат културата преку училишта, цркви, клубови, спорт, музика, собири и јазик дома.',
+            'simple-timeline-of-macedonia' => 'Едноставна временска линија може да има антички места, средновековни центри, понови периоди, современост, преселба и семејно сеќавање. Целта е да се организираат прашања, не да се поедностави историјата.',
+            'important-places-in-macedonian-history' => 'Важни места помагаат историјата да се учи преку набљудување. Охрид, Скопје, Битола, Крушево, музеи и семејни села можат да отворат внимателни прашања и сеќавања.',
             'macedonian-culture-basics' => 'Семејство, оро, музика, храна и прослави ги поврзуваат луѓето. Прашај како твоето семејство слави и што значи традицијата за вас.',
             'macedonian-weddings' => 'Македонските свадби можат да имаат музика, оро, храна, гости, фотографии и семејни обичаи. Традициите се разликуваат по семејство и регион.',
             'holidays-and-family-gatherings' => 'Празниците и собирите носат роднини, храна, посети, песни, приказни и заедничка трпеза. Тука зборовите се учат природно.',
             'traditional-clothing-and-symbols' => 'Традиционалната облека може да има вез, бои, шари и симболи. Различни региони имаат различни детали, затоа учи со почит.',
             'macedonian-community-life-in-australia' => 'Македонската заедница во Австралија може да вклучува јазични училишта, настани, спорт, музика, цркви, клубови и семејни мрежи.',
+            'oro-and-traditional-dance' => 'Оро се учи со гледање, слушање и внимателно приклучување. Забележи ритам, чекори, круг или линија и како танцот ги поврзува младите и постарите.',
+            'family-traditions-and-hospitality' => 'Гостопримството може да значи добредојде, храна, разговор, трпеза и грижа. Семејствата се различни, но почит, добредојде и љубезни зборови се важни.',
             'macedonian-food-and-music-basics' => 'Храната и музиката често одат заедно на собири. Тавче гравче, ајвар, шопска салата, песни и оро помагаат да се памети јазикот.',
             'tavce-gravce' => 'Тавче гравче е традиционално јадење со грав што често се поврзува со дом, ручек, гости и топла трпеза.',
             'ajvar-and-peppers' => 'Ајвар е намаз од пиперки, често поврзан со есен, печени пиперки, тегли, леб, сирење и семејна подготовка.',
             'shopska-salad-and-shared-meals' => 'Шопска салата често има домати, краставица, пиперки, кромид и сирење. Заедничката трпеза помага за разговор и учење.',
             'folk-music-and-celebrations' => 'Народната музика се слуша на свадби, забави, фестивали и настани. Ритамот, песните и орото помагаат да се памети културата.',
+            'traditional-macedonian-dishes' => 'Традиционалните јадења учат зборови за состојки, трпеза, семејна работа и сеќавање. Семејствата готват различно, затоа учи со почит и прашања.',
+            'instruments-and-traditional-music' => 'Инструментите и традиционалната музика се учат преку слушање. Именувај хармоника, тапан, глас, ритам и мелодија без препишување цели текстови.',
         ][$lesson['slug']] ?? 'Темата е полесна кога ја поврзуваш со вистински живот, дом, училиште, мапа, прослава или заедница.';
     }
 

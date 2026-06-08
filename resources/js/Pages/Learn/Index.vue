@@ -222,7 +222,7 @@ function authHref(path, intendedUrl) {
                     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div>
                             <h2 class="text-3xl font-black text-heritage-ink">Featured lessons</h2>
-                            <p class="mt-2 max-w-2xl text-heritage-muted">Start with short bilingual lessons, then practise with a related quiz.</p>
+                            <p class="mt-2 max-w-2xl text-heritage-muted">Start with detailed bilingual lessons, then practise with a related quiz.</p>
                         </div>
                         <span class="inline-flex w-fit rounded-full border border-heritage-line/60 bg-white px-3 py-1 text-xs font-black uppercase text-heritage-muted shadow-card">
                             {{ lessons.length }} lessons
