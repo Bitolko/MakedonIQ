@@ -24,6 +24,7 @@ const editingQuestion = ref(null);
 const formErrors = ref({});
 const correctIndex = ref(0);
 const pictureImageTypes = [
+    { value: 'placeholder', label: 'Placeholder' },
     { value: 'food', label: 'Food' },
     { value: 'city', label: 'City' },
     { value: 'lake', label: 'Lake' },
@@ -67,7 +68,8 @@ const blankForm = () => ({
         image_path: '',
         image_alt_en: '',
         image_alt_mk: '',
-        image_type: 'food',
+        image_type: 'placeholder',
+        image_key: '',
         image_credit: '',
         audio_path: '',
         audio_alt_en: '',
@@ -302,7 +304,8 @@ function normalizedMetadata(metadata = {}) {
         image_path: metadata?.image_path || '',
         image_alt_en: metadata?.image_alt_en || '',
         image_alt_mk: metadata?.image_alt_mk || '',
-        image_type: metadata?.image_type || 'food',
+        image_type: metadata?.image_type || 'placeholder',
+        image_key: metadata?.image_key || '',
         image_credit: metadata?.image_credit || '',
         audio_path: metadata?.audio_path || '',
         audio_alt_en: metadata?.audio_alt_en || '',
@@ -349,6 +352,7 @@ function pictureMetadataPayload(metadata = {}) {
         image_alt_en: nullableString(metadata?.image_alt_en),
         image_alt_mk: nullableString(metadata?.image_alt_mk),
         image_type: imageType,
+        image_key: nullableString(metadata?.image_key),
         image_credit: nullableString(metadata?.image_credit),
     };
 }
@@ -641,7 +645,7 @@ function formatDate(value) {
                     <div>
                         <h3 class="text-xl font-black text-heritage-ink">Picture metadata</h3>
                         <p class="mt-1 text-sm font-semibold leading-6 text-heritage-muted">
-                            Image path is optional for now. If left blank, users will see a placeholder card. Use original, public domain, or properly licensed images only. Do not use copied textbook images.
+                            Image path can be left blank for now. Users will see an image placeholder until a real image is added. Use original, public domain, or properly licensed images only.
                         </p>
                         <span v-if="fieldError('metadata')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata') }}</span>
                     </div>
@@ -661,6 +665,12 @@ function formatDate(value) {
                             <span v-if="fieldError('metadata.image_type')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_type') }}</span>
                         </label>
                     </div>
+                    <label class="block">
+                        <span class="label">Internal image key optional</span>
+                        <input v-model="form.metadata.image_key" class="field mt-2 bg-white" placeholder="food_tavce_gravce_001" type="text">
+                        <span class="mt-2 block text-xs font-bold leading-5 text-heritage-muted">Used internally to map future files such as public/images/quizzes/{image_key}.webp. It is not exposed by the public quiz API.</span>
+                        <span v-if="fieldError('metadata.image_key')" class="mt-2 block text-xs font-bold text-heritage-red">{{ fieldError('metadata.image_key') }}</span>
+                    </label>
                     <div class="grid gap-5 md:grid-cols-2">
                         <label class="block">
                             <span class="label">Image alt English</span>

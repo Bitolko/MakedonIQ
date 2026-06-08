@@ -260,7 +260,7 @@ public/audio/lessons/
 
 For now, `audio_path` can be null and the quiz UI shows an “Audio coming soon” placeholder instead of a broken player. Future original audio files should go in `public/audio/quizzes/` and use neutral MP3 filenames such as `song_001.mp3`, `song_002.mp3`, and `song_003.mp3`. Keep recordings short and optimized for web playback, around 10-20 seconds each. Public quiz-taking responses expose safe sound metadata such as `audio_path`, alt text, and audio type; they do not expose `is_correct`, `correct_answer`, or admin-only answer-key data.
 
-Geography includes four small map quizzes with five `map_guess` questions each. The first quiz, `Macedonia Map Challenge Demo`, is the only demo map quiz for guests. The other map quizzes require a free account for logged-out visitors and are available to logged-in users.
+Geography includes four small map quizzes with five `map_guess` questions each. `/map-challenge` is the dedicated hub for all four map quizzes, and the same quizzes also remain listed under `/quizzes/geography`. The first quiz, `Macedonia Map Challenge Demo`, is the only demo map quiz for guests. The other map quizzes require a free account for logged-out visitors and are available to logged-in users.
 
 Map challenge questions use `question_type = map_guess` with `questions.metadata` for local map positioning. The frontend renders a custom 3D Macedonia map asset from `public/images` and overlays the pin dynamically from `map_x` and `map_y`. Public responses only expose safe marker metadata such as `map_x`, `map_y`, and `target_type`; admin-only target keys, target labels, answer keys, and correct-answer flags are not returned publicly. No external map API, Google Maps, Mapbox, Leaflet, or paid mapping service is used.
 
@@ -268,15 +268,18 @@ Picture quiz questions use `question_type = picture_choice` with optional `quest
 
 ```json
 {
-  "image_path": "/images/quizzes/quiz_img_001.jpg",
-  "image_alt_en": "Picture quiz clue",
-  "image_alt_mk": "Привремена слика за квиз",
-  "image_type": "food",
-  "image_credit": "Original MakedonIQ image / public domain / licensed source"
+  "image_path": null,
+  "image_alt_en": "Image clue coming soon",
+  "image_alt_mk": "Слика за прашањето ќе биде додадена наскоро",
+  "image_credit": "Placeholder. Original or properly licensed MakedonIQ image to be added later.",
+  "image_type": "placeholder",
+  "image_key": "food_tavce_gravce_001"
 }
 ```
 
-`image_path` is optional. When it is blank, null, missing, or fails to load, the quiz UI shows a placeholder card instead of a broken image. Public quiz-taking responses expose only safe picture metadata: `image_path`, `image_alt_en`, `image_alt_mk`, and `image_type`. Admin-only notes such as `image_credit` are not needed for quiz taking. There is no upload system yet; admins can later enter a neutral path such as `/images/quizzes/quiz_img_001.jpg` after adding an original, public-domain, or properly licensed image file.
+The seeded image quizzes currently leave `image_path` null. When it is blank, null, missing, or fails to load, the quiz UI shows a polished placeholder card instead of a broken image. Future final images should go in `public/images/quizzes/` and use neutral paths such as `/images/quizzes/img_001.webp` or a stable mapped filename based on the internal key.
+
+Four locked, non-demo placeholder image quizzes are seeded: `guess-the-macedonian-food`, `macedonian-culture-picture-quiz`, `macedonian-places-picture-quiz`, and `macedonian-history-picture-quiz`. Public quiz-taking responses expose only safe picture metadata: `image_path`, `image_alt_en`, `image_alt_mk`, and `image_type`; they do not expose `is_correct`, `correct_answer`, answer keys, or descriptive internal `image_key` values. Admins can store image credit/source notes and internal image keys for later asset mapping. Use only original, public-domain, or properly licensed images; do not use copied textbook, schoolbook, or copyrighted images.
 
 Authenticated quiz and learner APIs:
 
@@ -307,7 +310,7 @@ categories
 quizzes.lesson_id
 ```
 
-The map challenge demo is seeded as a published Geography quiz at:
+The map challenge hub and demo quiz are available at:
 
 ```text
 /map-challenge
@@ -428,7 +431,7 @@ Public:
 8. Category page loads.
 9. Quiz start loads and shows related lesson when available.
 10. Active quiz loads.
-11. Macedonia Map Challenge loads the five-question demo and shows a marker without revealing the answer.
+11. Macedonia Map Challenge loads all four map quiz cards and shows a marker without revealing the answer.
 12. Public questions endpoint hides is_correct.
 13. Public map metadata does not expose answer-revealing target labels.
 14. Picture quizzes show an image when available or a placeholder when `image_path` is blank.
@@ -592,9 +595,10 @@ Map Challenge:
 
 ```text
 1. Open /map-challenge.
-2. Start the Macedonia Map Challenge Demo.
-3. Confirm the other Geography map quizzes are visible but locked for guests.
-4. View results.
+2. Confirm all four map quizzes appear.
+3. Start the Macedonia Map Challenge Demo.
+4. Confirm the other Geography map quizzes are visible but locked for guests.
+5. View results.
 ```
 
 Rollback note:

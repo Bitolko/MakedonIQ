@@ -38,6 +38,7 @@ const altText = computed(() => {
 });
 
 const placeholderLabel = computed(() => ({
+    placeholder: 'IMG',
     food: 'BOWL',
     city: 'CITY',
     lake: 'WAVE',
@@ -49,6 +50,7 @@ const placeholderLabel = computed(() => ({
 }[imageType.value] || 'IMG'));
 
 const placeholderToneClass = computed(() => ({
+    placeholder: 'from-white via-heritage-gold-faint to-heritage-red-faint text-heritage-red',
     food: 'from-heritage-gold-faint via-white to-heritage-red-faint text-heritage-gold-deep',
     city: 'from-white via-heritage-panel to-heritage-gold-faint text-heritage-navy',
     lake: 'from-white via-sky-50 to-heritage-panel text-sky-800',
@@ -98,7 +100,7 @@ function handleImageError() {
                 </div>
                 <figcaption class="mt-4 max-w-sm">
                     <p :class="['font-black text-heritage-ink', compact ? 'text-base' : 'text-xl']">Image coming soon</p>
-                    <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">Picture clue will appear here.</p>
+                    <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">This question is ready. The picture clue will be added later.</p>
                 </figcaption>
             </div>
         </div>

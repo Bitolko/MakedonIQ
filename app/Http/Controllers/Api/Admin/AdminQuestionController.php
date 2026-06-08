@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 class AdminQuestionController extends Controller
 {
     private const PICTURE_IMAGE_TYPES = [
+        'placeholder',
         'food',
         'city',
         'lake',
@@ -125,7 +126,8 @@ class AdminQuestionController extends Controller
             'metadata.image_alt_en' => ['nullable', 'string', 'max:255'],
             'metadata.image_alt_mk' => ['nullable', 'string', 'max:255'],
             'metadata.image_credit' => ['nullable', 'string', 'max:500'],
-            'metadata.image_type' => ['nullable', 'string', 'in:food,city,lake,landmark,alphabet,culture,music,other'],
+            'metadata.image_key' => ['nullable', 'string', 'max:100'],
+            'metadata.image_type' => ['nullable', 'string', 'in:placeholder,food,city,lake,landmark,alphabet,culture,music,other'],
             'metadata.audio_path' => ['nullable', 'string', 'max:255'],
             'metadata.audio_alt_en' => ['nullable', 'string', 'max:255'],
             'metadata.audio_alt_mk' => ['nullable', 'string', 'max:255'],
@@ -220,6 +222,7 @@ class AdminQuestionController extends Controller
                 'image_alt_en' => $this->nullableString($metadata['image_alt_en'] ?? null),
                 'image_alt_mk' => $this->nullableString($metadata['image_alt_mk'] ?? null),
                 'image_credit' => $this->nullableString($metadata['image_credit'] ?? null),
+                'image_key' => $this->nullableString($metadata['image_key'] ?? null),
                 'image_type' => $this->pictureImageType($metadata['image_type'] ?? null),
             ];
         }

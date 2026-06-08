@@ -10,29 +10,107 @@ import {
     fetchJson,
     localizedText,
     preferredLanguage,
-    quizActiveUrl,
     quizStartUrl,
 } from '../api/makedoniq';
 
-const quiz = ref(null);
+const category = ref(null);
+const quizzes = ref([]);
 const questions = ref([]);
 const isLoading = ref(true);
 const error = ref('');
 const demoMapQuizSlug = 'macedonia-map-challenge-demo';
+const mapQuizSlugs = [
+    'macedonia-map-challenge-demo',
+    'cities-of-macedonia-map-quiz',
+    'lakes-and-nature-map-quiz',
+    'landmarks-and-regions-map-quiz',
+];
+
+const mapQuizDetails = {
+    'macedonia-map-challenge-demo': {
+        badge: 'Demo',
+        shortTitle: 'Demo map challenge',
+        description: 'Try a short beginner-friendly map challenge with key places.',
+        icon: 'PIN',
+        accent: 'bg-heritage-red-faint text-heritage-red',
+        action: 'Start demo',
+    },
+    'cities-of-macedonia-map-quiz': {
+        badge: 'Cities',
+        shortTitle: 'Cities map quiz',
+        description: 'Practise recognising important Macedonian cities.',
+        icon: 'CITY',
+        accent: 'bg-heritage-gold-faint text-heritage-gold-deep',
+        action: 'Start quiz',
+    },
+    'lakes-and-nature-map-quiz': {
+        badge: 'Nature',
+        shortTitle: 'Lakes and nature map quiz',
+        description: 'Practise lakes, mountains, parks, and natural places.',
+        icon: 'LAKE',
+        accent: 'bg-sky-50 text-sky-800',
+        action: 'Start quiz',
+    },
+    'landmarks-and-regions-map-quiz': {
+        badge: 'Landmarks',
+        shortTitle: 'Landmarks and regions map quiz',
+        description: 'Explore landmarks, regions, old towns, and cultural places.',
+        icon: 'MARK',
+        accent: 'bg-heritage-navy-soft text-heritage-navy',
+        action: 'Start quiz',
+    },
+};
 
 const language = preferredLanguage();
 const user = currentUser();
 
-const categoryName = computed(() => localizedText(quiz.value?.category, 'name', language));
 const mapQuestions = computed(() => questions.value.filter((question) => question.question_type === 'map_guess'));
 const firstMapQuestion = computed(() => mapQuestions.value[0] || null);
 const mapMetadata = computed(() => firstMapQuestion.value?.metadata || {});
-const activeUrl = computed(() => quiz.value ? quizActiveUrl(quiz.value.category.slug, quiz.value.slug) : `/quizzes/geography/${demoMapQuizSlug}/active`);
-const startUrl = computed(() => quiz.value ? quizStartUrl(quiz.value.category.slug, quiz.value.slug) : `/quizzes/geography/${demoMapQuizSlug}/start`);
-const mapQuestionCountLabel = computed(() => {
-    const count = mapQuestions.value.length || quiz.value?.questions_count || 0;
+const categoryName = computed(() => localizedText(category.value, 'name', language) || 'Geography');
+const demoStartUrl = computed(() => quizStartUrl('geography', demoMapQuizSlug));
+const mapQuizCards = computed(() => {
+    const quizBySlug = new Map(
+        quizzes.value
+            .filter((quiz) => quiz.has_map_questions || mapQuizSlugs.includes(quiz.slug))
+            .map((quiz) => [quiz.slug, quiz]),
+    );
 
-    return count > 0 ? `${count} map clues` : 'Beginner map clues';
+    return mapQuizSlugs
+        .map((slug) => {
+            const quiz = quizBySlug.get(slug);
+
+            if (!quiz) {
+                return null;
+            }
+
+            const details = mapQuizDetails[slug];
+            const isLocked = Boolean(quiz.is_locked);
+            const isCompleted = Boolean(quiz.user_progress?.completed);
+            const startHref = quizStartUrl('geography', quiz.slug);
+
+            return {
+                ...quiz,
+                ...details,
+                title: localizedText(quiz, 'title', language) || details.shortTitle,
+                description: localizedText(quiz, 'description', language) || details.description,
+                difficultyLabel: difficultyLabel(quiz.difficulty),
+                questionCount: quiz.questions_count || quiz.map_questions_count || 5,
+                timeLabel: quiz.estimated_minutes ? `${quiz.estimated_minutes} min` : 'Self-paced',
+                isLocked,
+                isCompleted,
+                startHref,
+                registerHref: authHref('/register', startHref),
+                loginHref: authHref('/login', startHref),
+                buttonLabel: isCompleted ? 'Try again' : details.action,
+            };
+        })
+        .filter(Boolean);
+});
+const heroQuestionCountLabel = computed(() => {
+    const count = mapQuizCards.value.reduce((total, quiz) => total + Number(quiz.questionCount || 0), 0);
+
+    return count > 0 ? `${count} map clues` : '20 map clues';
 });
 
 const featureCards = [
@@ -70,12 +148,13 @@ const challengeSteps = [
 
 onMounted(async () => {
     try {
-        const [quizResponse, questionsResponse] = await Promise.all([
-            fetchJson(`/api/quizzes/${demoMapQuizSlug}`),
+        const [categoryResponse, questionsResponse] = await Promise.all([
+            fetchJson('/api/categories/geography'),
             fetchJson(`/api/quizzes/${demoMapQuizSlug}/questions`),
         ]);
 
-        quiz.value = quizResponse.data;
+        category.value = categoryResponse.data.category;
+        quizzes.value = categoryResponse.data.quizzes || [];
         questions.value = questionsResponse.data.questions || [];
     } catch (caughtError) {
         error.value = caughtError.status === 404
@@ -85,6 +164,10 @@ onMounted(async () => {
         isLoading.value = false;
     }
 });
+
+function authHref(path, intended) {
+    return `${path}?intended=${encodeURIComponent(intended || window.location.pathname)}`;
+}
 </script>
 
 <template>
@@ -128,13 +211,13 @@ onMounted(async () => {
 
                                 <div class="mt-5 flex flex-wrap gap-2">
                                     <AppBadge>{{ categoryName || 'Geography' }}</AppBadge>
-                                    <AppBadge variant="navy">{{ difficultyLabel(quiz?.difficulty) }}</AppBadge>
-                                    <AppBadge variant="red">{{ mapQuestionCountLabel }}</AppBadge>
+                                    <AppBadge variant="navy">{{ mapQuizCards.length }} challenges</AppBadge>
+                                    <AppBadge variant="red">{{ heroQuestionCountLabel }}</AppBadge>
                                 </div>
 
                                 <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                                    <PrimaryButton :href="activeUrl" class="w-full sm:w-auto" size="lg">Start Map Challenge</PrimaryButton>
-                                    <PrimaryButton :href="startUrl" class="w-full sm:w-auto" variant="gold" size="lg">View quiz intro</PrimaryButton>
+                                    <PrimaryButton :href="demoStartUrl" class="w-full sm:w-auto" size="lg">Start demo challenge</PrimaryButton>
+                                    <PrimaryButton href="#choose-map-challenge" class="w-full sm:w-auto" variant="gold" size="lg">Choose challenge</PrimaryButton>
                                     <PrimaryButton href="/learn/geography" class="w-full sm:w-auto" variant="ghost" size="lg">Read Geography lessons</PrimaryButton>
                                 </div>
 
@@ -167,6 +250,60 @@ onMounted(async () => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div id="choose-map-challenge" class="bg-heritage-bg/60 p-5 md:p-6 lg:p-8">
+                        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                            <div>
+                                <AppBadge variant="gold">Choose a map challenge</AppBadge>
+                                <h2 class="mt-4 text-3xl font-black text-heritage-ink">Choose a map challenge</h2>
+                                <p class="mt-2 max-w-2xl text-sm font-bold leading-6 text-heritage-muted md:text-base">
+                                    Start with the demo, then unlock cities, lakes, nature, landmarks, and regions.
+                                </p>
+                            </div>
+                            <PrimaryButton href="/quizzes/geography" variant="ghost" class="w-full sm:w-auto">Geography quizzes</PrimaryButton>
+                        </div>
+
+                        <div class="mt-7 grid gap-5 lg:grid-cols-2">
+                            <article
+                                v-for="card in mapQuizCards"
+                                :key="card.slug"
+                                :class="['flex min-h-full flex-col rounded-3xl border bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft md:p-6', card.isLocked ? 'border-heritage-gold/55' : 'border-heritage-line/70 hover:border-heritage-red/30']"
+                            >
+                                <div class="flex items-start justify-between gap-4">
+                                    <span :class="['flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-sm font-black shadow-inner', card.accent]">
+                                        {{ card.icon }}
+                                    </span>
+                                    <div class="flex flex-wrap justify-end gap-2">
+                                        <AppBadge v-if="card.is_demo" variant="gold">Demo</AppBadge>
+                                        <AppBadge v-if="card.isLocked" variant="neutral">Locked</AppBadge>
+                                        <AppBadge variant="red">{{ card.badge }}</AppBadge>
+                                    </div>
+                                </div>
+
+                                <h3 class="mt-5 text-2xl font-black leading-tight text-heritage-ink">{{ card.title }}</h3>
+                                <p class="mt-3 flex-1 text-sm font-bold leading-7 text-heritage-muted md:text-base">{{ card.description }}</p>
+
+                                <div class="mt-5 flex flex-wrap gap-2 text-sm font-bold text-heritage-muted">
+                                    <span class="rounded-full border border-heritage-line/60 bg-heritage-panel px-3 py-1">{{ card.questionCount }} questions</span>
+                                    <span class="rounded-full border border-heritage-line/60 bg-heritage-panel px-3 py-1">{{ card.difficultyLabel }}</span>
+                                    <span class="rounded-full border border-heritage-line/60 bg-heritage-panel px-3 py-1">{{ card.timeLabel }}</span>
+                                </div>
+
+                                <div v-if="card.isLocked" class="mt-6 rounded-[1.25rem] border border-heritage-gold/45 bg-heritage-gold-faint p-4">
+                                    <p class="text-xs font-black uppercase text-heritage-gold-deep">Create a free account to unlock</p>
+                                    <p class="mt-1 text-sm font-bold leading-6 text-heritage-muted">Preview this challenge now, then sign up to play and save your score.</p>
+                                    <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                                        <PrimaryButton :href="card.registerHref" class="w-full" size="sm">Unlock free</PrimaryButton>
+                                        <PrimaryButton :href="card.loginHref" class="w-full" variant="soft" size="sm">Log in</PrimaryButton>
+                                    </div>
+                                </div>
+
+                                <PrimaryButton v-else :href="card.startHref" class="mt-6 w-full sm:w-auto" :variant="card.is_demo ? 'red' : 'gold'">
+                                    {{ card.buttonLabel }}
+                                </PrimaryButton>
+                            </article>
                         </div>
                     </div>
 

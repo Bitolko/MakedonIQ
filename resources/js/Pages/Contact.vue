@@ -85,20 +85,20 @@ const heroContactRows = [
     {
         title: 'Families',
         detail: 'Home learning, lessons, and demo questions.',
-        icon: 'home',
-        tone: 'bg-heritage-red-faint text-heritage-red',
+        imageSrc: '/images/family.png',
+        imageAlt: 'Family learning icon',
     },
     {
         title: 'Schools',
         detail: 'Classroom ideas and future teacher tools.',
-        icon: 'book',
-        tone: 'bg-heritage-gold-faint text-heritage-gold-deep',
+        imageSrc: '/images/school.png',
+        imageAlt: 'School learning icon',
     },
     {
         title: 'Feedback',
         detail: 'Suggestions for quizzes, maps, songs, and improvements.',
-        icon: 'chat',
-        tone: 'bg-heritage-navy-soft text-heritage-navy',
+        imageSrc: '/images/feedback.png',
+        imageAlt: 'Feedback icon',
     },
 ];
 </script>
@@ -143,23 +143,15 @@ const heroContactRows = [
                                         :key="row.title"
                                         class="group flex items-start gap-4 py-4 first:pt-0 last:pb-0"
                                     >
-                                        <span :class="['flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-inner transition group-hover:scale-105', row.tone]">
-                                            <span v-if="row.icon === 'home'" class="relative h-6 w-6">
-                                                <span class="absolute left-1 top-3 h-3.5 w-4 rounded-b bg-current opacity-70" />
-                                                <span class="absolute left-0 top-2 h-3 w-6 rotate-45 rounded-sm bg-current opacity-35" />
-                                                <span class="absolute left-2.5 top-4 h-2.5 w-1.5 rounded-t bg-white/80" />
-                                            </span>
-                                            <span v-else-if="row.icon === 'book'" class="relative h-6 w-6">
-                                                <span class="absolute left-1 top-1 h-5 w-4 rounded-lg bg-current opacity-35" />
-                                                <span class="absolute right-1 top-1 h-5 w-4 rounded-lg bg-current opacity-65" />
-                                                <span class="absolute left-3 top-2 h-4 w-px bg-white/80" />
-                                            </span>
-                                            <span v-else class="relative h-6 w-6">
-                                                <span class="absolute inset-x-0 top-1 h-4 rounded-2xl bg-current opacity-55" />
-                                                <span class="absolute bottom-0 left-3 h-3 w-3 rotate-45 rounded-sm bg-current opacity-55" />
-                                                <span class="absolute left-2 top-3 h-1 w-2 rounded-full bg-white/80" />
-                                                <span class="absolute right-2 top-3 h-1 w-2 rounded-full bg-white/80" />
-                                            </span>
+                                        <span class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-heritage-gold/25 bg-white shadow-card transition group-hover:scale-105">
+                                            <img
+                                                :src="row.imageSrc"
+                                                :alt="row.imageAlt"
+                                                class="h-full w-full object-cover"
+                                                width="192"
+                                                height="192"
+                                                decoding="async"
+                                            >
                                         </span>
                                         <div class="min-w-0">
                                             <h3 class="text-lg font-black text-heritage-ink">{{ row.title }}</h3>
