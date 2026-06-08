@@ -87,18 +87,24 @@ const heroContactRows = [
         detail: 'Home learning, lessons, and demo questions.',
         imageSrc: '/images/family.png',
         imageAlt: 'Family learning icon',
+        zoom: 2.05,
+        frameClass: 'border-heritage-red/20 bg-heritage-red-faint',
     },
     {
         title: 'Schools',
         detail: 'Classroom ideas and future teacher tools.',
         imageSrc: '/images/school.png',
         imageAlt: 'School learning icon',
+        zoom: 2.35,
+        frameClass: 'border-heritage-gold/35 bg-heritage-gold-faint',
     },
     {
         title: 'Feedback',
         detail: 'Suggestions for quizzes, maps, songs, and improvements.',
         imageSrc: '/images/feedback.png',
         imageAlt: 'Feedback icon',
+        zoom: 2.5,
+        frameClass: 'border-heritage-gold/35 bg-heritage-gold-faint',
     },
 ];
 </script>
@@ -143,11 +149,12 @@ const heroContactRows = [
                                         :key="row.title"
                                         class="group flex items-start gap-4 py-4 first:pt-0 last:pb-0"
                                     >
-                                        <span class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-heritage-gold/25 bg-white shadow-card transition group-hover:scale-105">
+                                        <span :class="['flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[1.35rem] border shadow-card ring-4 ring-white/80 transition group-hover:scale-105', row.frameClass]">
                                             <img
                                                 :src="row.imageSrc"
                                                 :alt="row.imageAlt"
-                                                class="h-full w-full object-cover"
+                                                class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                                                :style="{ transform: `scale(${row.zoom})` }"
                                                 width="192"
                                                 height="192"
                                                 decoding="async"
